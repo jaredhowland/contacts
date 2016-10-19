@@ -1,0 +1,8 @@
+{
+  "autoload": {
+   "classmap": ["classes/"]
+  },
+  "require-dev": {
+    "phpdocumentor/phpdocumentor" : "2.*"
+  }
+}
