@@ -15,7 +15,7 @@
   * Inspired by https://github.com/jeroendesloovere/vcard
   *
   * @author Jared Howland <contacts@jaredhowland.com>
-  * @version 2016-10-18
+  * @version 2016-10-19
   * @since 2016-10-05
   *
   */
@@ -23,8 +23,8 @@
 /**
  * vCard class to create a vCard
  */
-class vcard implements contact {
-  use common;
+class vcard implements contactInterface {
+  use shared;
 
   /**
    * @var array $properties Array of properties added to the vCard object

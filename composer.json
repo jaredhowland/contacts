@@ -1,8 +1,14 @@
 {
-  "autoload": {
-   "classmap": ["classes/"]
-  },
-  "require-dev": {
-    "phpdocumentor/phpdocumentor" : "2.*"
-  }
+  "name": "jaredhowland/contacts",
+  "description": "PHP library to create files to store contact information",
+  "keywords": ["contacts","address book","vcard"],
+  "homepage": "http://github.com/jaredhowland/contacts",
+  "license": "MIT",
+  "authors": [
+    {
+      "name": "Jared Howland",
+      "homepage": "http://jaredhowland.com",
+      "role": "developer"
+    }
+  ]
 }

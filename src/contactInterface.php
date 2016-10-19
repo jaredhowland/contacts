@@ -3,12 +3,14 @@
   * Create a vCard
   *
   * @author Jared Howland <contacts@jaredhowland.com>
-  * @version 2016-10-18
+  * @version 2016-10-19
   * @since 2016-10-05
   *
   */
 
-interface contact {
+require_once 'config.php';
+
+interface contactInterface {
   public function add_full_name($name);
   public function add_name($last_name, $first_name, $additional_name, $prefix, $suffix);
   public function add_nickname($name);

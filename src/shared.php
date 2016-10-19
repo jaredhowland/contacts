@@ -1,14 +1,14 @@
 <?php
 /**
-  * Get library directory data
+  * Methods shared between various contact classes
   *
   * @author Jared Howland <contacts@jaredhowland.com>
-  * @version 2016-10-18
+  * @version 2016-10-19
   * @since 2016-10-05
   *
   */
 
-trait common {
+trait shared {
 
   /**
    * Sanitize phone number
