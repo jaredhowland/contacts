@@ -714,7 +714,7 @@ class vcard implements contactInterface {
    */
   private function set_property($element, $value) {
     if(!in_array($element, $this->multiple_properties_allowed) && isset($this->defined_elements[$element])) {
-      throw new Exception('You can only set "' . $element . '" once.');
+      throw new \Exception('You can only set "' . $element . '" once.');
     }
     // Define that we set this element
     $this->defined_elements[$element] = true;
