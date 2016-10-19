@@ -10,8 +10,6 @@
 
 namespace contacts;
 
-require_once 'config.php';
-
 interface contactInterface {
   public function add_full_name($name);
   public function add_name($last_name, $first_name, $additional_name, $prefix, $suffix);

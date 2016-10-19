@@ -21,7 +21,7 @@ class config {
    */
   public static function get($setting) {
     if(self::$config === null) {
-      self::$config = parse_ini_file('config.ini');
+      self::$config = parse_ini_file('config-contacts.ini');
     }
     return self::setting_exists($setting);
   }
