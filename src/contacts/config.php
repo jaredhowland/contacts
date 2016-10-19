@@ -36,7 +36,7 @@ class config {
     if(isset(self::$config[$setting])) {
       return self::$config[$setting];
     } else {
-      throw new UnexpectedValueException("'$setting' is not a valid config setting. Please check your 'config.ini' file for valid config options.");
+      throw new \UnexpectedValueException("'$setting' is not a valid config setting. Please check your 'config.ini' file for valid config options.");
     }
   }
 
