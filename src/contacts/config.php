@@ -58,7 +58,6 @@ class config {
 }
 
 config::set_error_reporting();
-require_once __DIR__ . '/vendor/autoload.php';
 date_default_timezone_set(\contacts\config::get('time_zone'));
 
 ?>
