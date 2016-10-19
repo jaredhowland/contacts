@@ -183,7 +183,7 @@ class vcard implements contactInterface {
     // Set directly rather than going through $this->construct_element to avoid escaping valid URL characters
     if(!empty($this->sanitize_url($photo))) {
       $mimetype = str_replace('image/', '', getimagesize($photo)['mime']);
-      $this->set_property('PHOTO', vsprintf(config::get('PHOTO-BINARY'), array($mimetype, base64_encode(file_get_contents($photo)))));
+      $this->set_property('PHOTO', vsprintf(\contacts\config::get('PHOTO-BINARY'), array($mimetype, base64_encode(file_get_contents($photo)))));
     }
   }
 
@@ -411,7 +411,7 @@ class vcard implements contactInterface {
     // Set directly rather than going through $this->construct_element to avoid escaping valid URL characters
     if(!empty($this->sanitize_url($logo))) {
       $mimetype = str_replace('image/', '', getimagesize($logo)['mime']);
-      $this->set_property('PHOTO', vsprintf(config::get('PHOTO-BINARY'), array($mimetype, base64_encode(file_get_contents($logo)))));
+      $this->set_property('PHOTO', vsprintf(\contacts\config::get('PHOTO-BINARY'), array($mimetype, base64_encode(file_get_contents($logo)))));
     }
   }
 
@@ -493,7 +493,7 @@ class vcard implements contactInterface {
    */
   public function add_revision() {
     // Set directly rather than going through $this->construct_element to avoid escaping valid timestamp characters
-    $this->set_property('REV', vsprintf(config::get('REV'), date('Y-m-d\TH:i:s\Z')));
+    $this->set_property('REV', vsprintf(\contacts\config::get('REV'), date('Y-m-d\TH:i:s\Z')));
   }
 
   /**
@@ -543,7 +543,7 @@ class vcard implements contactInterface {
    */
   public function add_url($url) {
     // Set directly rather than going through $this->construct_element to avoid escaping valid URL characters
-    $this->set_property('URL', vsprintf(config::get('URL'), $this->sanitize_url($url)));
+    $this->set_property('URL', vsprintf(\contacts\config::get('URL'), $this->sanitize_url($url)));
   }
 
   /**
@@ -681,7 +681,7 @@ class vcard implements contactInterface {
    */
   private function construct_element($element, $value, $delimiter = 'comma') {
     $value = is_array($value) ? array_map(array($this, 'clean_string'), $value, array($delimiter)) : $this->clean_string($value);
-    $this->set_property($element, vsprintf(config::get($element), $value));
+    $this->set_property($element, vsprintf(\contacts\config::get($element), $value));
   }
 
   /**

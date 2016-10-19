@@ -24,7 +24,7 @@ trait shared {
       $phone = sprintf("(%s) %s-%s", substr($phone, 0, 3), substr($phone, 3, 3), substr($phone, 6));
       return $phone;
     } elseif(strlen($phone) == 7) {
-      $phone = sprintf('(' . config::get('default_area_code') . ") %s-%s", substr($phone, 0, 3), substr($phone, 3));
+      $phone = sprintf('(' . \contacts\config::get('default_area_code') . ") %s-%s", substr($phone, 0, 3), substr($phone, 3));
       return $phone;
     } else {
       return null;
@@ -110,7 +110,7 @@ trait shared {
    **/
   protected function write_file($file_name, $data, $append = false) {
     $rights = $append ? 'a' : 'w';
-    $file_name = '.' . config::get('data_directory') . $file_name;
+    $file_name = '.' . \contacts\config::get('data_directory') . $file_name;
     if(!$handle = fopen($file_name, $rights)) {
       echo "Cannot open file '$file_name'";
       exit;
