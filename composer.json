@@ -5,10 +5,7 @@
   "homepage": "http://github.com/jaredhowland/contacts",
   "license": "MIT",
   "autoload": {
-    "classmap": ["src/contacts/"],
-    "psr-0":{
-      "contacts": ["src/contacts/"]
-    }
+    "classmap": ["src/contacts/"]
   },
   "authors": [
     {
