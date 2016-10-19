@@ -97,9 +97,9 @@ Known Issues
   * Binary photo data not supported for `PHOTO` field (URL-referenced values only). No plans to implement.
   * Binary photo data not supported for `LOGO` field (URL-referenced values only). No plans to implement.
   * The following vCard elements are not currently supported (no plans to implement):
-      * AGENT
-      * SOUND
-      * KEY
+      * `AGENT`
+      * `SOUND`
+      * `KEY`
 
 Inspired by https://github.com/jeroendesloovere/vcard
 
