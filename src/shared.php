@@ -8,6 +8,8 @@
   *
   */
 
+namespace contacts;
+
 trait shared {
 
   /**

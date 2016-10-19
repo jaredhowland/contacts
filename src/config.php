@@ -8,6 +8,8 @@
   *
   */
 
+namespace contacts;
+
 class config {
   private static $config;
 

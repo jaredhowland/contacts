@@ -8,6 +8,8 @@
   *
   */
 
+namespace contacts;
+
 require_once 'config.php';
 
 interface contactInterface {

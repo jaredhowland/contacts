@@ -20,6 +20,8 @@
   *
   */
 
+namespace contacts;
+
 /**
  * vCard class to create a vCard
  */
