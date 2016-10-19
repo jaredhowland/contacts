@@ -649,7 +649,7 @@ class vcard implements contactInterface {
       $value = str_replace('\r\n', "\r\n", $property['value']);
       $string .= $this->fold($value . "\r\n");
     }
-    $string .= "END:VCARD\r\n";
+    $string .= "END:VCARD\r\n\r\n";
     if($write) {
       $this->write_file($filename . '.vcf', $string, true);
     }
