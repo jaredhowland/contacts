@@ -50,44 +50,45 @@ echo $contact;
 
 Output
 ------
-  BEGIN:VCARD
-  VERSION:3.0
-  FN:Jane Doe
-  N:Doe;Jane;;;
-  NICKNAME:Janie
-  PHOTO;ENCODING=b;TYPE=jpeg:/9j/4AAQSkZJRgABAQAAAQABAAD//gA8Q1JFQVRPUjogZ2
-   QtanBlZyB2MS4wICh1c2luZyBJSkcgSlBFRyB2ODApLCBxdWFsaXR5ID0gMTAwCv/bAEMAAQE
-   …rest of binary-encoded photo
-  BDAY;X-APPLE-OMIT-YEAR=1604:1604-02-10
-  ADR;TYPE=dom,postal,parcel,work:;;123 Main St;Provo;UT;84602;United State
-   s
-  ADR;TYPE=dom,postal,parcel,home:;;123 Main St;Provo;UT;84602;United State
-   s
-  LABEL;TYPE=dom,parcel:Jane Doe\n123 Main St\nProvo\, UT 84602
-  TEL;TYPE=cell,iphone:(555) 555-5555
-  EMAIL;TYPE=internet:jane_doe@domain.com
-  TZ:-07:00
-  GEO:40.333333;-111.777778
-  TITLE:System Administrator
-  ROLE:Programmer
-  ORG:Awesome Company
-  CATEGORIES:School,Work
-  NOTE:Not much is known about Jane Doe.
-  SORT-STRING:Doe
-  URL:http://www.example.com
-  item1.X-ABDATE;type=pref:2010-10-10
-  item1.X-ABLabel:_$!<Anniversary>!$_
-  item2.X-ABRELATEDNAMES:Jane Smith
-  item2.X-ABLabel:_$!<Manager>!$_
-  item3.X-ABRELATEDNAMES:John Doe
-  item3.X-ABLabel:_$!<Spouse>!$_
-  item4.X-ABRELATEDNAMES:Jeff Doe
-  item4.X-ABLabel:_$!<Child>!$_
-  item5.X-ABRELATEDNAMES:Lisa Doe
-  item5.X-ABLabel:_$!<Child>!$_
-  REV:2016-10-18T14:55:15Z
-  END:VCARD
-
+```
+BEGIN:VCARD
+VERSION:3.0
+FN:Jane Doe
+N:Doe;Jane;;;
+NICKNAME:Janie
+PHOTO;ENCODING=b;TYPE=jpeg:/9j/4AAQSkZJRgABAQAAAQABAAD//gA8Q1JFQVRPUjogZ2
+ QtanBlZyB2MS4wICh1c2luZyBJSkcgSlBFRyB2ODApLCBxdWFsaXR5ID0gMTAwCv/bAEMAAQE
+ …rest of binary-encoded photo
+BDAY;X-APPLE-OMIT-YEAR=1604:1604-02-10
+ADR;TYPE=dom,postal,parcel,work:;;123 Main St;Provo;UT;84602;United State
+ s
+ADR;TYPE=dom,postal,parcel,home:;;123 Main St;Provo;UT;84602;United State
+ s
+LABEL;TYPE=dom,parcel:Jane Doe\n123 Main St\nProvo\, UT 84602
+TEL;TYPE=cell,iphone:(555) 555-5555
+EMAIL;TYPE=internet:jane_doe@domain.com
+TZ:-07:00
+GEO:40.333333;-111.777778
+TITLE:System Administrator
+ROLE:Programmer
+ORG:Awesome Company
+CATEGORIES:School,Work
+NOTE:Not much is known about Jane Doe.
+SORT-STRING:Doe
+URL:http://www.example.com
+item1.X-ABDATE;type=pref:2010-10-10
+item1.X-ABLabel:_$!<Anniversary>!$_
+item2.X-ABRELATEDNAMES:Jane Smith
+item2.X-ABLabel:_$!<Manager>!$_
+item3.X-ABRELATEDNAMES:John Doe
+item3.X-ABLabel:_$!<Spouse>!$_
+item4.X-ABRELATEDNAMES:Jeff Doe
+item4.X-ABLabel:_$!<Child>!$_
+item5.X-ABRELATEDNAMES:Lisa Doe
+item5.X-ABLabel:_$!<Child>!$_
+REV:2016-10-18T14:55:15Z
+END:VCARD
+```
 
 [1]: https://getcomposer.org
 [2]: http://packagist.org/
