@@ -4,6 +4,11 @@
   "keywords": ["contacts","address book","vcard"],
   "homepage": "http://github.com/jaredhowland/contacts",
   "license": "MIT",
+  "autoload": {
+    "psr-0":{
+      "contacts": ["src/"],
+    }
+  },
   "authors": [
     {
       "name": "Jared Howland",
