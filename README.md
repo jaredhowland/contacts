@@ -90,6 +90,19 @@ REV:2016-10-18T14:55:15Z
 END:VCARD
 ```
 
+Known Issues
+============
+  * Date-time values not supported for `BDAY` field (only date values). No plans to implement.
+  * Text values not supported for `TZ` field (only UTC-offset values). No plans to implement.
+  * Binary photo data not supported for `PHOTO` field (URL-referenced values only). No plans to implement.
+  * Binary photo data not supported for `LOGO` field (URL-referenced values only). No plans to implement.
+  * The following vCard elements are not currently supported (no plans to implement):
+      * AGENT
+      * SOUND
+      * KEY
+
+Inspired by https://github.com/jeroendesloovere/vcard
+
 [1]: https://getcomposer.org
 [2]: http://packagist.org/
 [3]: https://tools.ietf.org/html/rfc2426
