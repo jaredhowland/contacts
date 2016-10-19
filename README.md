@@ -1,10 +1,10 @@
 About Contacts
 ==============
-Contacts is a small PHP library to help create files containing address book information about contacts. Currently, vCard 3.0 is the only supported export format.
+Contacts is a small PHP library to create files containing address book information for contacts. Currently, [vCard 3.0][3] is the only supported export format.
 
 Installation
 ============
-Rhythm is available as a [Composer][1] [package][2].
+Contacts is available as a [Composer][1] [package][2].
 
 Composer
 --------
@@ -92,3 +92,4 @@ END:VCARD
 
 [1]: https://getcomposer.org
 [2]: http://packagist.org/
+[3]: https://tools.ietf.org/html/rfc2426
