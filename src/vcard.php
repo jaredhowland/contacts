@@ -5,7 +5,6 @@
   * Known issues:
   *   * Date-time values not supported for `BDAY` field (only date values). No plans to implement.
   *   * Text values not supported for `TZ` field (only UTC-offset values). No plans to implement.
-  *   * Binary photo data not supported for `PHOTO` field (URL-referenced values only). No plans to implement.
   *   * Binary photo data not supported for `LOGO` field (URL-referenced values only). No plans to implement.
   *   * The following vCard elements are not currently supported (no plans to implement):
   *     * AGENT
@@ -174,16 +173,18 @@ class vcard implements contactInterface {
    *
    * RFC 2426 pp. 9-10
    *
-   * Standard allows for binary photo data. Not supported in this class (URL-referenced photos only)
-   *
    * @link https://tools.ietf.org/html/rfc2426#section-3.1.4 RFC 2426 Section 3.1.4 (pp. 9-10)
-   * @param null $photo Not supported
+   * @param string $photo URL-referenced or base-64 encoded photo
+   * @param bool $isUrl Optional. Is it a URL-referenced photo or a base-64 encoded photo. Default: `true`
    */
-  public function add_photo($photo) {
-    // Set directly rather than going through $this->construct_element to avoid escaping valid URL characters
-    if(!empty($this->sanitize_url($photo))) {
-      $mimetype = str_replace('image/', '', getimagesize($photo)['mime']);
-      $this->set_property('PHOTO', vsprintf(\contacts\config::get('PHOTO-BINARY'), array($mimetype, base64_encode(file_get_contents($photo)))));
+  public function add_photo($photo, $isUrl = true) {
+    if ($isUrl) {
+      // Set directly rather than going through $this->construct_element to avoid escaping valid URL characters
+      if(!empty($this->sanitize_url($photo))) {
+        $this->set_property('PHOTO', vsprintf(\contacts\config::get('PHOTO-BINARY'), array('JPEG', base64_encode(file_get_contents($photo)))));
+      }
+    } else {
+      $this->set_property('PHOTO', vsprintf(\contacts\config::get('PHOTO-BINARY'), array('JPEG', $photo)));
     }
   }
 
