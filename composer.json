@@ -5,7 +5,9 @@
   "homepage": "http://github.com/jaredhowland/contacts",
   "license": "MIT",
   "autoload": {
-    "classmap": ["src/"]
+    "psr-0": {
+      "contacts": "src"
+    }
   },
   "authors": [
     {
@@ -13,5 +15,8 @@
       "homepage": "http://jaredhowland.com",
       "role": "developer"
     }
-  ]
+  ],
+  "require": {
+    "guzzlehttp/guzzle": "^6.0"
+  }
 }

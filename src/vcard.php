@@ -14,7 +14,7 @@
   * Inspired by https://github.com/jeroendesloovere/vcard
   *
   * @author Jared Howland <contacts@jaredhowland.com>
-  * @version 2016-10-19
+  * @version 2017-12-04
   * @since 2016-10-05
   *
   */
@@ -181,7 +181,7 @@ class vcard implements contactInterface {
     if ($isUrl) {
       // Set directly rather than going through $this->construct_element to avoid escaping valid URL characters
       if(!empty($this->sanitize_url($photo))) {
-        $this->set_property('PHOTO', vsprintf(\contacts\config::get('PHOTO-BINARY'), array('JPEG', base64_encode(file_get_contents($photo)))));
+        $this->set_property('PHOTO', vsprintf(\contacts\config::get('PHOTO-BINARY'), array('JPEG', base64_encode($this->get_data($photo)))));
       }
     } else {
       $this->set_property('PHOTO', vsprintf(\contacts\config::get('PHOTO-BINARY'), array('JPEG', $photo)));
