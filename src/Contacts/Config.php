@@ -3,25 +3,30 @@
  * App configuration
  *
  * @author  Jared Howland <contacts@jaredhowland.com>
- * @version 2016-10-19
+ * @version 2017-12-05
  * @since   2016-09-28
  *
  */
 
-namespace contacts;
+namespace Contacts;
 
-class config
+/**
+ * Configuration class to import `config.ini` file and set other defaults
+ */
+class Config
 {
+    /**
+     * @var string $config String returned by `config.ini`
+     */
     private static $config;
 
     /**
      * Set error reporting based on if app is in development or production
-     *
-     * @param null
-     *
      * @return null
+     * @internal param $null
+     *
      */
-    public static function set_error_reporting()
+    public static function setErrorReporting()
     {
         if (self::get('development')) {
             ini_set('display_errors', '1');
@@ -41,10 +46,10 @@ class config
     public static function get($setting)
     {
         if (self::$config === null) {
-            self::$config = parse_ini_file('config-contacts.ini');
+            self::$config = parse_ini_file('config.ini');
         }
 
-        return self::setting_exists($setting);
+        return self::settingExists($setting);
     }
 
     /**
@@ -54,7 +59,7 @@ class config
      *
      * @return string Setting value from `.ini` file
      */
-    private static function setting_exists($setting)
+    private static function settingExists($setting)
     {
         if (isset(self::$config[$setting])) {
             return self::$config[$setting];
@@ -65,7 +70,7 @@ class config
 
 }
 
-config::set_error_reporting();
-date_default_timezone_set(\contacts\config::get('time_zone'));
+config::setErrorReporting();
+date_default_timezone_set(\Contacts\Config::get('timeZone'));
 
 ?>

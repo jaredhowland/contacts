@@ -12,7 +12,7 @@ Composer
 2. Add the following to your `composer.json` file:
 ```json
 "require": {
-  "jaredhowland/contacts": "~1.0"
+  "jaredhowland/contacts": "~2.0"
 }
 ```
 
@@ -20,31 +20,31 @@ Usage
 =====
 ```php
 $vcard = new vcard;
-$vcard->add_full_name('Jane Doe');
-$vcard->add_name('Doe', 'Jane');
-$vcard->add_nickname('Janie');
-$vcard->add_photo('http://images.designntrend.com/data/images/full/77769/jane-doe.jpg?w=780');
-$vcard->add_birthday(null, 2, 10);
-$vcard->add_address(null, null, '123 Main St', 'Provo', 'UT', '84602', 'United States', 'dom,postal,parcel,work');
-$vcard->add_address(null, null, '123 Main St', 'Provo', 'UT', '84602', 'United States', 'dom,postal,parcel,home');
-$vcard->add_label('Jane Doe\n123 Main St\nProvo, UT 84602', 'dom,parcel');
-$vcard->add_telephone('555-555-5555', 'cell,iphone');
-$vcard->add_email('jane_doe@domain.com');
-$vcard->add_time_zone('-7');
-$vcard->add_lat_long(40.3333331, -111.7777775);
-$vcard->add_title('System Administrator');
-$vcard->add_role('Programmer');
-$vcard->add_organization('Awesome Company');
-$vcard->add_categories('School,Work');
-$vcard->add_note('Not much is known about Jane Doe.');
-$vcard->add_sort_string('Doe');
-$vcard->add_url('http://www.example.com');
-$vcard->add_anniversary('2010-10-10');
-$vcard->add_supervisor('Jane Smith');
-$vcard->add_spouse('John Doe');
-$vcard->add_child('Jeff Doe');
-$vcard->add_child('Lisa Doe');
-$contact = $vcard->build_vcard();
+$vcard->addFullName('Jane Doe');
+$vcard->addName('Doe', 'Jane');
+$vcard->addNickname('Janie');
+$vcard->addPhoto('http://images.designntrend.com/data/images/full/77769/jane-doe.jpg?w=780');
+$vcard->addBirthday(null, 2, 10);
+$vcard->addAddress(null, null, '123 Main St', 'Provo', 'UT', '84602', 'United States', 'dom,postal,parcel,work');
+$vcard->addAddress(null, null, '123 Main St', 'Provo', 'UT', '84602', 'United States', 'dom,postal,parcel,home');
+$vcard->addLabel('Jane Doe\n123 Main St\nProvo, UT 84602', 'dom,parcel');
+$vcard->addTelephone('555-555-5555', 'cell,iphone');
+$vcard->addEmail('jane_doe@domain.com');
+$vcard->addTimeZone('-7');
+$vcard->addLatLong(40.3333331, -111.7777775);
+$vcard->addTitle('System Administrator');
+$vcard->addRole('Programmer');
+$vcard->addOrganization('Awesome Company');
+$vcard->addCategories('School,Work');
+$vcard->addNote('Not much is known about Jane Doe.');
+$vcard->addSortString('Doe');
+$vcard->addUrl('http://www.example.com');
+$vcard->addAnniversary('2010-10-10');
+$vcard->addSupervisor('Jane Smith');
+$vcard->addSpouse('John Doe');
+$vcard->addChild('Jeff Doe');
+$vcard->addChild('Lisa Doe');
+$contact = $vcard->buildVcard();
 echo $contact;
 ```
 

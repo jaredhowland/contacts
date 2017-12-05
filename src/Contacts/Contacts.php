@@ -1,19 +1,25 @@
 <?php
 /**
- * Methods shared between various contact classes
+ * Methods Contacts between various contact classes
  *
  * @author  Jared Howland <contacts@jaredhowland.com>
- * @version 2017-12-04
+ * @version 2017-12-05
  * @since   2016-10-05
  *
  */
 
-namespace contacts;
+namespace Contacts;
 
 use GuzzleHttp\Client;
 
-trait shared
+/**
+ * Contacts class for methods shared between child classes
+ */
+class Contacts
 {
+    /**
+     * @var object $client Guzzle object for downloading files (photos, logos, etc.)
+     */
     protected $client;
 
     /**
@@ -23,7 +29,7 @@ trait shared
      *
      * @return int|null Return phone number if valid. Null otherwise.
      */
-    protected function sanitize_phone($phone)
+    protected function sanitizePhone($phone)
     {
         $phone = preg_replace("/[^0-9]/", '', $phone);
         if (strlen($phone) == 10) {
@@ -31,7 +37,7 @@ trait shared
 
             return $phone;
         } elseif (strlen($phone) == 7) {
-            $phone = sprintf('('.\contacts\config::get('default_area_code').") %s-%s", substr($phone, 0, 3),
+            $phone = sprintf('('.\contacts\config::get('defaultAreaCode').") %s-%s", substr($phone, 0, 3),
                 substr($phone, 3));
 
             return $phone;
@@ -52,7 +58,7 @@ trait shared
      *
      * @return array Array of sanitized latitude and longitude
      */
-    protected function sanitize_lat_long($lat, $long)
+    protected function sanitizeLatLong($lat, $long)
     {
         $lat = ($lat >= -90 && $lat <= 90) ? sprintf("%0.6f", round($lat, 6)) : '0.000000';
         $long = ($long >= -180 && $long <= 180) ? sprintf("%0.6f", round($long, 6)) : '0.000000';
@@ -67,7 +73,7 @@ trait shared
      *
      * @return string Sanitized email address
      */
-    protected function sanitize_email($email)
+    protected function sanitizeEmail($email)
     {
         $email = filter_var($email, FILTER_SANITIZE_EMAIL);
 
@@ -77,21 +83,21 @@ trait shared
     /**
      * Sanitize time zone offset
      *
-     * @param string $time_zone Time zone (UTC-offset) as a number between -14 and +12 (inclusive - do not zero-pad).
-     *                          Examples: `-7`, `-12`, `-12:00`, `10:30`
+     * @param string $timeZone Time zone (UTC-offset) as a number between -14 and +12 (inclusive - do not zero-pad).
+     *                         Examples: `-7`, `-12`, `-12:00`, `10:30`
      *
      * @return array Time zone offset
      */
-    protected function sanitize_time_zone($time_zone)
+    protected function sanitizeTimeZone($timeZone)
     {
-        $offset = explode(':', $time_zone);
-        $options['options']['min_range'] = -14;
-        $options['options']['max_range'] = 12;
-        $hour_offset = filter_var($offset[0], FILTER_VALIDATE_INT, $options);
-        $sign = ($hour_offset < 0) ? '-' : '+';
-        $minute_offset = $offset[1] ? $offset[1] : '00';
+        $offset = explode(':', $timeZone);
+        $options['options']['minRange'] = -14;
+        $options['options']['maxRange'] = 12;
+        $hourOffset = filter_var($offset[0], FILTER_VALIDATE_INT, $options);
+        $sign = ($hourOffset < 0) ? '-' : '+';
+        $minuteOffset = $offset[1] ? $offset[1] : '00';
 
-        return array($sign, abs($hour_offset), $minute_offset);
+        return array($sign, abs($hourOffset), $minuteOffset);
     }
 
     /**
@@ -101,7 +107,7 @@ trait shared
      *
      * @return string Sanitized URL
      */
-    protected function sanitize_url($url)
+    protected function sanitizeUrl($url)
     {
         $url = filter_var($url, FILTER_SANITIZE_URL);
 
@@ -118,7 +124,7 @@ trait shared
      *
      * @return bool TRUE if all appear. FALSE otherwise.
      */
-    protected function in_array_all($needles, $haystack)
+    protected function inArrayAll($needles, $haystack)
     {
         return !array_diff($needles, $haystack);
     }
@@ -128,23 +134,24 @@ trait shared
      *
      * @access protected
      *
-     * @param string $file_name Name of file inside directory defined
-     *                          in the config file ('data_directory')
-     * @param string $data      String containing all data to write to file
-     *                          Will overwrite any existing data
+     * @param string $fileName Name of file inside directory defined
+     *                         in the config file ('dataDirectory')
+     * @param string $data     String containing all data to write to file
+     *                         Will overwrite any existing data
+     * @param bool   $append   Whether or not to append data to end of file (overwrite is default)
      *
      * @return null
      **/
-    protected function write_file($file_name, $data, $append = false)
+    protected function writeFile($fileName, $data, $append = false)
     {
         $rights = $append ? 'a' : 'w';
-        $file_name = '.'.\contacts\config::get('data_directory').$file_name;
-        if (!$handle = fopen($file_name, $rights)) {
-            echo "Cannot open file '$file_name'";
+        $fileName = '.'.\contacts\config::get('dataDirectory').$fileName;
+        if (!$handle = fopen($fileName, $rights)) {
+            echo "Cannot open file '$fileName'";
             exit;
         }
         if (fwrite($handle, $data) === false) {
-            echo "Cannot write to file '$file_name'";
+            echo "Cannot write to file '$fileName'";
             exit;
         }
         fclose($handle);
@@ -157,7 +164,7 @@ trait shared
      *
      * @return string Contents of the passed URL
      */
-    protected function get_data($url)
+    protected function getData($url)
     {
         $this->client = new Client();
         $response = $this->client->get($url);

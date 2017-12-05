@@ -14,29 +14,27 @@
  * Inspired by https://github.com/jeroendesloovere/vcard
  *
  * @author  Jared Howland <contacts@jaredhowland.com>
- * @version 2017-12-04
+ * @version 2017-12-05
  * @since   2016-10-05
  *
  */
 
-namespace contacts;
+namespace Contacts;
 
 /**
  * vCard class to create a vCard
  */
-class vcard implements contactInterface
+class Vcard extends Contacts implements ContactInterface
 {
-    use shared;
-
     /**
      * @var array $properties Array of properties added to the vCard object
      */
     private $properties;
 
     /**
-     * @var array $multiple_properties_allowed Array of properties that can be set more than once
+     * @var array $multiplePropertiesAllowed Array of properties that can be set more than once
      */
-    private $multiple_properties_allowed = array(
+    private $multiplePropertiesAllowed = array(
         'EMAIL',
         'ADR',
         'LABEL',
@@ -48,9 +46,9 @@ class vcard implements contactInterface
     );
 
     /**
-     * @var array $valid_address_types Array of valid address types
+     * @var array $validAddressTypes Array of valid address types
      */
-    private $valid_address_types = array(
+    private $validAddressTypes = array(
         'dom',
         'intl',
         'postal',
@@ -61,9 +59,9 @@ class vcard implements contactInterface
     );
 
     /**
-     * @var array $valid_telephone_types Array of valid telephone types
+     * @var array $validTelephoneTypes Array of valid telephone types
      */
-    private $valid_telephone_types = array(
+    private $validTelephoneTypes = array(
         'home',
         'msg',
         'work',
@@ -82,23 +80,23 @@ class vcard implements contactInterface
     );
 
     /**
-     * @var array $valid_classifications Array of valid classification types
+     * @var array $validClassifications Array of valid classification types
      */
-    private $valid_classifications = array(
+    private $validClassifications = array(
         'PUBLIC',
         'PRIVATE',
         'CONFIDENTIAL',
     );
 
     /**
-     * @var int $extended_item_count Count of custom iOS elements set
+     * @var int $extendedItemCount Count of custom iOS elements set
      */
-    private $extended_item_count = 1;
+    private $extendedItemCount = 1;
 
     /**
-     * @var array $defined_elements Array of defined vCard elements added to the vCard object
+     * @var array $definedElements Array of defined vCard elements added to the vCard object
      */
-    private $defined_elements;
+    private $definedElements;
 
     /**
      * Print out properties and define elements to help with debugging
@@ -112,7 +110,7 @@ class vcard implements contactInterface
         echo "<pre>**PROPERTIES**\n";
         print_r($this->properties);
         echo "\n\n**DEFINED ELEMENTS**\n";
-        print_r($this->defined_elements);
+        print_r($this->definedElements);
     }
 
     /**
@@ -130,9 +128,9 @@ class vcard implements contactInterface
      *
      * @return null
      */
-    public function add_full_name($name)
+    public function addFullName($name)
     {
-        $this->construct_element('FN', $name);
+        $this->constructElement('FN', $name);
     }
 
     /**
@@ -146,11 +144,11 @@ class vcard implements contactInterface
      *
      * @return null
      */
-    private function construct_element($element, $value, $delimiter = 'comma')
+    private function constructElement($element, $value, $delimiter = 'comma')
     {
-        $value = is_array($value) ? array_map(array($this, 'clean_string'), $value,
-            array($delimiter)) : $this->clean_string($value);
-        $this->set_property($element, vsprintf(\contacts\config::get($element), $value));
+        $value = is_array($value) ? array_map(array($this, 'cleanString'), $value,
+            array($delimiter)) : $this->cleanString($value);
+        $this->setProperty($element, vsprintf(\contacts\config::get($element), $value));
     }
 
     /**
@@ -162,12 +160,12 @@ class vcard implements contactInterface
      *
      * @return string|null Returns cleaned string or `null`
      */
-    private function clean_string($string, $delimiter = 'comma')
+    private function cleanString($string, $delimiter = 'comma')
     {
         // If it's an array, clean individual strings and return a comma-delimited list of array values
         if (is_array($string)) {
             foreach ($string as $key => $value) {
-                $string[$key] = $this->clean_string($value);
+                $string[$key] = $this->cleanString($value);
             }
 
             return $delimiter == 'comma' ? implode(',', $string) : implode(';', $string);
@@ -186,13 +184,13 @@ class vcard implements contactInterface
      *
      * @return null
      */
-    private function set_property($element, $value)
+    private function setProperty($element, $value)
     {
-        if (!in_array($element, $this->multiple_properties_allowed) && isset($this->defined_elements[$element])) {
+        if (!in_array($element, $this->multiplePropertiesAllowed) && isset($this->definedElements[$element])) {
             throw new \Exception('You can only set "'.$element.'" once.');
         }
         // Define that we set this element
-        $this->defined_elements[$element] = true;
+        $this->definedElements[$element] = true;
         // Add property
         $this->properties[] = array(
             'key' => $element,
@@ -210,17 +208,17 @@ class vcard implements contactInterface
      *
      * @link https://tools.ietf.org/html/rfc2426#section-3.1.2 RFC 2426 Section 3.1.2 (p. 8)
      *
-     * @param string $last_name       Family name
-     * @param string $first_name      Given name. Default: null
-     * @param string $additional_name Middle name(s). Comma-delimited list. Default: null
-     * @param string $prefix          Honorific prefix(es). Comma-delimited list. Default: null
-     * @param string $suffix          Honorific suffix(es). Comma-delimited list. Default: null
+     * @param string $lastName       Family name
+     * @param string $firstName      Given name. Default: null
+     * @param string $additionalName Middle name(s). Comma-delimited list. Default: null
+     * @param string $prefix         Honorific prefix(es). Comma-delimited list. Default: null
+     * @param string $suffix         Honorific suffix(es). Comma-delimited list. Default: null
      *
      * @return null
      */
-    public function add_name($last_name, $first_name = null, $additional_name = null, $prefix = null, $suffix = null)
+    public function addName($lastName, $firstName = null, $additionalName = null, $prefix = null, $suffix = null)
     {
-        $this->construct_element('N', array($last_name, $first_name, $additional_name, $prefix, $suffix));
+        $this->constructElement('N', array($lastName, $firstName, $additionalName, $prefix, $suffix));
     }
 
     /**
@@ -239,10 +237,10 @@ class vcard implements contactInterface
      *
      * @return null
      */
-    public function add_nickname($name)
+    public function addNickname($name)
     {
         $name = is_array($name) ? $name : explode(',', $name);
-        $this->construct_element('NICKNAME', array($name));
+        $this->constructElement('NICKNAME', array($name));
     }
 
     /**
@@ -255,16 +253,16 @@ class vcard implements contactInterface
      * @param string $photo URL-referenced or base-64 encoded photo
      * @param bool   $isUrl Optional. Is it a URL-referenced photo or a base-64 encoded photo. Default: `true`
      */
-    public function add_photo($photo, $isUrl = true)
+    public function addPhoto($photo, $isUrl = true)
     {
         if ($isUrl) {
-            // Set directly rather than going through $this->construct_element to avoid escaping valid URL characters
-            if (!empty($this->sanitize_url($photo))) {
-                $this->set_property('PHOTO', vsprintf(\contacts\config::get('PHOTO-BINARY'),
-                    array('JPEG', base64_encode($this->get_data($photo)))));
+            // Set directly rather than going through $this->constructElement to avoid escaping valid URL characters
+            if (!empty($this->sanitizeUrl($photo))) {
+                $this->setProperty('PHOTO', vsprintf(\contacts\config::get('PHOTO-BINARY'),
+                    array('JPEG', base64_encode($this->getData($photo)))));
             }
         } else {
-            $this->set_property('PHOTO', vsprintf(\contacts\config::get('PHOTO-BINARY'), array('JPEG', $photo)));
+            $this->setProperty('PHOTO', vsprintf(\contacts\config::get('PHOTO-BINARY'), array('JPEG', $photo)));
         }
     }
 
@@ -284,13 +282,13 @@ class vcard implements contactInterface
      *
      * @return null
      */
-    public function add_birthday($year = null, $month, $day)
+    public function addBirthday($year = null, $month, $day)
     {
         if ($year) {
-            $this->construct_element('BDAY', array($year, $month, $day));
+            $this->constructElement('BDAY', array($year, $month, $day));
         } else {
-            $this->defined_elements['BDAY'] = true; // Define `BDAY` element
-            $this->construct_element('BDAY-NO-YEAR', array($month, $day));
+            $this->definedElements['BDAY'] = true; // Define `BDAY` element
+            $this->constructElement('BDAY-NO-YEAR', array($month, $day));
         }
     }
 
@@ -301,7 +299,7 @@ class vcard implements contactInterface
      *
      * @link https://tools.ietf.org/html/rfc2426#section-3.2.1 RFC 2426 Section 3.2.1 (pp. 10-11)
      *
-     * @param string       $po_box   Post office box number
+     * @param string       $poBox    Post office box number
      * @param string       $extended Extended address
      * @param string       $street   Street address
      * @param string       $city     City
@@ -321,8 +319,8 @@ class vcard implements contactInterface
      *
      * @return null
      */
-    public function add_address(
-        $po_box = null,
+    public function addAddress(
+        $poBox = null,
         $extended = null,
         $street = null,
         $city = null,
@@ -333,8 +331,8 @@ class vcard implements contactInterface
     ) {
         $type = is_array($type) ? $type : explode(',', $type);
         // Make sure all `$type`s are valid. If invalid `$type`(s), revert to standard default.
-        $type = $this->in_array_all($type, $this->valid_address_types) ? $type : 'intl,postal,parcel,work';
-        $this->construct_element('ADR', array($type, $po_box, $extended, $street, $city, $state, $zip, $country));
+        $type = $this->inArrayAll($type, $this->validAddressTypes) ? $type : 'intl,postal,parcel,work';
+        $this->constructElement('ADR', array($type, $poBox, $extended, $street, $city, $state, $zip, $country));
     }
 
     /**
@@ -358,12 +356,12 @@ class vcard implements contactInterface
      *
      * @return null
      */
-    public function add_label($label, $type = null)
+    public function addLabel($label, $type = null)
     {
         $type = is_array($type) ? $type : explode(',', $type);
         // Make sure all `$type`s are valid. If invalid `$type`(s), revert to standard default.
-        $type = $this->in_array_all($type, $this->valid_address_types) ? $type : 'intl,postal,parcel,work';
-        $this->construct_element('LABEL', array($type, $label));
+        $type = $this->inArrayAll($type, $this->validAddressTypes) ? $type : 'intl,postal,parcel,work';
+        $this->constructElement('LABEL', array($type, $label));
     }
 
     /**
@@ -395,12 +393,12 @@ class vcard implements contactInterface
      *
      * @return null
      */
-    public function add_telephone($phone, $type = null)
+    public function addTelephone($phone, $type = null)
     {
         $type = is_array($type) ? $type : explode(',', $type);
         // Make sure all `$type`s are valid. If invalid `$type`(s), revert to standard default.
-        $type = $this->in_array_all($type, $this->valid_telephone_types) ? $type : 'voice';
-        $this->construct_element('TEL', array($type, $this->sanitize_phone($phone)));
+        $type = $this->inArrayAll($type, $this->validTelephoneTypes) ? $type : 'voice';
+        $this->constructElement('TEL', array($type, $this->sanitizePhone($phone)));
     }
 
     /**
@@ -422,11 +420,11 @@ class vcard implements contactInterface
      *
      * @return null
      */
-    public function add_email($email, $type = null)
+    public function addEmail($email, $type = null)
     {
         $type = empty($type) ? 'internet' : $type;
         $type = is_array($type) ? $type : explode(',', $type);
-        $this->construct_element('EMAIL', array($type, $this->sanitize_email($email)));
+        $this->constructElement('EMAIL', array($type, $this->sanitizeEmail($email)));
     }
 
     /**
@@ -440,9 +438,9 @@ class vcard implements contactInterface
      *
      * @return null
      */
-    public function add_mailer($mailer)
+    public function addMailer($mailer)
     {
-        $this->construct_element('MAILER', $mailer);
+        $this->constructElement('MAILER', $mailer);
     }
 
     /**
@@ -455,14 +453,14 @@ class vcard implements contactInterface
      * @link https://tools.ietf.org/html/rfc2426#section-3.4.1 RFC 2426 Section 3.4.1 (p. 15)
      * @link http://www.iana.org/time-zones Internet Assigned Numbers Authority (IANA) Time Zone Database
      *
-     * @param string $time_zone Time zone (UTC-offset) as a number between -14 and +12 (inclusive - do not zero-pad).
-     *                          Examples: `-7`, `-12`, `-12:00`, `10:30`
+     * @param string $timeZone Time zone (UTC-offset) as a number between -14 and +12 (inclusive - do not zero-pad).
+     *                         Examples: `-7`, `-12`, `-12:00`, `10:30`
      *
      * @return null
      */
-    public function add_time_zone($time_zone)
+    public function addTimeZone($timeZone)
     {
-        $this->construct_element('TZ', $this->sanitize_time_zone($time_zone));
+        $this->constructElement('TZ', $this->sanitizeTimeZone($timeZone));
     }
 
     /**
@@ -481,9 +479,9 @@ class vcard implements contactInterface
      *
      * @return null
      */
-    public function add_lat_long($lat, $long)
+    public function addLatLong($lat, $long)
     {
-        $this->construct_element('GEO', $this->sanitize_lat_long($lat, $long));
+        $this->constructElement('GEO', $this->sanitizeLatLong($lat, $long));
     }
 
     /**
@@ -497,9 +495,9 @@ class vcard implements contactInterface
      *
      * @return null
      */
-    public function add_title($title)
+    public function addTitle($title)
     {
-        $this->construct_element('TITLE', $title);
+        $this->constructElement('TITLE', $title);
     }
 
     /**
@@ -513,9 +511,9 @@ class vcard implements contactInterface
      *
      * @return null
      */
-    public function add_role($role)
+    public function addRole($role)
     {
-        $this->construct_element('ROLE', $role);
+        $this->constructElement('ROLE', $role);
     }
 
     /**
@@ -529,12 +527,12 @@ class vcard implements contactInterface
      *
      * @param null $logo Not supported
      */
-    public function add_logo($logo)
+    public function addLogo($logo)
     {
-        // Set directly rather than going through $this->construct_element to avoid escaping valid URL characters
-        if (!empty($this->sanitize_url($logo))) {
+        // Set directly rather than going through $this->constructElement to avoid escaping valid URL characters
+        if (!empty($this->sanitizeUrl($logo))) {
             $mimetype = str_replace('image/', '', getimagesize($logo)['mime']);
-            $this->set_property('PHOTO', vsprintf(\contacts\config::get('PHOTO-BINARY'),
+            $this->setProperty('PHOTO', vsprintf(\contacts\config::get('PHOTO-BINARY'),
                 array($mimetype, base64_encode(file_get_contents($logo)))));
         }
     }
@@ -548,7 +546,7 @@ class vcard implements contactInterface
      *
      * @param null $agent Not supported
      */
-    public function add_agent($agent)
+    public function addAgent($agent)
     {
     }
 
@@ -566,10 +564,10 @@ class vcard implements contactInterface
      *
      * @return null
      */
-    public function add_organization($organization)
+    public function addOrganization($organization)
     {
         $organization = is_array($organization) ? $organization : explode(';', $organization);
-        $this->construct_element('ORG', array($organization), 'semicolon');
+        $this->constructElement('ORG', array($organization), 'semicolon');
     }
 
     /**
@@ -583,10 +581,10 @@ class vcard implements contactInterface
      *
      * @return null
      */
-    public function add_categories($categories)
+    public function addCategories($categories)
     {
         $categories = is_array($categories) ? $categories : explode(',', $categories);
-        $this->construct_element('CATEGORIES', array($categories));
+        $this->constructElement('CATEGORIES', array($categories));
     }
 
     /**
@@ -600,9 +598,9 @@ class vcard implements contactInterface
      *
      * @return null
      */
-    public function add_note($note)
+    public function addNote($note)
     {
-        $this->construct_element('NOTE', $note);
+        $this->constructElement('NOTE', $note);
     }
 
     /**
@@ -612,13 +610,13 @@ class vcard implements contactInterface
      *
      * @link https://tools.ietf.org/html/rfc2426#section-3.6.3 RFC 2426 Section 3.6.3 (pp. 20-21)
      *
-     * @param string $product_id Product ID
+     * @param string $productId Product ID
      *
      * @return null
      */
-    public function add_product_id($product_id)
+    public function addProductId($productId)
     {
-        $this->construct_element('PRODID', $product_id);
+        $this->constructElement('PRODID', $productId);
     }
 
     /**
@@ -629,13 +627,13 @@ class vcard implements contactInterface
      *
      * @link https://tools.ietf.org/html/rfc2426#section-3.6.5 RFC 2426 Section 3.6.5 (pp. 21-22)
      *
-     * @param string $sort_string Sort string to use for `FN` and `N`
+     * @param string $sortString Sort string to use for `FN` and `N`
      *
      * @return null
      */
-    public function add_sort_string($sort_string)
+    public function addSortString($sortString)
     {
-        $this->construct_element('SORT-STRING', $sort_string);
+        $this->constructElement('SORT-STRING', $sortString);
     }
 
     /**
@@ -647,7 +645,7 @@ class vcard implements contactInterface
      *
      * @param null $sound Not supported
      */
-    public function add_sound($sound)
+    public function addSound($sound)
     {
     }
 
@@ -658,13 +656,13 @@ class vcard implements contactInterface
      *
      * @link https://tools.ietf.org/html/rfc2426#section-3.6.7 RFC 2426 Section 3.6.7 (p. 23)
      *
-     * @param string $unique_identifier Unique identifier
+     * @param string $uniqueIdentifier Unique identifier
      *
      * @return null
      */
-    public function add_unique_identifier($unique_identifier)
+    public function addUniqueIdentifier($uniqueIdentifier)
     {
-        $this->construct_element('UID', $unique_identifier);
+        $this->constructElement('UID', $uniqueIdentifier);
     }
 
     /**
@@ -678,10 +676,10 @@ class vcard implements contactInterface
      *
      * @return null
      */
-    public function add_url($url)
+    public function addUrl($url)
     {
-        // Set directly rather than going through $this->construct_element to avoid escaping valid URL characters
-        $this->set_property('URL', vsprintf(\contacts\config::get('URL'), $this->sanitize_url($url)));
+        // Set directly rather than going through $this->constructElement to avoid escaping valid URL characters
+        $this->setProperty('URL', vsprintf(\contacts\config::get('URL'), $this->sanitizeUrl($url)));
     }
 
     /**
@@ -699,11 +697,11 @@ class vcard implements contactInterface
      *
      * @return null
      */
-    public function add_classification($classification = null)
+    public function addClassification($classification = null)
     {
-        $classification = $this->in_array_all([$classification],
-            $this->valid_classifications) ? $classification : 'PUBLIC';
-        $this->construct_element('CLASS', $classification);
+        $classification = $this->inArrayAll([$classification],
+            $this->validClassifications) ? $classification : 'PUBLIC';
+        $this->constructElement('CLASS', $classification);
     }
 
     /**
@@ -715,7 +713,7 @@ class vcard implements contactInterface
      *
      * @param null $key Not supported
      */
-    public function add_key($key)
+    public function addKey($key)
     {
     }
 
@@ -731,9 +729,9 @@ class vcard implements contactInterface
      *
      * @return null
      */
-    public function add_extended_type($label, $value)
+    public function addExtendedType($label, $value)
     {
-        $this->construct_element('X-', array($label, $value));
+        $this->constructElement('X-', array($label, $value));
     }
 
     /**
@@ -743,11 +741,11 @@ class vcard implements contactInterface
      *
      * @return null
      */
-    public function add_anniversary($anniversary)
+    public function addAnniversary($anniversary)
     {
         $anniversary = date('Y-m-d', strtotime($anniversary));
-        $this->construct_element('ANNIVERSARY', array($anniversary, $this->extended_item_count));
-        $this->extended_item_count++;
+        $this->constructElement('ANNIVERSARY', array($anniversary, $this->extendedItemCount));
+        $this->extendedItemCount++;
     }
 
     /**
@@ -757,10 +755,10 @@ class vcard implements contactInterface
      *
      * @return null
      */
-    public function add_supervisor($supervisor)
+    public function addSupervisor($supervisor)
     {
-        $this->construct_element('SUPERVISOR', array($supervisor, $this->extended_item_count));
-        $this->extended_item_count++;
+        $this->constructElement('SUPERVISOR', array($supervisor, $this->extendedItemCount));
+        $this->extendedItemCount++;
     }
 
     /**
@@ -770,10 +768,10 @@ class vcard implements contactInterface
      *
      * @return null
      */
-    public function add_spouse($spouse)
+    public function addSpouse($spouse)
     {
-        $this->construct_element('SPOUSE', array($spouse, $this->extended_item_count));
-        $this->extended_item_count++;
+        $this->constructElement('SPOUSE', array($spouse, $this->extendedItemCount));
+        $this->extendedItemCount++;
     }
 
     /**
@@ -783,10 +781,10 @@ class vcard implements contactInterface
      *
      * @return null
      */
-    public function add_child($child)
+    public function addChild($child)
     {
-        $this->construct_element('CHILD', array($child, $this->extended_item_count));
-        $this->extended_item_count++;
+        $this->constructElement('CHILD', array($child, $this->extendedItemCount));
+        $this->extendedItemCount++;
     }
 
     /**
@@ -797,10 +795,10 @@ class vcard implements contactInterface
      *
      * @return string vCard as a string
      */
-    public function build_vcard($write = false, $filename = null)
+    public function buildVcard($write = false, $filename = null)
     {
         $filename = empty($filename) ? date('Y.m.d.H.i.s') : $filename;
-        $this->add_revision();
+        $this->addRevision();
         $string = "BEGIN:VCARD\r\n";
         $string .= "VERSION:3.0\r\n";
         foreach ($this->properties as $property) {
@@ -809,7 +807,7 @@ class vcard implements contactInterface
         }
         $string .= "END:VCARD\r\n\r\n";
         if ($write) {
-            $this->write_file($filename.'.vcf', $string, true);
+            $this->writeFile($filename.'.vcf', $string, true);
         }
 
         return $string;
@@ -826,10 +824,10 @@ class vcard implements contactInterface
      *
      * @return null
      */
-    public function add_revision()
+    public function addRevision()
     {
-        // Set directly rather than going through $this->construct_element to avoid escaping valid timestamp characters
-        $this->set_property('REV', vsprintf(\contacts\config::get('REV'), date('Y-m-d\TH:i:s\Z')));
+        // Set directly rather than going through $this->constructElement to avoid escaping valid timestamp characters
+        $this->setProperty('REV', vsprintf(\contacts\config::get('REV'), date('Y-m-d\TH:i:s\Z')));
     }
 
     /**
@@ -847,7 +845,6 @@ class vcard implements contactInterface
     {
         return (strlen($text) <= 75) ? $text : substr(chunk_split($text, 73, "\r\n "), 0, -3);
     }
-
 }
 
 ?>
