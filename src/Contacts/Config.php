@@ -71,6 +71,6 @@ class Config
 }
 
 config::setErrorReporting();
-date_default_timezone_set(\Contacts\Config::get('timeZone'));
+date_default_timezone_set(\Contacts\Config::get('time_zone'));
 
 ?>
