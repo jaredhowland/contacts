@@ -148,7 +148,7 @@ class Vcard extends Contacts implements ContactInterface
     {
         $value = is_array($value) ? array_map(array($this, 'cleanString'), $value,
             array($delimiter)) : $this->cleanString($value);
-        $this->setProperty($element, vsprintf(\contacts\config::get($element), $value));
+        $this->setProperty($element, vsprintf(Config::get($element), $value));
     }
 
     /**
