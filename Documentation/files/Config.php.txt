@@ -27,7 +27,7 @@ class Config
      *
      * @return void
      */
-    public static function setErrorReporting(): void
+    public static function setErrorReporting()
     {
         if (self::get('development')) {
             ini_set('display_errors', '1');

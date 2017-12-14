@@ -13,4 +13,7 @@ namespace Contacts;
 
 use Exception;
 
+/**
+ * ContactsException class for `Contacts` namespace
+ */
 class ContactsException extends Exception {}

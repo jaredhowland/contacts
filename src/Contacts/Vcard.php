@@ -21,9 +21,9 @@
 namespace Contacts;
 
 /**
- * vCard class to create a vCard
+ * vCard class to create a vCard. Extends `Contacts` and implements `ContactsInterface`
  */
-class Vcard extends Contacts implements ContactInterface
+class Vcard extends Contacts implements ContactsInterface
 {
     /**
      * @var array $properties Array of properties added to the vCard object
@@ -96,14 +96,15 @@ class Vcard extends Contacts implements ContactInterface
     /**
      * Construct Vcard Class
      *
-     * @param string $defaultAreaCode Default area code to use for phone numbers
-     * @param string $defaultTimeZone Default time zone to use for Vcard revision date and time
+     * @param string $dataDirectory   Directory to save vCard(s) to. Default: `/Data/`
+     * @param string $defaultAreaCode Default area code to use for phone numbers. Default: `801`
+     * @param string $defaultTimeZone Default time zone to use for Vcard revision date and time. Default: `America/Denver`
      *
      * @return void
      */
-    public function __construct(string $defaultAreaCode = '801', string $defaultTimeZone = 'America/Denver')
+    public function __construct(string $dataDirectory = null, string $defaultAreaCode = '801', string $defaultTimeZone = 'America/Denver')
     {
-        parent::__construct($defaultAreaCode, $defaultTimeZone);
+        parent::__construct($dataDirectory, $defaultAreaCode, $defaultTimeZone);
     }
 
     /**
@@ -179,10 +180,10 @@ class Vcard extends Contacts implements ContactInterface
      * @link https://tools.ietf.org/html/rfc2426#section-3.1.2 RFC 2426 Section 3.1.2 (p. 8)
      *
      * @param string $lastName        Family name
-     * @param string $firstName       Given name. Default: null
-     * @param string $additionalNames Middle name(s). Comma-delimited. Default: null
-     * @param string $prefixes        Honorific prefix(es). Comma-delimited. Default: null
-     * @param string $suffixes        Honorific suffix(es). Comma-delimited. Default: null
+     * @param string $firstName       Given name. Default: `null`
+     * @param string $additionalNames Middle name(s). Comma-delimited. Default: `null`
+     * @param string $prefixes        Honorific prefix(es). Comma-delimited. Default: `null`
+     * @param string $suffixes        Honorific suffix(es). Comma-delimited. Default: `null`
      *
      * @throws ContactsException if an element that can only be defined once is defined more than once
      *
@@ -255,7 +256,7 @@ class Vcard extends Contacts implements ContactInterface
      * @link https://tools.ietf.org/html/rfc2426#section-3.1.5 RFC 2426 Section 3.1.5 (p. 10)
      *
      * @param int $year  Year of birth. If no year given, use iOS custom date field to indicate birth month and day
-     *                   only. Default: null
+     *                   only. Default: `null`
      * @param int $month Month of birth.
      * @param int $day   Day of birth.
      *
@@ -672,7 +673,7 @@ class Vcard extends Contacts implements ContactInterface
      *
      * @link https://tools.ietf.org/html/rfc2426#section-3.6.4 RFC 2426 Section 3.6.4 (p. 21)
      *
-     * @param null
+     * @param string $dateTime Date and time to add to card as the revision time. Default: `creation timestamp`
      *
      * @throws ContactsException if an element that can only be defined once is defined more than once
      *
@@ -727,7 +728,7 @@ class Vcard extends Contacts implements ContactInterface
      *
      * @link https://tools.ietf.org/html/rfc2426#section-3.6.7 RFC 2426 Section 3.6.7 (p. 23)
      *
-     * @param string $uniqueIdentifier Unique identifier. Default: PHP-generated unique identifier
+     * @param string $uniqueIdentifier Unique identifier. Default: `PHP-generated unique identifier`
      *
      * @throws ContactsException if an element that can only be defined once is defined more than once
      *
@@ -901,8 +902,8 @@ class Vcard extends Contacts implements ContactInterface
     /**
      * Build the vCard
      *
-     * @param bool   $write    Write vCard to file or not. Default: false
-     * @param string $filename Name of vCard file. Default: timestamp
+     * @param bool   $write    Write vCard to file or not. Default: `false`
+     * @param string $filename Name of vCard file. Default: `timestamp`
      *
      * @throws ContactsException if an element that can only be defined once is defined more than once
      *
@@ -934,7 +935,7 @@ class Vcard extends Contacts implements ContactInterface
      * @param string       $element   Name of the vCard element
      * @param string|array $value     Value to construct. If it's an array, make it a list using the proper `delimiter`
      * @param string       $delimiter Delimiter to use for lists given via `$value` array.
-     *                                Default: `comma`. Any other value is interpreted as semicolon.
+     *                                Default: `,`.
      *
      * @throws ContactsException if an element that can only be defined once is defined more than once
      *

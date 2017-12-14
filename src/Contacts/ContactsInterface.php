@@ -11,9 +11,9 @@
 namespace Contacts;
 
 /**
- * ContactInterface for all `Contact` child classes
+ * ContactsInterface for all `Contacts` child classes
  */
-interface ContactInterface
+interface ContactsInterface
 {
     public function addFullName(string $name);
 

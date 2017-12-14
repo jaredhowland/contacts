@@ -18,6 +18,11 @@ use GuzzleHttp\Client;
 class Contacts
 {
     /**
+     * @var string $dataDirectory Path to directory to save the vCard(s) to
+     */
+    private $dataDirectory;
+
+    /**
      * @var string $defaultAreaCode String for default area code of phone numbers
      */
     protected $defaultAreaCode;
@@ -32,8 +37,18 @@ class Contacts
      */
     protected $client;
 
-    protected function __construct(string $defaultAreaCode = '801', string $defaultTimeZone = 'America/Denver')
+    /**
+     * Construct
+     *
+     * @param string $dataDirectory   Directory to save vCard(s) to. Default: `/Data/`
+     * @param string $defaultAreaCode Default area code to use for phone numbers without an area code. Default: `801`
+     * @param string $defaultTimeZone Default time zone to use when adding a revision date to a vCard. Default: `America/Denver`
+     *
+     * @return void
+     */
+    protected function __construct(string $dataDirectory = null, string $defaultAreaCode = '801', string $defaultTimeZone = 'America/Denver')
     {
+        $this->dataDirectory = empty($dataDirectory) ? Config::get('dataDirectory') : $dataDirectory;
         $this->defaultAreaCode = $defaultAreaCode;
         $this->defaultTimeZone = $defaultTimeZone;
         date_default_timezone_set($defaultTimeZone);
@@ -192,10 +207,10 @@ class Contacts
      * @access protected
      *
      * @param string $fileName Name of file inside directory defined
-     *                         in the config file ('dataDirectory')
+     *                         in by `$this->dataDirectory`
      * @param string $data     String containing all data to write to file
      *                         Will overwrite any existing data
-     * @param bool   $append   Whether or not to append data to end of file (overwrite is default)
+     * @param bool   $append   Whether or not to append data to end of file (overwrite is default). Default: `false`
      *
      * @throws ContactsException if file cannot be opened and/or written to
      *
@@ -204,7 +219,7 @@ class Contacts
     protected function writeFile(string $fileName, string $data, bool $append = false)
     {
         $rights = $append ? 'a' : 'w';
-        $fileName = '.'.Config::get('dataDirectory').$fileName;
+        $fileName = $this->dataDirectory.$fileName;
         if (!$handle = fopen($fileName, $rights)) {
             throw new ContactsException("Cannot open file '$fileName'");
         }
