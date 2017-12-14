@@ -21,7 +21,7 @@ Composer
 Usage
 =====
 ```php
-$vcard = new \Contacts\Vcard('./');
+$vcard = new \Contacts\Vcard('./'); // Tell contacts where to put the `.vcf` file
 $vcard->addFullName('Jane Doe');
 $vcard->addName('Doe', 'Jane');
 $vcard->addNicknames(['Janie', 'Jan']);
@@ -52,8 +52,7 @@ $vcard->addChild('Lisa Doe');
 $vcard->addExtendedType('TWITTER', '@jared_howland');
 $vcard->addUniqueIdentifier();
 $vcard->addRevision('2017-12-14'); // Added automatically if you don't call this method
-$contact = $vcard->buildVcard();
-echo $contact;
+$vcard->buildVcard(true, 'myVcard'); // Bool tells whether to save the file to a directory or not (`false` is default`)
 ```
 
 Output
