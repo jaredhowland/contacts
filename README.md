@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.org/jaredhowland/contacts.svg?branch=master)](https://travis-ci.org/jaredhowland/contacts)
+
 About Contacts
 ==============
 Contacts is a small PHP library to create files containing address book information for contacts. Currently, [vCard 3.0][3] is the only supported export format.
