@@ -1,9 +1,9 @@
-<?php
+<?php declare(strict_types=1);
 /**
  * Create a vCard
  *
  * @author  Jared Howland <contacts@jaredhowland.com>
- * @version 2017-12-05
+ * @version 2017-12-12
  * @since   2016-10-05
  *
  */
@@ -15,61 +15,61 @@ namespace Contacts;
  */
 interface ContactInterface
 {
-    public function addFullName($name);
+    public function addFullName(string $name);
 
-    public function addName($lastName, $firstName, $additionalName, $prefix, $suffix);
+    public function addName(string $lastName, string $firstName, string $additionalNames, string $prefixes, string $suffixes);
 
-    public function addNickname($name);
+    public function addNicknames(array $names);
 
-    public function addPhoto($photo);
+    public function addPhoto(string $photo, bool $isUrl);
 
-    public function addBirthday($year, $month, $day);
+    public function addBirthday(int $year, int $month, int $day);
 
-    public function addAddress($poBox, $extended, $street, $city, $state, $zip, $country, $type);
+    public function addAddress(string $poBox, string $extended, string $street, string $city, string $state, string $zip, string $country, array $types);
 
-    public function addLabel($label, $type);
+    public function addLabel(string $label, array $types);
 
-    public function addTelephone($phone, $type);
+    public function addTelephone(string $phone, array $types);
 
-    public function addEmail($email, $type);
+    public function addEmail(string $email, array $types);
 
-    public function addMailer($mailer);
+    public function addMailer(string $mailer);
 
-    public function addTimeZone($timeZone);
+    public function addTimeZone(string $timeZone);
 
-    public function addLatLong($lat, $long);
+    public function addLatLong(string $lat, string $long);
 
-    public function addTitle($title);
+    public function addTitle(string $title);
 
-    public function addRole($role);
+    public function addRole(string $role);
 
-    public function addLogo($logo);
+    public function addLogo(string $logo);
 
-    public function addAgent($agent);
+    public function addAgent(string $agent);
 
-    public function addOrganization($organization);
+    public function addOrganizations(array $organizations);
 
-    public function addCategories($categories);
+    public function addCategories(array $categories);
 
-    public function addNote($note);
+    public function addNote(string $note);
 
-    public function addProductId($productId);
+    public function addProductId(string $productId);
 
-    public function addRevision();
+    public function addRevision(string $dateTime);
 
-    public function addSortString($sortString);
+    public function addSortString(string $sortString);
 
-    public function addSound($sound);
+    public function addSound(string $sound);
 
-    public function addUniqueIdentifier($uniqueIdentifier);
+    public function addUniqueIdentifier(string $uniqueIdentifier);
 
-    public function addUrl($url);
+    public function addUrl(string $url);
 
-    public function addClassification($classification);
+    public function addClassification(string $classification);
 
-    public function addKey($key);
+    public function addKey(string $key);
 
-    public function addExtendedType($label, $value);
+    public function addExtendedType(string $label, string $value);
 }
 
 ?>
