@@ -14,7 +14,7 @@ Composer
 2. Add the following to your `composer.json` file:
 ```json
 "require": {
-  "jaredhowland/contacts": "~2.0"
+  "jaredhowland/contacts": "~3.0"
 }
 ```
 
