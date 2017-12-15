@@ -75,7 +75,6 @@ class Contacts
 
             return $phone;
         } else {
-
             throw new ContactsException("Invalid phone: '$phone'");
         }
     }
@@ -103,14 +102,11 @@ class Contacts
             $long = ($long >= -180 && $long <= 180) ? sprintf("%0.6f", round($long, 6)) : null;
 
             if (is_null($lat) || is_null($long)) {
-
                 throw new ContactsException("Invalid latitude or longitude. Latitude: '$lat' Longitude: '$long");
             } else {
-
                 return [$lat, $long];
             }
         } else {
-
             throw new ContactsException("Invalid latitude or longitude. Latitude: '$lat' Longitude: '$long");
         }
     }
@@ -161,7 +157,6 @@ class Contacts
 
             return [$sign, abs($hourOffset), $minuteOffset];
         } else {
-
             throw new ContactsException("Invalid time zone: '$timeZone'. UTC offset only. Text values not valid.");
         }
     }
@@ -244,5 +239,3 @@ class Contacts
         return (string)$response->getBody();
     }
 }
-
-?>

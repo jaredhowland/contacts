@@ -71,5 +71,3 @@ interface ContactsInterface
 
     public function addExtendedType(string $label, string $value);
 }
-
-?>

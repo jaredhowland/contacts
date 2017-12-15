@@ -70,8 +70,6 @@ class Config
             throw new \UnexpectedValueException("'$setting' is not a valid config setting. Please check your 'config.ini' file for valid config options.\n");
         }
     }
-
 }
 
 config::setErrorReporting();
-?>

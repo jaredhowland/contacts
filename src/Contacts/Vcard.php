@@ -195,8 +195,7 @@ class Vcard extends Contacts implements ContactsInterface
         string $additionalNames = null,
         string $prefixes = null,
         string $suffixes = null
-    )
-    {
+    ) {
         $additionalNames = str_replace(' ', '', $additionalNames);
         $prefixes = str_replace(' ', '', $prefixes);
         $suffixes = str_replace(' ', '', $suffixes);
@@ -312,8 +311,7 @@ class Vcard extends Contacts implements ContactsInterface
         string $zip = null,
         string $country = null,
         array $types = ['intl', 'postal', 'parcel', 'work']
-    )
-    {
+    ) {
         // Make sure all `$types`s are valid. If invalid `$types`(s), revert to standard default.
         if ($this->inArrayAll($types, $this->validAddressTypes)) {
             $this->constructElement('ADR', [$types, $poBox, $extended, $street, $city, $state, $zip, $country]);
@@ -995,5 +993,3 @@ class Vcard extends Contacts implements ContactsInterface
         );
     }
 }
-
-?>

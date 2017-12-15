@@ -16,4 +16,6 @@ use Exception;
 /**
  * ContactsException class for `Contacts` namespace
  */
-class ContactsException extends Exception {}
+class ContactsException extends Exception
+{
+}
