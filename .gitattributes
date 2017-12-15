@@ -1,0 +1,8 @@
+/Test          export-ignore
+/Documentation export-ignore
+/Examples      export-ignore
+.travis.yml    export-ignore
+.styleci.yml   export-ignore
+phpdoc.xml     export-ignore
+phpunit.xml    export-ignore
+README.md      export-ignore
