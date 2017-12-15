@@ -1,7 +1,7 @@
-[![Latest Version on Packagist][ico-version]][https://packagist.org/packages/jaredhowland/contacts]
+[![Packagist](https://img.shields.io/packagist/v/jaredhowland/contacts.svg)](https://packagist.org/packages/jaredhowland/contacts)
 [![Build Status](https://travis-ci.org/jaredhowland/contacts.svg?branch=master)](https://travis-ci.org/jaredhowland/contacts)
-[![Software License][ico-license]](LICENSE)
-[![Total Downloads][ico-downloads]][https://packagist.org/packages/jaredhowland/contacts/stats]
+[![StyleCI](https://styleci.io/repos/71304265/shield?branch=master)](https://styleci.io/repos/71304265)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
 About Contacts
 ==============
