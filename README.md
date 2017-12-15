@@ -99,8 +99,6 @@ X-TWITTER:@jared_howland
 UID:5a32a74023b097.12918287
 REV:2017-12-14T00:00:00Z
 END:VCARD
-
-
 ```
 
 Known Issues
@@ -111,6 +109,11 @@ Known Issues
       * `AGENT`
       * `SOUND`
       * `KEY`
+      
+Future Roadmap
+==============
+  * Allow methods to be daisy-chained
+  * Refactor tests
 
 Inspired by https://github.com/jeroendesloovere/vcard
 
