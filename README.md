@@ -1,5 +1,5 @@
 [![Packagist](https://img.shields.io/packagist/v/jaredhowland/contacts.svg)](https://packagist.org/packages/jaredhowland/contacts)
-[![Build Status](https://travis-ci.org/jaredhowland/contacts.svg?branch=master)](https://travis-ci.org/jaredhowland/contacts)
+[![Travis](https://img.shields.io/travis/jaredhowland/contacts/master.svg)](https://travis-ci.org/jaredhowland/contacts)
 [![StyleCI](https://styleci.io/repos/71304265/shield?branch=master)](https://styleci.io/repos/71304265)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
