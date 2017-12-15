@@ -1,7 +1,7 @@
-[![Packagist](https://img.shields.io/packagist/v/jaredhowland/contacts.svg)](https://packagist.org/packages/jaredhowland/contacts)
-[![Travis](https://img.shields.io/travis/jaredhowland/contacts/master.svg)](https://travis-ci.org/jaredhowland/contacts)
+[![Packagist](https://img.shields.io/packagist/v/jaredhowland/contacts.svg??style=flat-square)](https://packagist.org/packages/jaredhowland/contacts)
+[![Travis](https://img.shields.io/travis/jaredhowland/contacts/master.svg?style=flat-square)](https://travis-ci.org/jaredhowland/contacts)
 [![StyleCI](https://styleci.io/repos/71304265/shield?branch=master)](https://styleci.io/repos/71304265)
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg?style=flat-square)](https://opensource.org/licenses/MIT)
 
 About Contacts
 ==============
