@@ -1,7 +1,7 @@
-[![Latest Version on Packagist][ico-version]][link-packagist]
+[![Latest Version on Packagist][ico-version]][https://packagist.org/packages/jaredhowland/contacts]
 [![Build Status](https://travis-ci.org/jaredhowland/contacts.svg?branch=master)](https://travis-ci.org/jaredhowland/contacts)
-[![Software License][ico-license]](LICENSE.md)
-[![Total Downloads][ico-downloads]][link-downloads]
+[![Software License][ico-license]](LICENSE)
+[![Total Downloads][ico-downloads]][https://packagist.org/packages/jaredhowland/contacts/stats]
 
 About Contacts
 ==============
