@@ -1,7 +1,7 @@
 [![Travis](https://img.shields.io/travis/jaredhowland/contacts/master.svg?style=flat-square)](https://travis-ci.org/jaredhowland/contacts)
 [![StyleCI](https://styleci.io/repos/71304265/shield?branch=master)](https://styleci.io/repos/71304265)
 [![Packagist](https://img.shields.io/packagist/v/jaredhowland/contacts.svg?style=flat-square)](https://packagist.org/packages/jaredhowland/contacts)
-[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg?style=flat-square?style=flat-square)](LICENSE.md)
+[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg?style=flat-square)](LICENSE.md)
 
 About Contacts
 ==============
