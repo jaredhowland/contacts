@@ -109,16 +109,9 @@ Known Issues
       * `AGENT`
       * `SOUND`
       * `KEY`
-      
-Future Roadmap
-==============
-  * Allow methods to be daisy-chained
-  * Refactor tests
-  * Write [Read the Docs][4] documentation
 
 Inspired by https://github.com/jeroendesloovere/vcard
 
 [1]: https://getcomposer.org
 [2]: http://packagist.org/
 [3]: https://tools.ietf.org/html/rfc2426
-[4]: https://readthedocs.org
