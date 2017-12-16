@@ -16,7 +16,7 @@ namespace Contacts;
 class Config
 {
     /**
-     * @var string $config String returned by `Config.ini`
+     * @var array $config Array of values in `Config.ini`
      */
     private static $config;
 

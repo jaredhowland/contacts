@@ -168,6 +168,7 @@ class Contacts
         $timeZone = preg_replace("/[^0-9:]/", '', $timeZone);
         $timeZone = ltrim($timeZone, '0');
         $offset = explode(':', $timeZone);
+        $options = [];
         $options['options']['min_range'] = -14;
         $options['options']['max_range'] = 12;
         $hourOffset = filter_var($negative.$offset[0], FILTER_VALIDATE_INT, $options);
@@ -211,7 +212,7 @@ class Contacts
      *
      * @return bool TRUE if all appear. FALSE otherwise.
      */
-    protected function inArrayAll(array $needles = null, array $haystack)
+    protected function inArrayAll(array $needles = [], array $haystack)
     {
         return !array_diff($needles, $haystack);
     }

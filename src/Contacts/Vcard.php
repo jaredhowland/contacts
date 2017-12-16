@@ -683,7 +683,7 @@ class Vcard extends Contacts implements ContactsInterface
      */
     public function addRevision(string $dateTime = null)
     {
-        $dateTime = is_null($dateTime) ? date('Y-m-d\TH:i:s\Z') : date("Y-m-d\TH:i:s\Z", strtotime($dateTime));
+        $dateTime = is_null($dateTime) ? date('Y-m-d\TH:i:s\Z') : date("Y-m-d\TH:i:s\Z", /** @scrutinizer ignore-type */ strtotime($dateTime));
         // Set directly rather than going through $this->constructElement to avoid escaping valid timestamp characters
         $this->setProperty('REV', vsprintf(Config::get('REV'), [$dateTime]));
     }
@@ -904,7 +904,7 @@ class Vcard extends Contacts implements ContactsInterface
      *
      * @return string Folded text
      */
-    protected function fold(string $text): string
+    protected function fold(string $text)
     {
         return (strlen($text) <= 75) ? $text : substr(chunk_split($text, 73, "\r\n "), 0, -3);
     }
@@ -933,7 +933,7 @@ class Vcard extends Contacts implements ContactsInterface
         }
         $string .= "END:VCARD\r\n\r\n";
         if ($write) {
-            $this->writeFile($filename.'.vcf', $string, true);
+            $this->writeFile(/** @scrutinizer ignore-type */$filename.'.vcf', $string, true);
         }
 
         return $string;
