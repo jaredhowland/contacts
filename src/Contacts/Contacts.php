@@ -63,7 +63,7 @@ class Contacts
      *
      * @return string|null Return formatted phone number if valid. Null otherwise.
      */
-    protected function sanitizePhone(string $phone)
+    protected function sanitizePhone(string $phone = null)
     {
         $phone = preg_replace("/[^0-9]/", '', $phone);
         if (strlen($phone) == 10) {
@@ -95,19 +95,39 @@ class Contacts
      */
     protected function sanitizeLatLong(string $lat, string $long)
     {
+        $latLong = $this->formatGeo($lat, $long);
+        if (is_null($latLong['lat']) || is_null($latLong['long'])) {
+            throw new ContactsException("Invalid latitude or longitude. Latitude: '$lat' Longitude: '$long'");
+        } else {
+            return $latLong;
+        }
+    }
+
+    /**
+     * Format latitude and longitude
+     *
+     * @param string $lat  Geographic Positioning System latitude (decimal) (must be a number between -90 and 90)
+     *
+     * **FORMULA**: decimal = degrees + minutes/60 + seconds/3600
+     * @param string $long Geographic Positioning System longitude (decimal) (must be a number between -180 and 180)
+     *
+     * **FORMULA**: decimal = degrees + minutes/60 + seconds/3600
+     *
+     * @throws ContactsException if invalid latitude or longitude is used
+     *
+     * @return array Array of formatted latitude and longitude
+     */
+    protected function formatGeo(string $lat, string $long)
+    {
         if (is_numeric($lat) && is_numeric($long)) {
             $lat = ($lat == 0) ? abs($lat) : $lat;
             $long = ($long == 0) ? abs($long) : $long;
             $lat = ($lat >= -90 && $lat <= 90) ? sprintf("%0.6f", round($lat, 6)) : null;
             $long = ($long >= -180 && $long <= 180) ? sprintf("%0.6f", round($long, 6)) : null;
 
-            if (is_null($lat) || is_null($long)) {
-                throw new ContactsException("Invalid latitude or longitude. Latitude: '$lat' Longitude: '$long");
-            } else {
-                return [$lat, $long];
-            }
+            return ['lat' => $lat, 'long' => $long];
         } else {
-            throw new ContactsException("Invalid latitude or longitude. Latitude: '$lat' Longitude: '$long");
+            throw new ContactsException("Invalid latitude or longitude. Latitude: '$lat' Longitude: '$long'");
         }
     }
 
@@ -120,7 +140,7 @@ class Contacts
      *
      * @return string|null Sanitized email address
      */
-    protected function sanitizeEmail(string $email)
+    protected function sanitizeEmail(string $email = null)
     {
         $email = filter_var($email, FILTER_SANITIZE_EMAIL);
 
@@ -191,7 +211,7 @@ class Contacts
      *
      * @return bool TRUE if all appear. FALSE otherwise.
      */
-    protected function inArrayAll(array $needles, array $haystack)
+    protected function inArrayAll(array $needles = null, array $haystack)
     {
         return !array_diff($needles, $haystack);
     }

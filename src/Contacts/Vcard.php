@@ -265,7 +265,7 @@ class Vcard extends Contacts implements ContactsInterface
      */
     public function addBirthday(int $year = null, int $month, int $day)
     {
-        if ($year) {
+        if ($year !== null) {
             $this->constructElement('BDAY', [$year, $month, $day]);
         } else {
             $this->definedElements['BDAY'] = true; // Define `BDAY` element
@@ -566,10 +566,12 @@ class Vcard extends Contacts implements ContactsInterface
             }
         } else {
             $img = base64_decode($photo);
-            $file = finfo_open();
-            $mimetype = finfo_buffer($file, $img, FILEINFO_MIME_TYPE);
-            $mimetype = strtoupper(str_replace('image/', '', $mimetype));
-            $this->setProperty($element, vsprintf(Config::get('PHOTO-BINARY'), [$mimetype, $photo]));
+            if (!empty($img)) {
+                $file = finfo_open();
+                $mimetype = finfo_buffer($file, $img, FILEINFO_MIME_TYPE);
+                $mimetype = strtoupper(str_replace('image/', '', $mimetype));
+                $this->setProperty($element, vsprintf(Config::get('PHOTO-BINARY'), [$mimetype, $photo]));
+            }
         }
     }
 
@@ -581,6 +583,8 @@ class Vcard extends Contacts implements ContactsInterface
      * @link https://tools.ietf.org/html/rfc2426#section-3.5.4 RFC 2426 Section 3.5.4 (pp. 18-19)
      *
      * @param string $agent Not implemented
+     *
+     * @throws ContactsException if this unsupported method is called
      *
      * @return void
      */
@@ -679,7 +683,7 @@ class Vcard extends Contacts implements ContactsInterface
      */
     public function addRevision(string $dateTime = null)
     {
-        $dateTime = empty($dateTime) ? date('Y-m-d\TH:i:s\Z') : date("Y-m-d\TH:i:s\Z", strtotime($dateTime));
+        $dateTime = is_null($dateTime) ? date('Y-m-d\TH:i:s\Z') : date("Y-m-d\TH:i:s\Z", strtotime($dateTime));
         // Set directly rather than going through $this->constructElement to avoid escaping valid timestamp characters
         $this->setProperty('REV', vsprintf(Config::get('REV'), [$dateTime]));
     }
@@ -711,6 +715,8 @@ class Vcard extends Contacts implements ContactsInterface
      * @link https://tools.ietf.org/html/rfc2426#section-3.6.6 RFC 2426 Section 3.6.6 (pp. 22-23)
      *
      * @param string $sound Not supported
+     *
+     * @throws ContactsException if this unsupported method is called
      *
      * @return void
      */
@@ -753,7 +759,7 @@ class Vcard extends Contacts implements ContactsInterface
      */
     public function addUrl(string $url)
     {
-        if ($this->sanitizeUrl($url)) {
+        if ($this->sanitizeUrl($url) !== null) {
             // Set directly rather than going through $this->constructElement to avoid escaping valid URL characters
             $this->setProperty('URL', vsprintf(Config::get('URL'), [$this->sanitizeUrl($url)]));
         }
@@ -786,22 +792,6 @@ class Vcard extends Contacts implements ContactsInterface
     }
 
     /**
-     * Add key. Not currently supported.
-     *
-     * RFC 2426 pp. 25-26
-     *
-     * @link https://tools.ietf.org/html/rfc2426#section-3.7.2 RFC 2426 Section 3.7.2 (pp. 25-26)
-     *
-     * @param string $key Not supported
-     *
-     * @return void
-     */
-    public function addKey(string $key = null)
-    {
-        throw new ContactsException('"KEY" is not a currently supported element.');
-    }
-
-    /**
      * Add custom extended type to vCard
      *
      * RFC 2426 p. 26
@@ -821,6 +811,24 @@ class Vcard extends Contacts implements ContactsInterface
     }
 
     /**
+     * Add key. Not currently supported.
+     *
+     * RFC 2426 pp. 25-26
+     *
+     * @link https://tools.ietf.org/html/rfc2426#section-3.7.2 RFC 2426 Section 3.7.2 (pp. 25-26)
+     *
+     * @param string $key Not supported
+     *
+     * @throws ContactsException if this unsupported method is called
+     *
+     * @return void
+     */
+    public function addKey(string $key = null)
+    {
+        throw new ContactsException('"KEY" is not a currently supported element.');
+    }
+
+    /**
      * Add custom iOS anniversary to vCard
      *
      * @param string $anniversary Anniversary date
@@ -831,9 +839,13 @@ class Vcard extends Contacts implements ContactsInterface
      */
     public function addAnniversary(string $anniversary)
     {
-        $anniversary = date('Y-m-d', strtotime($anniversary));
-        $this->constructElement('ANNIVERSARY', [$anniversary, $this->extendedItemCount]);
-        $this->extendedItemCount++;
+        if (is_int(strtotime($anniversary))) {
+            $anniversary = date('Y-m-d', strtotime($anniversary));
+            $this->constructElement('ANNIVERSARY', [$anniversary, $this->extendedItemCount]);
+            $this->extendedItemCount++;
+        } else {
+            throw new ContactsException("Invalid date for anniversary: '$anniversary'");
+        }
     }
 
     /**
