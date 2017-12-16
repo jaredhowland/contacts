@@ -1,6 +1,7 @@
-/Test              export-ignore
-/Documentation     export-ignore
-/Examples          export-ignore
+/tests             export-ignore
+/docs              export-ignore
+/phpdocs           export-ignore
+/examples          export-ignore
 .github            export-ignore
 .travis.yml        export-ignore
 .styleci.yml       export-ignore

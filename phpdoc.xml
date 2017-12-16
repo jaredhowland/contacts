@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <phpdoc>
     <parser>
-        <target>./Documentation</target>
+        <target>./phpdocs</target>
     </parser>
     <transformer>
-        <target>./Documentation</target>
+        <target>./phpdocs</target>
     </transformer>
     <files>
         <directory>./src/Contacts/</directory>
