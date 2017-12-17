@@ -85,8 +85,8 @@ Known Issues
 - Text values not supported for ``TZ`` field (only UTC-offset values). No plans to implement.
 - The following vCard elements are not currently supported (no plans to implement):
 
-    - ``AGENT``
-    - ``SOUND``
-    - ``KEY``
+  - ``AGENT``
+  - ``SOUND``
+  - ``KEY``
 
 Inspired by https://github.com/jeroendesloovere/vcard
