@@ -7,17 +7,21 @@ Welcome to Contacts's documentation!
 ====================================
 
 .. toctree::
-   :maxdepth: 2
-   :caption: Contents:
+   :maxdepth: 1
+   :caption: Contents
 
    introduction
    installation
    quick-start
+
+.. toctree::
+   :maxdepth: 1
+   :caption: Developers
+
    readme
    changelog
    code-of-conduct
    license
-
 
 Indices and tables
 ==================

@@ -40,7 +40,7 @@ class Contacts
     /**
      * Construct
      *
-     * @param string $dataDirectory   Directory to save vCard(s) to. Default: `/Data/`
+     * @param string $dataDirectory   Directory to save vCard(s) to. Default: `/data/`
      * @param string $defaultAreaCode Default area code to use for phone numbers without an area code. Default: `801`
      * @param string $defaultTimeZone Default time zone to use when adding a revision date to a vCard. Default: `America/Denver`
      *

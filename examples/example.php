@@ -33,4 +33,4 @@ $directory->addExtendedType('TWITTER', '@jared_howland');
 $directory->addUniqueIdentifier();
 $directory->addRevision('2017-12-14'); // Added automatically if you don't call this method
 
-$directory->buildVcard(true, 'example'); // Writes to `./Data/` directory by default unless you set a different directory when you create a new `Contacts` object
+$directory->buildVcard(true, 'example'); // Writes to `./data/` directory by default unless you set a different directory when you create a new `Contacts` object
