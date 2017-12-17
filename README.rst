@@ -1,8 +1,20 @@
-.. image:: https://img.shields.io/travis/jaredhowland/contacts/dev.svg?style=flat-square :target: https://travis-ci.org/jaredhowland/contacts
-.. image:: https://img.shields.io/scrutinizer/g/jaredhowland/contacts.svg?style=flat-square   :target: https://scrutinizer-ci.com/g/jaredhowland/contacts/
-.. image:: https://styleci.io/repos/71304265/shield?branch=dev   :target: https://styleci.io/repos/71304265
-.. image:: https://img.shields.io/packagist/v/jaredhowland/contacts.svg?style=flat-square   :target: https://packagist.org/packages/jaredhowland/contacts
-.. image:: https://img.shields.io/badge/License-MIT-blue.svg?style=flat-square   :target: LICENSE.rst
+|TravisCI|_ |Scrutinizer|_ |StyleCI|_ |Packagist|_ |MIT License|_
+
+.. |TravisCI| image:: https://img.shields.io/travis/jaredhowland/contacts/dev.svg?style=flat-square
+.. _TravisCI: https://travis-ci.org/jaredhowland/contacts
+
+.. |Scrutinizer| image:: https://img.shields.io/scrutinizer/g/jaredhowland/contacts.svg?style=flat-square
+.. _Scrutinizer: https://scrutinizer-ci.com/g/jaredhowland/contacts/
+
+.. |StyleCI| image:: https://styleci.io/repos/71304265/shield?branch=dev
+.. _StyleCI: https://styleci.io/repos/71304265
+
+.. |Packagist| image:: https://img.shields.io/packagist/v/jaredhowland/contacts.svg?style=flat-square
+.. _Packagist: https://packagist.org/packages/jaredhowland/contacts
+
+.. |MIT License| image:: https://img.shields.io/badge/License-MIT-blue.svg?style=flat-square
+.. _MIT License: LICENSE.rst
+
 
 ==============
 About Contacts
