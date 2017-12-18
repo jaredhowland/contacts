@@ -18,7 +18,7 @@ $directory->addTitle('System Administrator');
 $directory->addRole('Programmer');
 // $directory->addAgent($agent); NOT SUPPORTED
 $directory->addOrganizations(['Awesome Company']);
-$directory->addCategories(['School,Work']);
+$directory->addCategories(['School', 'Work']);
 $directory->addNote('Not much is known about Jane Doe.');
 $directory->addSortString('Doe');
 // $directory->addSound($sound); NOT SUPPORTED

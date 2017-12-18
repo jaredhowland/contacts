@@ -855,7 +855,7 @@ GEO:40.333333;-111.777778
 TITLE:System Administrator
 ROLE:Programmer
 ORG:Awesome Company
-CATEGORIES:School\,Work
+CATEGORIES:School,Work
 NOTE:Not much is known about Jane Doe.
 SORT-STRING:Doe
 URL:http://www.example.com
@@ -873,4 +873,3 @@ X-TWITTER:@jared_howland
 UID:5a32a74023b097.12918287
 REV:2017-12-14T00:00:00Z
 END:VCARD
-

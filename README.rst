@@ -1,35 +1,25 @@
 |TravisCI|_ |Scrutinizer|_ |StyleCI|_ |Packagist|_ |MIT License|_
 
-.. |TravisCI| image:: https://img.shields.io/travis/jaredhowland/contacts/dev.svg?style=flat-square
-.. _TravisCI: https://travis-ci.org/jaredhowland/contacts
+========
+Contacts
+========
+Contacts is a small PHP library to create files containing address book information for people. Currently, `vCard 3.0 <https://tools.ietf.org/html/rfc2426>`_ is the only supported export format.
 
-.. |Scrutinizer| image:: https://img.shields.io/scrutinizer/g/jaredhowland/contacts.svg?style=flat-square
-.. _Scrutinizer: https://scrutinizer-ci.com/g/jaredhowland/contacts/
+========
+Features
+========
+* `vCard 3.0 <https://tools.ietf.org/html/rfc2426>`_ Compatibility:
 
-.. |StyleCI| image:: https://styleci.io/repos/71304265/shield?branch=dev
-.. _StyleCI: https://styleci.io/repos/71304265
-
-.. |Packagist| image:: https://img.shields.io/packagist/v/jaredhowland/contacts.svg?style=flat-square
-.. _Packagist: https://packagist.org/packages/jaredhowland/contacts
-
-.. |MIT License| image:: https://img.shields.io/badge/License-MIT-blue.svg?style=flat-square
-.. _MIT License: LICENSE.rst
-
-
-==============
-About Contacts
-==============
-Contacts is a small PHP library to create files containing address book information. Currently, `vCard 3.0 <https://tools.ietf.org/html/rfc2426>`_ is the only supported export format. Future implementations may add other vCard formats, microformats, Google contacts format, ``.csv`` format, etc.
-
-vCard can be a difficult format to work with. The `full vCard 3.0 standard <https://tools.ietf.org/html/rfc2426>`_ is sometimes vague which has lead to inconsistent interpretations across different applications over the years. This library should generate vCard files that can be used across most applications that support the vCard format. It is especially helpful for generating contact information that can be used for iOS and macOS contact applications.
+  * Generates vCards that should be compatible with all applications that use vCards
+  * Includes fields that are unique to the iOS and macOS contacts application (``Supervisor``, ``Anniversary``, ``Spouse``, ``Child``)
+* Flexible: future implementations will include other formats commonly used to store contact information—other vCard formats, microformats, Google contacts format, ``.csv`` format, etc.
+* Method chaining for constructing contact information in a fluid interface
 
 ============
 Installation
 ============
-Contacts is available as a `Composer <https://getcomposer.org>`_ `package <http://packagist.org/>`_.
+Contacts is available as a `Composer <https://getcomposer.org>`_ `package <http://packagist.org/>`_:
 
-Composer
---------
 1. If needed, install `Composer <https://getcomposer.org>`_
 2. Add the following to your ``composer.json`` file
 
@@ -43,44 +33,89 @@ Composer
 Usage
 =====
 
+Input
+-----
+This is an extensive example. Most of the time, you will only need a tiny fraction of these fields to create a vCard:
+
 .. code-block:: php
 
        <?php
           require_once '../vendor/autoload.php';
 
-          $directory = new \Contacts\Vcard('./');
-          $directory->addFullName('Jane Doe');
-          $directory->addName('Doe', 'Jane');
-          $directory->addNicknames(['Janie', 'Jan']);
-          $directory->addPhoto('https://raw.githubusercontent.com/jaredhowland/contacts/master/Test/files/photo.jpg');
-          $directory->addBirthday(null, 2, 10);
-          $directory->addAddress(null, null, '123 Main', 'Provo', 'UT', '84602', 'United States', ['dom', 'postal', 'parcel', 'work']);
-          $directory->addAddress(null, null, '123 Main', 'Provo', 'UT', '84602', 'United States', ['dom', 'postal', 'parcel', 'home']);
-          $directory->addLabel('Jane Doe\n123 Main St\nProvo, UT 84602', ['dom', 'parcel']);
-          $directory->addTelephone('555-555-5555', ['cell', 'iphone']);
-          $directory->addEmail('jane_doe@domain.com');
-          $directory->addTimeZone('-7');
-          $directory->addLatLong(40.3333331, -111.7777775);
-          $directory->addTitle('System Administrator');
-          $directory->addRole('Programmer');
-          // $directory->addAgent($agent); NOT SUPPORTED
-          $directory->addOrganizations(['Awesome Company']);
-          $directory->addCategories(['School,Work']);
-          $directory->addNote('Not much is known about Jane Doe.');
-          $directory->addSortString('Doe');
-          // $directory->addSound($sound); NOT SUPPORTED
-          $directory->addUrl('http://www.example.com');
-          // $directory->addKey($key); NOT SUPPORTED
-          $directory->addAnniversary('2010-10-10');
-          $directory->addSupervisor('Jane Smith');
-          $directory->addSpouse('John Doe');
-          $directory->addChild('Jeff Doe');
-          $directory->addChild('Lisa Doe');
-          $directory->addExtendedType('TWITTER', '@jared_howland');
-          $directory->addUniqueIdentifier();
-          $directory->addRevision('2017-12-14'); // Added automatically if you don't call this method
+          $vcard = new \Contacts\Vcard('./'); // Tell app where to save `.vcf` file
+          $vcard->addFullName('Jane Doe');
+          $vcard->addName('Doe', 'Jane');
+          $vcard->addNicknames(['Janie', 'Jan']);
+          $vcard->addPhoto('https://raw.githubusercontent.com/jaredhowland/contacts/dev|/tests/files/photo.jpg');
+          $vcard->addBirthday(null, 2, 10);
+          $vcard->addAddress(null, null, '123 Main', 'Provo', 'UT', '84602', 'United States', ['dom', 'postal', 'parcel', 'work']);
+          $vcard->addAddress(null, null, '123 Main', 'Provo', 'UT', '84602', 'United States', ['dom', 'postal', 'parcel', 'home']);
+          $vcard->addLabel('Jane Doe\n123 Main St\nProvo, UT 84602', ['dom', 'parcel']);
+          $vcard->addTelephone('555-555-5555', ['cell', 'iphone']);
+          $vcard->addEmail('jane_doe@domain.com');
+          $vcard->addTimeZone('-7');
+          $vcard->addLatLong(40.3333331, -111.7777775);
+          $vcard->addTitle('System Administrator');
+          $vcard->addRole('Programmer');
+          // $vcard->addAgent($agent); NOT SUPPORTED
+          $vcard->addOrganizations(['Awesome Company']);
+          $vcard->addCategories(['School', 'Work']);
+          $vcard->addNote('Not much is known about Jane Doe.');
+          $vcard->addSortString('Doe');
+          // $vcard->addSound($sound); NOT SUPPORTED
+          $vcard->addUrl('http://www.example.com');
+          // $vcard->addKey($key); NOT SUPPORTED
+          $vcard->addAnniversary('2010-10-10');
+          $vcard->addSupervisor('Jane Smith');
+          $vcard->addSpouse('John Doe');
+          $vcard->addChild('Jeff Doe');
+          $vcard->addChild('Lisa Doe');
+          $vcard->addExtendedType('TWITTER', '@jared_howland');
+          $vcard->addUniqueIdentifier();
+          $vcard->addRevision('2017-12-14'); // Added automatically if you don't call this method
 
           $directory->buildVcard(true, 'example'); // Writes to `./data/` directory by default unless you set a different directory when you create a new `Contacts` object
+       ?>
+
+Or you can chain methods together to build the vCard:
+
+.. code-block:: php
+
+        <?php
+          require_once '../vendor/autoload.php';
+
+          $vcard = new \Contacts\Vcard('./'); // Tell app where to save `.vcf` file
+          $vcard->addFullName('Jane Doe')
+                ->addName('Doe', 'Jane')
+                ->addNicknames(['Janie', 'Jan'])
+                ->addPhoto('https://raw.githubusercontent.com/jaredhowland/contacts/dev/tests/files/photo.jpg')
+                ->addBirthday(null, 2, 10)
+                ->addAddress(null, null, '123 Main', 'Provo', 'UT', '84602', 'United States', ['dom', 'postal', 'parcel', 'work'])
+                ->addAddress(null, null, '123 Main', 'Provo', 'UT', '84602', 'United States', ['dom', 'postal', 'parcel', 'home'])
+                ->addLabel('Jane Doe\n123 Main St\nProvo, UT 84602', ['dom', 'parcel'])
+                ->addTelephone('555-555-5555', ['cell', 'iphone'])
+                ->addEmail('jane_doe@domain.com')
+                ->addTimeZone('-7')
+                ->addLatLong(40.3333331, -111.7777775)
+                ->addTitle('System Administrator')
+                ->addRole('Programmer')
+                ->addOrganizations(['Awesome Company'])
+                ->addCategories(['School', 'Work'])
+                ->addNote('Not much is known about Jane Doe.')
+                ->addSortString('Doe')
+                ->addUrl('http://www.example.com')
+                ->addAnniversary('2010-10-10')
+                ->addSupervisor('Jane Smith')
+                ->addSpouse('John Doe')
+                ->addChild('Jeff Doe')
+                ->addChild('Lisa Doe')
+                ->addExtendedType('TWITTER', '@jared_howland')
+                ->addUniqueIdentifier()
+                ->addRevision('2017-12-14') /* Added automatically with the current date and time if you don't call this method */
+                ->buildVcard(true, 'example'); // Writes to `./data/` directory by default unless you set a different directory when you create a new `Contacts` object
+          // $vcard->addAgent($agent); NOT SUPPORTED
+          // $vcard->addSound($sound); NOT SUPPORTED
+          // $vcard->addKey($key); NOT SUPPORTED
        ?>
 
 Output
@@ -106,7 +141,7 @@ Output
    TITLE:System Administrator
    ROLE:Programmer
    ORG:Awesome Company
-   CATEGORIES:School\,Work
+   CATEGORIES:School,Work
    NOTE:Not much is known about Jane Doe.
    SORT-STRING:Doe
    URL:http://www.example.com
@@ -125,6 +160,13 @@ Output
    REV:2017-12-14T00:00:00Z
    END:VCARD
 
+==========
+Contribute
+==========
+* Issue Tracker: https://github.com/jaredhowland/contacts/issues
+* Source Code: https://github.com/jaredhowland/contacts
+
+============
 Known Issues
 ============
 
@@ -137,3 +179,18 @@ Known Issues
   - ``KEY``
 
 Inspired by https://github.com/jeroendesloovere/vcard
+
+.. |TravisCI| image:: https://img.shields.io/travis/jaredhowland/contacts/dev.svg?style=flat-square
+.. _TravisCI: https://travis-ci.org/jaredhowland/contacts
+
+.. |Scrutinizer| image:: https://img.shields.io/scrutinizer/g/jaredhowland/contacts.svg?style=flat-square
+.. _Scrutinizer: https://scrutinizer-ci.com/g/jaredhowland/contacts/
+
+.. |StyleCI| image:: https://styleci.io/repos/71304265/shield?branch=dev
+.. _StyleCI: https://styleci.io/repos/71304265
+
+.. |Packagist| image:: https://img.shields.io/packagist/v/jaredhowland/contacts.svg?style=flat-square
+.. _Packagist: https://packagist.org/packages/jaredhowland/contacts
+
+.. |MIT License| image:: https://img.shields.io/badge/License-MIT-blue.svg?style=flat-square
+.. _MIT License: LICENSE.rst

@@ -22,10 +22,3 @@ Welcome to Contacts's documentation!
    changelog
    code-of-conduct
    license
-
-Indices and tables
-==================
-
-* :ref:`genindex`
-* :ref:`modindex`
-* :ref:`search`
