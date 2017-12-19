@@ -26,7 +26,7 @@ Contacts is available as a `Composer <https://getcomposer.org>`_ `package <http:
 .. code-block:: javascript
 
    "require": {
-      "jaredhowland/contacts": "~3.0"
+      "jaredhowland/contacts": "~4.0"
    }
 
 =====
@@ -40,9 +40,11 @@ This is an extensive example. Most of the time, you will only need a tiny fracti
 .. code-block:: php
 
        <?php
-          require_once '../vendor/autoload.php';
+          require 'vendor/autoload.php';
 
-          $vcard = new \Contacts\Vcard('./'); // Tell app where to save `.vcf` file
+          use \Contacts\Vcard;
+
+          $vcard = new Vcard('./'); // Tell app where to save `.vcf` file
           $vcard->addFullName('Jane Doe');
           $vcard->addName('Doe', 'Jane');
           $vcard->addNicknames(['Janie', 'Jan']);
@@ -82,9 +84,11 @@ Or you can chain methods together to build the vCard:
 .. code-block:: php
 
         <?php
-          require_once '../vendor/autoload.php';
+          require '../vendor/autoload.php';
 
-          $vcard = new \Contacts\Vcard('./'); // Tell app where to save `.vcf` file
+          use \Contacts\Vcard;
+
+          $vcard = new Vcard('./'); // Tell app where to save `.vcf` file
           $vcard->addFullName('Jane Doe')
                 ->addName('Doe', 'Jane')
                 ->addNicknames(['Janie', 'Jan'])

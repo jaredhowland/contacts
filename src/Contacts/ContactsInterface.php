@@ -3,7 +3,7 @@
  * Create a vCard
  *
  * @author  Jared Howland <contacts@jaredhowland.com>
- * @version 2017-12-12
+ * @version 2017-12-18
  * @since   2016-10-05
  *
  */

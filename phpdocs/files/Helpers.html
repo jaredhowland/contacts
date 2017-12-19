@@ -21,7 +21,55 @@
     <script src="../js/jquery.smooth-scroll.js"></script>
     <script src="../js/prism.min.js"></script>
     <!-- TODO: Add http://jscrollpane.kelvinluck.com/ to style the scrollbars for browsers not using webkit-->
-    
+        <script type="text/javascript">
+        function loadExternalCodeSnippets() {
+            Array.prototype.slice.call(document.querySelectorAll('pre[data-src]')).forEach(function (pre) {
+                var src = pre.getAttribute('data-src');
+                var extension = (src.match(/\.(\w+)$/) || [, ''])[1];
+                var language = 'php';
+
+                var code = document.createElement('code');
+                code.className = 'language-' + language;
+
+                pre.textContent = '';
+
+                code.textContent = 'Loading…';
+
+                pre.appendChild(code);
+
+                var xhr = new XMLHttpRequest();
+
+                xhr.open('GET', src, true);
+
+                xhr.onreadystatechange = function () {
+                    if (xhr.readyState == 4) {
+
+                        if (xhr.status < 400 && xhr.responseText) {
+                            code.textContent = xhr.responseText;
+
+                            Prism.highlightElement(code);
+                        }
+                        else if (xhr.status >= 400) {
+                            code.textContent = '✖ Error ' + xhr.status + ' while fetching file: ' + xhr.statusText;
+                        }
+                        else {
+                            code.textContent = '✖ Error: File does not exist or is empty';
+                        }
+                    }
+                };
+
+                xhr.send(null);
+            });
+        }
+
+        $(document).ready(function(){
+            loadExternalCodeSnippets();
+        });
+        $('#source-view').on('shown', function () {
+            loadExternalCodeSnippets();
+        })
+    </script>
+
     <link rel="shortcut icon" href="../images/favicon.ico"/>
     <link rel="apple-touch-icon" href="../images/apple-touch-icon.png"/>
     <link rel="apple-touch-icon" sizes="72x72" href="../images/apple-touch-icon-72x72.png"/>
@@ -96,19 +144,19 @@
                                 <div class="accordion" style="margin-bottom: 0">
         <div class="accordion-group">
             <div class="accordion-heading">
-                                    <a class="accordion-toggle " data-toggle="collapse" data-target="#namespace-1606665302"></a>
+                                    <a class="accordion-toggle " data-toggle="collapse" data-target="#namespace-1495777936"></a>
                                 <a href="../namespaces/default.html" style="margin-left: 30px; padding-left: 0">\</a>
             </div>
-            <div id="namespace-1606665302" class="accordion-body collapse in">
+            <div id="namespace-1495777936" class="accordion-body collapse in">
                 <div class="accordion-inner">
 
                                                     <div class="accordion" style="margin-bottom: 0">
         <div class="accordion-group">
             <div class="accordion-heading">
-                                    <a class="accordion-toggle collapsed" data-toggle="collapse" data-target="#namespace-643466657"></a>
+                                    <a class="accordion-toggle collapsed" data-toggle="collapse" data-target="#namespace-1199566674"></a>
                                 <a href="../namespaces/Contacts.html" style="margin-left: 30px; padding-left: 0">Contacts</a>
             </div>
-            <div id="namespace-643466657" class="accordion-body collapse ">
+            <div id="namespace-1199566674" class="accordion-body collapse ">
                 <div class="accordion-inner">
 
                     
@@ -137,13 +185,15 @@
     <section class="row-fluid">
         <div class="span10 offset2">
             <div class="row-fluid">
-                <div class="span8 content namespace">
+                <div class="span8 content file">
                     <nav>
-                                                <a href="../namespaces/default.html">\</a>
-                                            </nav>
-                    <h1><small>\</small>Contacts</h1>
+                                                                    </nav>
 
+                    <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal"><i class="icon-code"></i></a>
+                    <h1><small></small>Helpers.php</h1>
+                    <p><em>Share Contacts methods between classes</em></p>
                     
+
                                         <h2>Traits</h2>
                     <table class="table table-hover">
                                                     <tr>
@@ -152,40 +202,44 @@
                             </tr>
                                             </table>
                     
-                                        <h2>Interfaces</h2>
-                    <table class="table table-hover">
-                                                    <tr>
-                                <td><a href="../classes/Contacts.ContactsInterface.html">ContactsInterface</a></td>
-                                <td><em>ContactsInterface for all `Contacts` child classes</em></td>
-                            </tr>
-                                            </table>
                     
-                                        <h2>Classes</h2>
-                    <table class="table table-hover">
-                                            <tr>
-                            <td><a href="../classes/Contacts.Config.html">Config</a></td>
-                            <td><em>Configuration class to import `Config.ini` file and set other defaults</em></td>
-                        </tr>
-                                            <tr>
-                            <td><a href="../classes/Contacts.ContactsException.html">ContactsException</a></td>
-                            <td><em>ContactsException class for `Contacts` namespace</em></td>
-                        </tr>
-                                            <tr>
-                            <td><a href="../classes/Contacts.Vcard.html">Vcard</a></td>
-                            <td><em>vCard class to create a vCard. Extends `Contacts` and implements `ContactsInterface`</em></td>
-                        </tr>
-                                        </table>
                                     </div>
 
                 <aside class="span4 detailsbar">
                     <dl>
-                        <dt>Namespace hierarchy</dt>
-                        <dd class="hierarchy">
-                                                                                                                                                                                                                                                                
-                                    <div class="namespace-wrapper"><a href="../namespaces/default.html">\</a></div>
-                                                                                        <div class="namespace-wrapper">\Contacts</div>
-                        </dd>
+                                                    <dt>Package</dt>
+                            <dd><div class="namespace-wrapper">\Default</div></dd>
+                        
+                        
                     </dl>
+                    <h2>Tags</h2>
+                    <table class="table table-condensed">
+                                                    <tr>
+                                <th>
+                                    author
+                                </th>
+                                <td>
+                                                                            <p>Jared Howland <a href="mailto:contacts@jaredhowland.com">contacts@jaredhowland.com</a></p>
+                                                                    </td>
+                            </tr>
+                                                    <tr>
+                                <th>
+                                    version
+                                </th>
+                                <td>
+                                                                            
+                                                                    </td>
+                            </tr>
+                                                    <tr>
+                                <th>
+                                    since
+                                </th>
+                                <td>
+                                                                            
+                                                                    </td>
+                            </tr>
+                                            </table>
+
                 </aside>
             </div>
 
@@ -193,6 +247,16 @@
             
         </div>
     </section>
+
+    <div id="source-view" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="source-view-label" aria-hidden="true">
+        <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+            <h3 id="source-view-label"></h3>
+        </div>
+        <div class="modal-body">
+            <pre data-src="../files/Helpers.php.txt" class="language-php line-numbers"></pre>
+        </div>
+    </div>
 
     <footer class="row-fluid">
         <section class="span10 offset2">

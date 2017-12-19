@@ -1,9 +1,9 @@
 <?php
 /**
- * Methods Contacts between various contact classes
+ * Share Contacts methods between classes
  *
  * @author  Jared Howland <contacts@jaredhowland.com>
- * @version 2017-12-11
+ * @version 2017-12-19
  * @since   2016-10-05
  *
  */
@@ -13,9 +13,9 @@ namespace Contacts;
 use GuzzleHttp\Client;
 
 /**
- * Contacts class for methods shared between child classes
+ * Helper trait for methods shared between child classes
  */
-class Contacts
+trait Helpers
 {
     /**
      * @var string $dataDirectory Path to directory to save the vCard(s) to
@@ -38,7 +38,7 @@ class Contacts
     protected $client;
 
     /**
-     * Construct
+     * Setup Helper trait
      *
      * @param string $dataDirectory   Directory to save vCard(s) to. Default: `/data/`
      * @param string $defaultAreaCode Default area code to use for phone numbers without an area code. Default: `801`
@@ -46,7 +46,7 @@ class Contacts
      *
      * @return void
      */
-    protected function __construct(string $dataDirectory = null, string $defaultAreaCode = '801', string $defaultTimeZone = 'America/Denver')
+    protected function setup(string $dataDirectory = null, string $defaultAreaCode = '801', string $defaultTimeZone = 'America/Denver')
     {
         $this->dataDirectory = empty($dataDirectory) ? Config::get('dataDirectory') : $dataDirectory;
         $this->defaultAreaCode = $defaultAreaCode;

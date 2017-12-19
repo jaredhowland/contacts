@@ -3,8 +3,8 @@
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
 
-Welcome to Contacts's documentation!
-====================================
+Contacts Documentation
+======================
 
 .. toctree::
    :maxdepth: 1
@@ -13,6 +13,7 @@ Welcome to Contacts's documentation!
    introduction
    installation
    quick-start
+   API Documentation <http://htmlpreview.github.com/?https://github.com/jaredhowland/contacts/blob/dev/phpdocs/index.html>
 
 .. toctree::
    :maxdepth: 1

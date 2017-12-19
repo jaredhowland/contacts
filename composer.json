@@ -5,8 +5,13 @@
   "homepage": "http://github.com/jaredhowland/contacts",
   "license": "MIT",
   "autoload": {
-    "psr-0": {
-      "Contacts": "src"
+    "psr-4": {
+      "Contacts\\": "src/Contacts/"
+    }
+  },
+  "autoload-dev": {
+    "psr-4": {
+      "Tests\\": "tests/"
     }
   },
   "authors": [

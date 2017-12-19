@@ -8,11 +8,15 @@
  *
  */
 
+namespace Tests;
+
 use Contacts\Vcard;
 use PHPUnit\Framework\TestCase;
 
 class VcardTest extends TestCase
 {
+    public $branch = 'dev';
+
     public function testDebugReturnsString()
     {
         $vcard = new Vcard();
@@ -81,7 +85,7 @@ class VcardTest extends TestCase
     public function testAddPhotoUrl()
     {
         $vcard = new Vcard();
-        $vcard->addPhoto('https://raw.githubusercontent.com/jaredhowland/contacts/master/tests/files/photo.jpg');
+        $vcard->addPhoto('https://raw.githubusercontent.com/jaredhowland/contacts/'.$this->branch.'/tests/files/photo.jpg');
 
         $expectedResult = file_get_contents('tests/files/expectedPhoto.txt');
         $result = $vcard->getProperties()[0]['value'];
@@ -351,9 +355,9 @@ class VcardTest extends TestCase
     public function testAddLogoUrl()
     {
         $vcard = new Vcard();
-        $vcard->addLogo('https://raw.githubusercontent.com/jaredhowland/contacts/master/tests/files/photo.jpg');
+        $vcard->addLogo('https://raw.githubusercontent.com/jaredhowland/contacts/'.$this->branch.'/tests/files/photo.jpg');
 
-        $expectedResult = file_get_contents('Test/files/expectedPhoto.txt');
+        $expectedResult = file_get_contents('tests/files/expectedPhoto.txt');
         $result = $vcard->getProperties()[0]['value'];
 
         $this->assertEquals($expectedResult, $result);
@@ -362,9 +366,9 @@ class VcardTest extends TestCase
     public function testAddLogoBinary()
     {
         $vcard = new Vcard();
-        $vcard->addLogo(file_get_contents('Test/files/photoBinary.txt'), false);
+        $vcard->addLogo(file_get_contents('tests/files/photoBinary.txt'), false);
 
-        $expectedResult = file_get_contents('Test/files/expectedPhoto.txt');
+        $expectedResult = file_get_contents('tests/files/expectedPhoto.txt');
         $result = $vcard->getProperties()[0]['value'];
 
         $this->assertEquals($expectedResult, $result);
