@@ -144,19 +144,19 @@
                                 <div class="accordion" style="margin-bottom: 0">
         <div class="accordion-group">
             <div class="accordion-heading">
-                                    <a class="accordion-toggle " data-toggle="collapse" data-target="#namespace-1667828863"></a>
+                                    <a class="accordion-toggle " data-toggle="collapse" data-target="#namespace-1623345439"></a>
                                 <a href="../namespaces/default.html" style="margin-left: 30px; padding-left: 0">\</a>
             </div>
-            <div id="namespace-1667828863" class="accordion-body collapse in">
+            <div id="namespace-1623345439" class="accordion-body collapse in">
                 <div class="accordion-inner">
 
                                                     <div class="accordion" style="margin-bottom: 0">
         <div class="accordion-group">
             <div class="accordion-heading">
-                                    <a class="accordion-toggle collapsed" data-toggle="collapse" data-target="#namespace-1842450663"></a>
+                                    <a class="accordion-toggle collapsed" data-toggle="collapse" data-target="#namespace-1802011427"></a>
                                 <a href="../namespaces/Contacts.html" style="margin-left: 30px; padding-left: 0">Contacts</a>
             </div>
-            <div id="namespace-1842450663" class="accordion-body collapse ">
+            <div id="namespace-1802011427" class="accordion-body collapse ">
                 <div class="accordion-inner">
 
                     
@@ -281,7 +281,13 @@
                         </section>
                         <section class="row-fluid private">
                             <section class="span4">
+                                                                    <a href="../classes/Contacts.Helpers.html#method_getSign" class="">getSign()</a><br />
+                                                                    <a href="../classes/Contacts.Helpers.html#method_cleanTimeZone" class="">cleanTimeZone()</a><br />
+                                                                    <a href="../classes/Contacts.Helpers.html#method_getTimeZoneOffset" class="">getTimeZoneOffset()</a><br />
+                                                                    <a href="../classes/Contacts.Helpers.html#method_setTimeZoneFilterOptions" class="">setTimeZoneFilterOptions()</a><br />
                                                                     <a href="../classes/Contacts.Vcard.html#method_photoProperty" class="">photoProperty()</a><br />
+                                                                    <a href="../classes/Contacts.Vcard.html#method_photoURL" class="">photoURL()</a><br />
+                                                                    <a href="../classes/Contacts.Vcard.html#method_photoBase64" class="">photoBase64()</a><br />
                                                                     <a href="../classes/Contacts.Vcard.html#method_constructElement" class="">constructElement()</a><br />
                                                                     <a href="../classes/Contacts.Vcard.html#method_cleanString" class="">cleanString()</a><br />
                                                                     <a href="../classes/Contacts.Vcard.html#method_setProperty" class="">setProperty()</a><br />
@@ -2840,6 +2846,167 @@ Will overwrite any existing data</p></td>
 
                                                     <div class="row-fluid">
         <div class="span8 content class">
+            <a id="method_getSign" name="method_getSign" class="anchor"></a>
+            <article class="method">
+                <h3 class="private ">getSign()</h3>
+                <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
+                <pre class="signature" style="margin-right: 54px;">getSign(string  <span class="argument">$timeZone</span>) : string</pre>
+                <p><em>Get sign of time zone offset</em></p>
+                
+
+                                    <h4>Parameters</h4>
+                    <table class="table table-condensed table-hover">
+                                                    <tr>
+                                <td>string</td>
+                                <td>$timeZone </td>
+                                <td><p>Time zone (UTC-offset) as a number between -14 and +12 (inclusive).
+Examples: <code>-7</code>, <code>-07</code>, <code>-12</code>, <code>-12:00</code>, <code>10:30</code></p></td>
+                            </tr>
+                                            </table>
+                
+                                    <h4>Throws</h4>
+                    <dl>
+                                                    <dt>\Contacts\ContactsException</dt>
+                            <dd><p>if invalid time zone UTC offset is used</p></dd>
+                                                                    </dl>
+                
+                                    <h4>Returns</h4>
+                    string
+                                            &mdash; <p>Sign of time zone offset (<code>+</code> or <code>-</code>). Default: <code>+</code></p>
+                                    				
+                            </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                                                            <dl>
+                                                    <dt>Inherited from</dt>
+                    <dd><a href="../classes/Contacts.Helpers.html"><div class="path-wrapper">\Contacts\Helpers</div></a></dd>
+                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="method_cleanTimeZone" name="method_cleanTimeZone" class="anchor"></a>
+            <article class="method">
+                <h3 class="private ">cleanTimeZone()</h3>
+                <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
+                <pre class="signature" style="margin-right: 54px;">cleanTimeZone(string  <span class="argument">$timeZone</span>) : string</pre>
+                <p><em>Strip the time zone of all characters except numbers and `:`; trim leading `0`s</em></p>
+                
+
+                                    <h4>Parameters</h4>
+                    <table class="table table-condensed table-hover">
+                                                    <tr>
+                                <td>string</td>
+                                <td>$timeZone </td>
+                                <td><p>Time zone (UTC-offset) as a number between -14 and +12 (inclusive).
+Examples: <code>-7</code>, <code>-07</code>, <code>-12</code>, <code>-12:00</code>, <code>10:30</code></p></td>
+                            </tr>
+                                            </table>
+                
+                
+                                    <h4>Returns</h4>
+                    string
+                                            &mdash; <p>Cleaned time zone string</p>
+                                    				
+                            </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                                                            <dl>
+                                                    <dt>Inherited from</dt>
+                    <dd><a href="../classes/Contacts.Helpers.html"><div class="path-wrapper">\Contacts\Helpers</div></a></dd>
+                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="method_getTimeZoneOffset" name="method_getTimeZoneOffset" class="anchor"></a>
+            <article class="method">
+                <h3 class="private ">getTimeZoneOffset()</h3>
+                <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
+                <pre class="signature" style="margin-right: 54px;">getTimeZoneOffset(string  <span class="argument">$timeZone</span>, string  <span class="argument">$negative = null</span>) : array</pre>
+                <p><em>Get the time zone offset</em></p>
+                
+
+                                    <h4>Parameters</h4>
+                    <table class="table table-condensed table-hover">
+                                                    <tr>
+                                <td>string</td>
+                                <td>$timeZone </td>
+                                <td><p>Time zone (UTC-offset) as a number between -14 and +12 (inclusive).
+Examples: <code>-7</code>, <code>-07</code>, <code>-12</code>, <code>-12:00</code>, <code>10:30</code></p></td>
+                            </tr>
+                                                    <tr>
+                                <td>string</td>
+                                <td>$negative </td>
+                                <td><p>Negative sign if offset is negative. Default: <code>null</code></p></td>
+                            </tr>
+                                            </table>
+                
+                
+                                    <h4>Returns</h4>
+                    array
+                                            &mdash; <p>Time zone offsets for hour and minute</p>
+                                    				
+                            </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                                                            <dl>
+                                                    <dt>Inherited from</dt>
+                    <dd><a href="../classes/Contacts.Helpers.html"><div class="path-wrapper">\Contacts\Helpers</div></a></dd>
+                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="method_setTimeZoneFilterOptions" name="method_setTimeZoneFilterOptions" class="anchor"></a>
+            <article class="method">
+                <h3 class="private ">setTimeZoneFilterOptions()</h3>
+                <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
+                <pre class="signature" style="margin-right: 54px;">setTimeZoneFilterOptions() : array</pre>
+                <p><em>Sanitize time zone filter options</em></p>
+                
+
+                
+                
+                                    <h4>Returns</h4>
+                    array
+                                            &mdash; <p>Valid time zone offset options</p>
+                                    				
+                            </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                                                            <dl>
+                                                    <dt>Inherited from</dt>
+                    <dd><a href="../classes/Contacts.Helpers.html"><div class="path-wrapper">\Contacts\Helpers</div></a></dd>
+                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
             <a id="method_photoProperty" name="method_photoProperty" class="anchor"></a>
             <article class="method">
                 <h3 class="private ">photoProperty()</h3>
@@ -2876,6 +3043,94 @@ Will overwrite any existing data</p></td>
                                     <h4>Returns</h4>
                     $this
                                     				
+                            </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                                                            <dl>
+                                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="method_photoURL" name="method_photoURL" class="anchor"></a>
+            <article class="method">
+                <h3 class="private ">photoURL()</h3>
+                <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
+                <pre class="signature" style="margin-right: 54px;">photoURL(string  <span class="argument">$element</span>, string  <span class="argument">$photoUrl</span>) </pre>
+                <p><em>Add photo to `PHOTO` or `LOGO` elements</em></p>
+                
+
+                                    <h4>Parameters</h4>
+                    <table class="table table-condensed table-hover">
+                                                    <tr>
+                                <td>string</td>
+                                <td>$element </td>
+                                <td><p>Element to add photo to</p></td>
+                            </tr>
+                                                    <tr>
+                                <td>string</td>
+                                <td>$photoUrl </td>
+                                <td><p>URL-referenced or base-64 encoded photo</p></td>
+                            </tr>
+                                            </table>
+                
+                                    <h4>Throws</h4>
+                    <dl>
+                                                    <dt>\Contacts\ContactsException</dt>
+                            <dd><p>if an element that can only be defined once is defined more than once</p></dd>
+                                                                    </dl>
+                
+                				
+                            </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                                                            <dl>
+                                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="method_photoBase64" name="method_photoBase64" class="anchor"></a>
+            <article class="method">
+                <h3 class="private ">photoBase64()</h3>
+                <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
+                <pre class="signature" style="margin-right: 54px;">photoBase64(string  <span class="argument">$element</span>, string  <span class="argument">$photoString</span>) </pre>
+                <p><em>Add photo to `PHOTO` or `LOGO` elements</em></p>
+                
+
+                                    <h4>Parameters</h4>
+                    <table class="table table-condensed table-hover">
+                                                    <tr>
+                                <td>string</td>
+                                <td>$element </td>
+                                <td><p>Element to add photo to</p></td>
+                            </tr>
+                                                    <tr>
+                                <td>string</td>
+                                <td>$photoString </td>
+                                <td><p>URL-referenced or base-64 encoded photo</p></td>
+                            </tr>
+                                            </table>
+                
+                                    <h4>Throws</h4>
+                    <dl>
+                                                    <dt>\Contacts\ContactsException</dt>
+                            <dd><p>if an element that can only be defined once is defined more than once</p></dd>
+                                                                    </dl>
+                
+                				
                             </article>
         </div>
         <aside class="span4 detailsbar">
@@ -3075,7 +3330,7 @@ Default: <code>,</code>.</p></td>
                 <section class="span10 offset1">
                     <hr />
                     Documentation is powered by <a href="http://www.phpdoc.org/">phpDocumentor </a> and authored
-                    on December 19th, 2017 at 20:47.
+                    on December 20th, 2017 at 23:38.
                 </section>
             </section>
         </section>

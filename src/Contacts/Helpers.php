@@ -163,23 +163,78 @@ trait Helpers
      */
     protected function sanitizeTimeZone(string $timeZone)
     {
-        $sign = ($timeZone[0] == '-') ? '-' : '+';
+        $sign = $this->getSign($timeZone);
         $negative = ($sign === '-') ? '-' : null;
-        $timeZone = preg_replace("/[^0-9:]/", '', $timeZone);
-        $timeZone = ltrim($timeZone, '0');
-        $offset = explode(':', $timeZone);
-        $options = [];
-        $options['options']['min_range'] = -14;
-        $options['options']['max_range'] = 12;
-        $hourOffset = filter_var($negative.$offset[0], FILTER_VALIDATE_INT, $options);
-        if ($hourOffset) {
-            $sign = abs($hourOffset) === 0 ? '+' : $sign;
-            $minuteOffset = (isset($offset[1]) && $hourOffset) ? $offset[1] : '00';
+        $timeZone = $this->cleanTimeZone($timeZone);
+        if ($this->getTimeZoneOffset($timeZone, $negative)['hourOffset']) {
+            $sign = abs($this->getTimeZoneOffset($timeZone, $negative)['hourOffset']) === 0 ? '+' : $sign;
 
-            return [$sign, abs($hourOffset), $minuteOffset];
+            return [$sign, abs($this->getTimeZoneOffset($timeZone, $negative)['hourOffset']), $this->getTimeZoneOffset($timeZone, $negative)['minuteOffset']];
         } else {
             throw new ContactsException("Invalid time zone: '$timeZone'. UTC offset only. Text values not valid.");
         }
+    }
+
+    /**
+     * Get sign of time zone offset
+     *
+     * @param string $timeZone Time zone (UTC-offset) as a number between -14 and +12 (inclusive).
+     *                         Examples: `-7`, `-07`, `-12`, `-12:00`, `10:30`
+     *
+     * @throws ContactsException if invalid time zone UTC offset is used
+     *
+     * @return string Sign of time zone offset (`+` or `-`). Default: `+`
+     */
+    private function getSign(string $timeZone)
+    {
+        return ($timeZone[0] === '-') ? '-' : '+';
+    }
+
+    /**
+     * Strip the time zone of all characters except numbers and `:`; trim leading `0`s
+     *
+     * @param string $timeZone Time zone (UTC-offset) as a number between -14 and +12 (inclusive).
+     *                         Examples: `-7`, `-07`, `-12`, `-12:00`, `10:30`
+     *
+     * @return string Cleaned time zone string
+     */
+    private function cleanTimeZone(string $timeZone)
+    {
+        $timeZone = preg_replace("/[^0-9:]/", '', $timeZone);
+        return ltrim($timeZone, '0');
+    }
+
+    /**
+     * Get the time zone offset
+     *
+     * @param string $timeZone Time zone (UTC-offset) as a number between -14 and +12 (inclusive).
+     *                         Examples: `-7`, `-07`, `-12`, `-12:00`, `10:30`
+     *
+     * @param string $negative Negative sign if offset is negative. Default: `null`
+     *
+     * @return array Time zone offsets for hour and minute
+     */
+    private function getTimeZoneOffset(string $timeZone, string $negative = null)
+    {
+        $offset = explode(':', $timeZone);
+        $hourOffset = filter_var($negative.$offset[0], FILTER_VALIDATE_INT, $this->setTimeZoneFilterOptions());
+        $minuteOffset = (isset($offset[1]) && $hourOffset) ? $offset[1] : '00';
+        return ['hourOffset' => $hourOffset, 'minuteOffset' => $minuteOffset];
+    }
+
+    /**
+     * Sanitize time zone filter options
+     *
+     * @param null
+     *
+     * @return array Valid time zone offset options
+     */
+    private function setTimeZoneFilterOptions()
+    {
+        $options = [];
+        $options['options']['min_range'] = -14;
+        $options['options']['max_range'] = 12;
+        return $options;
     }
 
     /**

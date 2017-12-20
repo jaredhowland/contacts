@@ -75,7 +75,7 @@ class Vcard implements ContactsInterface
         'car',
         'isdn',
         'pcs',
-        'iphone']; // Custom type
+        'iphone']; // Custom type for iOS and macOS applications
 
     /**
      * @var array $validClassifications Array of valid classification types
@@ -199,9 +199,9 @@ class Vcard implements ContactsInterface
         string $prefixes = null,
         string $suffixes = null
     ) {
-        $additionalNames = str_replace(' ', '', $additionalNames);
-        $prefixes = str_replace(' ', '', $prefixes);
-        $suffixes = str_replace(' ', '', $suffixes);
+        $additionalNames = str_replace(', ', ',', $additionalNames);
+        $prefixes = str_replace(', ', ',', $prefixes);
+        $suffixes = str_replace(', ', ',', $suffixes);
         // Set directly rather than going through $this->constructElement to avoid escaping valid commas in `$additionalNames`, `$prefixes`, and `$suffixes`
         $this->setProperty('N', vsprintf(Config::get('N'), [$lastName, $firstName, $additionalNames, $prefixes, $suffixes]));
         return $this;
@@ -572,22 +572,47 @@ class Vcard implements ContactsInterface
     private function photoProperty(string $element, string $photo, bool $isUrl = true)
     {
         if ($isUrl) {
-            // Set directly rather than going through $this->constructElement to avoid escaping valid URL characters
-            if (!empty($this->sanitizeUrl($photo))) {
-                $mimetype = strtoupper(str_replace('image/', '', getimagesize($photo)['mime']));
-                $photo = $this->getData($this->sanitizeUrl($photo));
-                $this->setProperty($element, vsprintf(Config::get('PHOTO-BINARY'), [$mimetype, base64_encode($photo)]));
-                return $this;
-            }
+            $this->photoURL($element, $photo);
         } else {
-            $img = base64_decode($photo);
-            if (!empty($img)) {
-                $file = finfo_open();
-                $mimetype = finfo_buffer($file, $img, FILEINFO_MIME_TYPE);
-                $mimetype = strtoupper(str_replace('image/', '', $mimetype));
-                $this->setProperty($element, vsprintf(Config::get('PHOTO-BINARY'), [$mimetype, $photo]));
-                return $this;
-            }
+            $this->photoBase64($element, $photo);
+        }
+        return $this;
+    }
+
+    /**
+     * Add photo to `PHOTO` or `LOGO` elements
+     *
+     * @param string $element  Element to add photo to
+     * @param string $photoUrl URL-referenced or base-64 encoded photo
+     *
+     * @throws ContactsException if an element that can only be defined once is defined more than once
+     */
+    private function photoURL(string $element, string $photoUrl)
+    {
+        // Set directly rather than going through $this->constructElement to avoid escaping valid URL characters
+        if (!empty($this->sanitizeUrl($photoUrl))) {
+            $mimetype = strtoupper(str_replace('image/', '', getimagesize($photoUrl)['mime']));
+            $photo = $this->getData($this->sanitizeUrl($photoUrl));
+            $this->setProperty($element, vsprintf(Config::get('PHOTO-BINARY'), [$mimetype, base64_encode($photo)]));
+        }
+    }
+
+    /**
+     * Add photo to `PHOTO` or `LOGO` elements
+     *
+     * @param string $element     Element to add photo to
+     * @param string $photoString URL-referenced or base-64 encoded photo
+     *
+     * @throws ContactsException if an element that can only be defined once is defined more than once
+     */
+    private function photoBase64(string $element, string $photoString)
+    {
+        $img = base64_decode($photoString);
+        if (!empty($img)) {
+            $file = finfo_open();
+            $mimetype = finfo_buffer($file, $img, FILEINFO_MIME_TYPE);
+            $mimetype = strtoupper(str_replace('image/', '', $mimetype));
+            $this->setProperty($element, vsprintf(Config::get('PHOTO-BINARY'), [$mimetype, $photoString]));
         }
     }
 
