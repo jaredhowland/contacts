@@ -152,17 +152,17 @@ trait Helpers
     /**
      * Constrain latitude and longitude
      *
-     * @param string $string Latitude or longitude value
-     * @param int    $max    Max value for latitude or longitude
-     * @param int    $min    Min value for latitude or longitude
+     * @param float $string Latitude or longitude value
+     * @param int   $max    Max value for latitude or longitude
+     * @param int   $min    Min value for latitude or longitude
      *
      * @throws ContactsException if invalid latitude or longitude is used
      *
      * @return mixed Latitude or longitude rounded to 6 decimal places. Default: `null`
      */
-    private function constrainLatLong(string $string, int $max, int $min)
+    private function constrainLatLong(float $string, int $max, int $min)
     {
-        $string = ((float)$string == 0) ? abs($string) : $string;
+        $string = ($string == 0) ? abs($string) : $string;
 
         return ($string >= $min && $string <= $max) ? sprintf("%0.6f", round($string, 6)) : null;
     }
@@ -310,7 +310,7 @@ trait Helpers
      *
      * @return bool TRUE if all appear. FALSE otherwise.
      */
-    protected function inArrayAll(array $needles = null, array $haystack)
+    protected function inArrayAll(array $needles = [], array $haystack)
     {
         return !array_diff($needles, $haystack);
     }
