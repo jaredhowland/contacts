@@ -120,15 +120,50 @@ trait Helpers
     protected function formatGeo(string $lat, string $long)
     {
         if (is_numeric($lat) && is_numeric($long)) {
-            $lat = ($lat == 0) ? abs($lat) : $lat;
-            $long = ($long == 0) ? abs($long) : $long;
-            $lat = ($lat >= -90 && $lat <= 90) ? sprintf("%0.6f", round($lat, 6)) : null;
-            $long = ($long >= -180 && $long <= 180) ? sprintf("%0.6f", round($long, 6)) : null;
 
-            return ['lat' => $lat, 'long' => $long];
+            return $this->cleanLatLong($lat, $long);
         } else {
             throw new ContactsException("Invalid latitude or longitude. Latitude: '$lat' Longitude: '$long'");
         }
+    }
+
+    /**
+     * Clean latitude and longitude
+     *
+     * @param string $lat  Geographic Positioning System latitude (decimal) (must be a number between -90 and 90)
+     *
+     * **FORMULA**: decimal = degrees + minutes/60 + seconds/3600
+     * @param string $long Geographic Positioning System longitude (decimal) (must be a number between -180 and 180)
+     *
+     * **FORMULA**: decimal = degrees + minutes/60 + seconds/3600
+     *
+     * @throws ContactsException if invalid latitude or longitude is used
+     *
+     * @return array Array of formatted latitude and longitude
+     */
+    private function cleanLatLong(string $lat, string $long)
+    {
+        $lat = $this->constrainLatLong($lat, 90, -90);
+        $long = $this->constrainLatLong($long, 180, -180);
+
+        return ['lat' => $lat, 'long' => $long];
+    }
+
+    /**
+     * Constrain latitude and longitude
+     *
+     * @param string $string Latitude or longitude value
+     * @param int    $max    Max value for latitude or longitude
+     * @param int    $min    Min value for latitude or longitude
+     *
+     * @throws ContactsException if invalid latitude or longitude is used
+     *
+     * @return float Latitude or longitude rounded to 6 decimal places. Default: `null`
+     */
+    private function constrainLatLong(string $string, int $max, int $min)
+    {
+        $string = ($string == 0) ? abs($string) : $string;
+        return ($string >= $min && $lat <= $max) ? sprintf("%0.6f", round($string, 6)) : null;
     }
 
     /**

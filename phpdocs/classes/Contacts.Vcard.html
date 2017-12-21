@@ -144,19 +144,19 @@
                                 <div class="accordion" style="margin-bottom: 0">
         <div class="accordion-group">
             <div class="accordion-heading">
-                                    <a class="accordion-toggle " data-toggle="collapse" data-target="#namespace-1623345439"></a>
+                                    <a class="accordion-toggle " data-toggle="collapse" data-target="#namespace-1812726713"></a>
                                 <a href="../namespaces/default.html" style="margin-left: 30px; padding-left: 0">\</a>
             </div>
-            <div id="namespace-1623345439" class="accordion-body collapse in">
+            <div id="namespace-1812726713" class="accordion-body collapse in">
                 <div class="accordion-inner">
 
                                                     <div class="accordion" style="margin-bottom: 0">
         <div class="accordion-group">
             <div class="accordion-heading">
-                                    <a class="accordion-toggle collapsed" data-toggle="collapse" data-target="#namespace-1802011427"></a>
+                                    <a class="accordion-toggle collapsed" data-toggle="collapse" data-target="#namespace-1701040439"></a>
                                 <a href="../namespaces/Contacts.html" style="margin-left: 30px; padding-left: 0">Contacts</a>
             </div>
-            <div id="namespace-1802011427" class="accordion-body collapse ">
+            <div id="namespace-1701040439" class="accordion-body collapse ">
                 <div class="accordion-inner">
 
                     
@@ -281,6 +281,8 @@
                         </section>
                         <section class="row-fluid private">
                             <section class="span4">
+                                                                    <a href="../classes/Contacts.Helpers.html#method_cleanLatLong" class="">cleanLatLong()</a><br />
+                                                                    <a href="../classes/Contacts.Helpers.html#method_constrainLatLong" class="">constrainLatLong()</a><br />
                                                                     <a href="../classes/Contacts.Helpers.html#method_getSign" class="">getSign()</a><br />
                                                                     <a href="../classes/Contacts.Helpers.html#method_cleanTimeZone" class="">cleanTimeZone()</a><br />
                                                                     <a href="../classes/Contacts.Helpers.html#method_getTimeZoneOffset" class="">getTimeZoneOffset()</a><br />
@@ -2846,6 +2848,111 @@ Will overwrite any existing data</p></td>
 
                                                     <div class="row-fluid">
         <div class="span8 content class">
+            <a id="method_cleanLatLong" name="method_cleanLatLong" class="anchor"></a>
+            <article class="method">
+                <h3 class="private ">cleanLatLong()</h3>
+                <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
+                <pre class="signature" style="margin-right: 54px;">cleanLatLong(string  <span class="argument">$lat</span>, string  <span class="argument">$long</span>) : array</pre>
+                <p><em>Clean latitude and longitude</em></p>
+                
+
+                                    <h4>Parameters</h4>
+                    <table class="table table-condensed table-hover">
+                                                    <tr>
+                                <td>string</td>
+                                <td>$lat </td>
+                                <td><p>Geographic Positioning System latitude (decimal) (must be a number between -90 and 90)</p>
+<p><strong>FORMULA</strong>: decimal = degrees + minutes/60 + seconds/3600</p></td>
+                            </tr>
+                                                    <tr>
+                                <td>string</td>
+                                <td>$long </td>
+                                <td><p>Geographic Positioning System longitude (decimal) (must be a number between -180 and 180)</p>
+<p><strong>FORMULA</strong>: decimal = degrees + minutes/60 + seconds/3600</p></td>
+                            </tr>
+                                            </table>
+                
+                                    <h4>Throws</h4>
+                    <dl>
+                                                    <dt>\Contacts\ContactsException</dt>
+                            <dd><p>if invalid latitude or longitude is used</p></dd>
+                                                                    </dl>
+                
+                                    <h4>Returns</h4>
+                    array
+                                            &mdash; <p>Array of formatted latitude and longitude</p>
+                                    				
+                            </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                                                            <dl>
+                                                    <dt>Inherited from</dt>
+                    <dd><a href="../classes/Contacts.Helpers.html"><div class="path-wrapper">\Contacts\Helpers</div></a></dd>
+                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="method_constrainLatLong" name="method_constrainLatLong" class="anchor"></a>
+            <article class="method">
+                <h3 class="private ">constrainLatLong()</h3>
+                <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
+                <pre class="signature" style="margin-right: 54px;">constrainLatLong(string  <span class="argument">$string</span>, integer  <span class="argument">$max</span>, integer  <span class="argument">$min</span>) : float</pre>
+                <p><em>Constrain latitude and longitude</em></p>
+                
+
+                                    <h4>Parameters</h4>
+                    <table class="table table-condensed table-hover">
+                                                    <tr>
+                                <td>string</td>
+                                <td>$string </td>
+                                <td><p>Latitude or longitude value</p></td>
+                            </tr>
+                                                    <tr>
+                                <td>integer</td>
+                                <td>$max </td>
+                                <td><p>Max value for latitude or longitude</p></td>
+                            </tr>
+                                                    <tr>
+                                <td>integer</td>
+                                <td>$min </td>
+                                <td><p>Min value for latitude or longitude</p></td>
+                            </tr>
+                                            </table>
+                
+                                    <h4>Throws</h4>
+                    <dl>
+                                                    <dt>\Contacts\ContactsException</dt>
+                            <dd><p>if invalid latitude or longitude is used</p></dd>
+                                                                    </dl>
+                
+                                    <h4>Returns</h4>
+                    float
+                                            &mdash; <p>Latitude or longitude rounded to 6 decimal places. Default: <code>null</code></p>
+                                    				
+                            </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                                                            <dl>
+                                                    <dt>Inherited from</dt>
+                    <dd><a href="../classes/Contacts.Helpers.html"><div class="path-wrapper">\Contacts\Helpers</div></a></dd>
+                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
             <a id="method_getSign" name="method_getSign" class="anchor"></a>
             <article class="method">
                 <h3 class="private ">getSign()</h3>
@@ -3330,7 +3437,7 @@ Default: <code>,</code>.</p></td>
                 <section class="span10 offset1">
                     <hr />
                     Documentation is powered by <a href="http://www.phpdoc.org/">phpDocumentor </a> and authored
-                    on December 20th, 2017 at 23:38.
+                    on December 21st, 2017 at 00:24.
                 </section>
             </section>
         </section>
