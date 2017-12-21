@@ -352,7 +352,7 @@ class Vcard implements ContactsInterface
      *
      * @return $this
      */
-    public function addLabel(string $label, array $types = null)
+    public function addLabel(string $label, array $types = [])
     {
         // Make sure all `$types`s are valid. If invalid `$types`(s), revert to standard default.
         $types = $this->inArrayAll($types, $this->validAddressTypes) ? $types : ['intl', 'postal', 'parcel', 'work'];
@@ -391,7 +391,7 @@ class Vcard implements ContactsInterface
      *
      * @return $this
      */
-    public function addTelephone(string $phone = null, array $types = null)
+    public function addTelephone(string $phone = null, array $types = [])
     {
         // Make sure all `$types`s are valid. If invalid `$types`(s), revert to standard default.
         $types = $this->inArrayAll($types, $this->validTelephoneTypes) ? $types : ['voice'];

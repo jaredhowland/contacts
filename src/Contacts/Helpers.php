@@ -83,10 +83,10 @@ trait Helpers
     /**
      * Sanitize latitude and longitude
      *
-     * @param string $lat  Geographic Positioning System latitude (decimal) (must be a number between -90 and 90)
+     * @param float $lat  Geographic Positioning System latitude (decimal) (must be a number between -90 and 90)
      *
      * **FORMULA**: decimal = degrees + minutes/60 + seconds/3600
-     * @param string $long Geographic Positioning System longitude (decimal) (must be a number between -180 and 180)
+     * @param float $long Geographic Positioning System longitude (decimal) (must be a number between -180 and 180)
      *
      * **FORMULA**: decimal = degrees + minutes/60 + seconds/3600
      *
@@ -94,7 +94,7 @@ trait Helpers
      *
      * @return array Array of sanitized latitude and longitude
      */
-    protected function sanitizeLatLong(string $lat, string $long)
+    protected function sanitizeLatLong(float $lat, float $long)
     {
         $latLong = $this->formatGeo($lat, $long);
         if (is_null($latLong['lat']) || is_null($latLong['long'])) {
@@ -107,10 +107,10 @@ trait Helpers
     /**
      * Format latitude and longitude
      *
-     * @param string $lat  Geographic Positioning System latitude (decimal) (must be a number between -90 and 90)
+     * @param float $lat  Geographic Positioning System latitude (decimal) (must be a number between -90 and 90)
      *
      * **FORMULA**: decimal = degrees + minutes/60 + seconds/3600
-     * @param string $long Geographic Positioning System longitude (decimal) (must be a number between -180 and 180)
+     * @param float $long Geographic Positioning System longitude (decimal) (must be a number between -180 and 180)
      *
      * **FORMULA**: decimal = degrees + minutes/60 + seconds/3600
      *
@@ -118,7 +118,7 @@ trait Helpers
      *
      * @return array Array of formatted latitude and longitude
      */
-    protected function formatGeo(string $lat, string $long)
+    protected function formatGeo(float $lat, float $long)
     {
         if (is_numeric($lat) && is_numeric($long)) {
             return $this->cleanLatLong($lat, $long);
@@ -130,10 +130,10 @@ trait Helpers
     /**
      * Clean latitude and longitude
      *
-     * @param string $lat  Geographic Positioning System latitude (decimal) (must be a number between -90 and 90)
+     * @param float $lat  Geographic Positioning System latitude (decimal) (must be a number between -90 and 90)
      *
      * **FORMULA**: decimal = degrees + minutes/60 + seconds/3600
-     * @param string $long Geographic Positioning System longitude (decimal) (must be a number between -180 and 180)
+     * @param float $long Geographic Positioning System longitude (decimal) (must be a number between -180 and 180)
      *
      * **FORMULA**: decimal = degrees + minutes/60 + seconds/3600
      *
@@ -141,7 +141,7 @@ trait Helpers
      *
      * @return array Array of formatted latitude and longitude
      */
-    private function cleanLatLong(string $lat, string $long)
+    private function cleanLatLong(float $lat, float $long)
     {
         $lat = $this->constrainLatLong($lat, 90, -90);
         $long = $this->constrainLatLong($long, 180, -180);
