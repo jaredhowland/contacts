@@ -201,14 +201,14 @@ trait Helpers
     {
         $sign = ($timeZone[0] === '-') ? '-' : '+';
         $negative = ($sign === '-') ? '-' : null;
-        $timeZone = $this->cleanTimeZone($timeZone);
-        if ($this->getTimeZoneOffset($timeZone, $negative)['hourOffset']) {
-            $sign = abs($this->getTimeZoneOffset($timeZone, $negative)['hourOffset']) === 0 ? '+' : $sign;
+        $timeZone = $negative.$this->cleanTimeZone($timeZone);
+        if ($this->getTimeZoneOffset($timeZone)['hourOffset']) {
+            $sign = abs($this->getTimeZoneOffset($timeZone)['hourOffset']) === 0 ? '+' : $sign;
 
             return [
                 $sign,
-                abs($this->getTimeZoneOffset($timeZone, $negative)['hourOffset']),
-                $this->getTimeZoneOffset($timeZone, $negative)['minuteOffset'],
+                abs($this->getTimeZoneOffset($timeZone)['hourOffset']),
+                $this->getTimeZoneOffset($timeZone)['minuteOffset'],
             ];
         } else {
             throw new ContactsException("Invalid time zone: '$timeZone'. UTC offset only. Text values not valid.");
@@ -236,14 +236,12 @@ trait Helpers
      * @param string $timeZone Time zone (UTC-offset) as a number between -14 and +12 (inclusive).
      *                         Examples: `-7`, `-07`, `-12`, `-12:00`, `10:30`
      *
-     * @param string $negative Negative sign if offset is negative. Default: `null`
-     *
      * @return array Time zone offsets for hour and minute
      */
-    private function getTimeZoneOffset(string $timeZone, string $negative = null)
+    private function getTimeZoneOffset(string $timeZone)
     {
         $offset = explode(':', $timeZone);
-        $hourOffset = filter_var($negative.$offset[0], FILTER_VALIDATE_INT, $this->setTimeZoneFilterOptions());
+        $hourOffset = filter_var($offset[0], FILTER_VALIDATE_INT, $this->setTimeZoneFilterOptions());
         $minuteOffset = (isset($offset[1]) && $hourOffset) ? $offset[1] : '00';
 
         return ['hourOffset' => $hourOffset, 'minuteOffset' => $minuteOffset];
