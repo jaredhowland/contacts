@@ -199,7 +199,7 @@ trait Helpers
      */
     protected function sanitizeTimeZone(string $timeZone)
     {
-        $sign = $this->getSign($timeZone);
+        $sign = ($timeZone[0] === '-') ? '-' : '+';
         $negative = ($sign === '-') ? '-' : null;
         $timeZone = $this->cleanTimeZone($timeZone);
         if ($this->getTimeZoneOffset($timeZone, $negative)['hourOffset']) {
@@ -213,21 +213,6 @@ trait Helpers
         } else {
             throw new ContactsException("Invalid time zone: '$timeZone'. UTC offset only. Text values not valid.");
         }
-    }
-
-    /**
-     * Get sign of time zone offset
-     *
-     * @param string $timeZone Time zone (UTC-offset) as a number between -14 and +12 (inclusive).
-     *                         Examples: `-7`, `-07`, `-12`, `-12:00`, `10:30`
-     *
-     * @throws ContactsException if invalid time zone UTC offset is used
-     *
-     * @return string Sign of time zone offset (`+` or `-`). Default: `+`
-     */
-    private function getSign(string $timeZone)
-    {
-        return ($timeZone[0] === '-') ? '-' : '+';
     }
 
     /**
