@@ -199,18 +199,10 @@ trait Helpers
      */
     protected function sanitizeTimeZone(string $timeZone)
     {
-//        if ($timeZone[0] === '-') {
-//            $sign = '-';
-//            $negative = '-';
-//        } else {
-//            $sign = '+';
-//            $negative = null;
-//        }
-        $sign = ($timeZone[0] === '-') ? '-' : '+';
-        $negative = ($timeZone[0] === '-') ? '-' : null;
-        $timeZone = $negative.$this->cleanTimeZone($timeZone);
+        $prefix = $this->getPrefixes($timeZone);
+        $timeZone = $prefix['negative'].$this->cleanTimeZone($timeZone);
         if ($this->getTimeZoneOffset($timeZone)['hourOffset']) {
-            $sign = abs($this->getTimeZoneOffset($timeZone)['hourOffset']) === 0 ? '+' : $sign;
+            $sign = abs($this->getTimeZoneOffset($timeZone)['hourOffset']) === 0 ? '+' : $prefix['sign'];
 
             return [
                 $sign,
@@ -220,6 +212,22 @@ trait Helpers
         } else {
             throw new ContactsException("Invalid time zone: '$timeZone'. UTC offset only. Text values not valid.");
         }
+    }
+
+    /**
+     * Gets time zone prefixes
+     *
+     * @param string $timeZone Time zone (UTC-offset) as a number between -14 and +12 (inclusive).
+     *                         Examples: `-7`, `-07`, `-12`, `-12:00`, `10:30`
+     *
+     * @return array Time zone prefixes
+     */
+    private function getPrefixes(string $timeZone)
+    {
+        $sign = ($timeZone[0] === '-') ? '-' : '+';
+        $negative = ($timeZone[0] === '-') ? '-' : null;
+
+        return ['sign' => $sign, 'negative' => $negative];
     }
 
     /**
