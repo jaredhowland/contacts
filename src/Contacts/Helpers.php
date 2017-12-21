@@ -120,7 +120,6 @@ trait Helpers
     protected function formatGeo(string $lat, string $long)
     {
         if (is_numeric($lat) && is_numeric($long)) {
-
             return $this->cleanLatLong($lat, $long);
         } else {
             throw new ContactsException("Invalid latitude or longitude. Latitude: '$lat' Longitude: '$long'");
