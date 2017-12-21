@@ -37,7 +37,7 @@ interface ContactsInterface
 
     public function addTimeZone(string $timeZone);
 
-    public function addLatLong(string $lat, string $long);
+    public function addLatLong(float $lat, float $long);
 
     public function addTitle(string $title);
 

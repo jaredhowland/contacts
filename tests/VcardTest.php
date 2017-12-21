@@ -295,10 +295,10 @@ class VcardTest extends TestCase
     public function providerTestAddLatLongValid()
     {
         return [
-            ['0', '0', 'GEO:0.000000;0.000000'],
-            ['-89.123456', '179.654321', 'GEO:-89.123456;179.654321'],
-            ['-90', '-180', 'GEO:-90.000000;-180.000000'],
-            ['90', '180', 'GEO:90.000000;180.000000']
+            [0, 0, 'GEO:0.000000;0.000000'],
+            [-89.123456, 179.654321, 'GEO:-89.123456;179.654321'],
+            [-90, -180, 'GEO:-90.000000;-180.000000'],
+            [90, 180, 'GEO:90.000000;180.000000']
         ];
     }
 
@@ -323,10 +323,9 @@ class VcardTest extends TestCase
     public function providerTestAddLatLongInvalid()
     {
         return [
-            ['-90.123456', '180.654321', null],
-            ['seven', 'eight', null],
-            ['hi', 'bye', null],
-            ['', '', null]
+            [-90.123456, 180.654321, null],
+            [-90, 181, null],
+            [-91, 180, null]
         ];
     }
 

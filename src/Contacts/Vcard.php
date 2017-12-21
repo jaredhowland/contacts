@@ -481,10 +481,10 @@ class Vcard implements ContactsInterface
      *
      * @link https://tools.ietf.org/html/rfc2426#section-3.4.2 RFC 2426 Section 3.4.2 (pp. 15-16)
      *
-     * @param string $lat  Geographic Positioning System latitude (decimal) (must be a number between -90 and 90)
+     * @param float $lat  Geographic Positioning System latitude (decimal) (must be a number between -90 and 90)
      *
      * **FORMULA**: decimal = degrees + minutes/60 + seconds/3600
-     * @param string $long Geographic Positioning System longitude (decimal) (must be a number between -180 and 180)
+     * @param float $long Geographic Positioning System longitude (decimal) (must be a number between -180 and 180)
      *
      * **FORMULA**: decimal = degrees + minutes/60 + seconds/3600
      *
@@ -492,7 +492,7 @@ class Vcard implements ContactsInterface
      *
      * @return $this
      */
-    public function addLatLong(string $lat, string $long)
+    public function addLatLong(float $lat, float $long)
     {
         if ($this->sanitizeLatLong($lat, $long)) {
             $this->constructElement('GEO', $this->sanitizeLatLong($lat, $long));
