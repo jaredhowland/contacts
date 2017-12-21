@@ -44,9 +44,9 @@ class Config
      *
      * @return string Return setting value from `.ini` file
      */
-    public static function get(string $setting): string
+    public static function get(string $setting)
     {
-        if (empty(self::$config) && parse_ini_file('Config.ini')) {
+        if (empty(self::$config) && is_array(parse_ini_file('Config.ini'))) {
             self::$config = parse_ini_file('Config.ini');
         }
 
@@ -62,7 +62,7 @@ class Config
      *
      * @return string Setting value from `.ini` file
      */
-    private static function settingExists(string $setting): string
+    private static function settingExists(string $setting)
     {
         if (isset(self::$config[$setting])) {
             return self::$config[$setting];
