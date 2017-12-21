@@ -199,8 +199,15 @@ trait Helpers
      */
     protected function sanitizeTimeZone(string $timeZone)
     {
+//        if ($timeZone[0] === '-') {
+//            $sign = '-';
+//            $negative = '-';
+//        } else {
+//            $sign = '+';
+//            $negative = null;
+//        }
         $sign = ($timeZone[0] === '-') ? '-' : '+';
-        $negative = ($sign === '-') ? '-' : null;
+        $negative = ($timeZone[0] === '-') ? '-' : null;
         $timeZone = $negative.$this->cleanTimeZone($timeZone);
         if ($this->getTimeZoneOffset($timeZone)['hourOffset']) {
             $sign = abs($this->getTimeZoneOffset($timeZone)['hourOffset']) === 0 ? '+' : $sign;
