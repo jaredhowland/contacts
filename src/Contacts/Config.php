@@ -46,7 +46,7 @@ class Config
      */
     public static function get(string $setting): string
     {
-        if (empty(self::$config)) {
+        if (empty(self::$config) && parse_ini_file('Config.ini')) {
             self::$config = parse_ini_file('Config.ini');
         }
 

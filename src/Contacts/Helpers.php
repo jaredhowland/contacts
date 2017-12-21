@@ -18,36 +18,37 @@ use GuzzleHttp\Client;
 trait Helpers
 {
     /**
-     * @var string $dataDirectory Path to directory to save the vCard(s) to
-     */
-    private $dataDirectory;
-
-    /**
      * @var string $defaultAreaCode String for default area code of phone numbers
      */
     protected $defaultAreaCode;
-
     /**
      * @var string $defaultTimeZone String for default time zone
      */
     protected $defaultTimeZone;
-
     /**
      * @var object $client Guzzle object for downloading files (photos, logos, etc.)
      */
     protected $client;
+    /**
+     * @var string $dataDirectory Path to directory to save the vCard(s) to
+     */
+    private $dataDirectory;
 
     /**
      * Setup Helper trait
      *
      * @param string $dataDirectory   Directory to save vCard(s) to. Default: `/data/`
      * @param string $defaultAreaCode Default area code to use for phone numbers without an area code. Default: `801`
-     * @param string $defaultTimeZone Default time zone to use when adding a revision date to a vCard. Default: `America/Denver`
+     * @param string $defaultTimeZone Default time zone to use when adding a revision date to a vCard. Default:
+     *                                `America/Denver`
      *
      * @return void
      */
-    protected function setup(string $dataDirectory = null, string $defaultAreaCode = '801', string $defaultTimeZone = 'America/Denver')
-    {
+    protected function setup(
+        string $dataDirectory = null,
+        string $defaultAreaCode = '801',
+        string $defaultTimeZone = 'America/Denver'
+    ) {
         $this->dataDirectory = empty($dataDirectory) ? Config::get('dataDirectory') : $dataDirectory;
         $this->defaultAreaCode = $defaultAreaCode;
         $this->defaultTimeZone = $defaultTimeZone;
@@ -157,12 +158,13 @@ trait Helpers
      *
      * @throws ContactsException if invalid latitude or longitude is used
      *
-     * @return float Latitude or longitude rounded to 6 decimal places. Default: `null`
+     * @return mixed Latitude or longitude rounded to 6 decimal places. Default: `null`
      */
     private function constrainLatLong(string $string, int $max, int $min)
     {
-        $string = ($string == 0) ? abs($string) : $string;
-        return ($string >= $min && $lat <= $max) ? sprintf("%0.6f", round($string, 6)) : null;
+        $string = ((float)$string == 0) ? abs($string) : $string;
+
+        return ($string >= $min && $string <= $max) ? sprintf("%0.6f", round($string, 6)) : null;
     }
 
     /**
@@ -203,7 +205,11 @@ trait Helpers
         if ($this->getTimeZoneOffset($timeZone, $negative)['hourOffset']) {
             $sign = abs($this->getTimeZoneOffset($timeZone, $negative)['hourOffset']) === 0 ? '+' : $sign;
 
-            return [$sign, abs($this->getTimeZoneOffset($timeZone, $negative)['hourOffset']), $this->getTimeZoneOffset($timeZone, $negative)['minuteOffset']];
+            return [
+                $sign,
+                abs($this->getTimeZoneOffset($timeZone, $negative)['hourOffset']),
+                $this->getTimeZoneOffset($timeZone, $negative)['minuteOffset'],
+            ];
         } else {
             throw new ContactsException("Invalid time zone: '$timeZone'. UTC offset only. Text values not valid.");
         }
@@ -235,6 +241,7 @@ trait Helpers
     private function cleanTimeZone(string $timeZone)
     {
         $timeZone = preg_replace("/[^0-9:]/", '', $timeZone);
+
         return ltrim($timeZone, '0');
     }
 
@@ -253,6 +260,7 @@ trait Helpers
         $offset = explode(':', $timeZone);
         $hourOffset = filter_var($negative.$offset[0], FILTER_VALIDATE_INT, $this->setTimeZoneFilterOptions());
         $minuteOffset = (isset($offset[1]) && $hourOffset) ? $offset[1] : '00';
+
         return ['hourOffset' => $hourOffset, 'minuteOffset' => $minuteOffset];
     }
 
@@ -268,6 +276,7 @@ trait Helpers
         $options = [];
         $options['options']['min_range'] = -14;
         $options['options']['max_range'] = 12;
+
         return $options;
     }
 
@@ -301,7 +310,7 @@ trait Helpers
      *
      * @return bool TRUE if all appear. FALSE otherwise.
      */
-    protected function inArrayAll(array $needles = [], array $haystack)
+    protected function inArrayAll(array $needles = null, array $haystack)
     {
         return !array_diff($needles, $haystack);
     }
