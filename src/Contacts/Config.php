@@ -16,7 +16,7 @@ namespace Contacts;
 class Config
 {
     /**
-     * @var array $config Array of values in `Config.ini`
+     * @var array|false $config Array of values in `Config.ini`. `false` if no defined values.
      */
     private static $config;
 
