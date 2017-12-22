@@ -252,7 +252,7 @@ trait Helpers
     private function getTimeZoneOffset(string $timeZone)
     {
         $offset = explode(':', $timeZone);
-        $hourOffset = filter_var($offset[0], FILTER_VALIDATE_INT, ['min_range' => -14, 'max_range' => 12]);
+        $hourOffset = filter_var($offset[0], FILTER_VALIDATE_INT, ['options' => ['min_range' => -14, 'max_range' => 12]]);
         $minuteOffset = (isset($offset[1])) ? $offset[1] : '00';
 
         return ['hourOffset' => $hourOffset, 'minuteOffset' => $minuteOffset];
@@ -268,8 +268,7 @@ trait Helpers
      * @return string|null Sanitized URL or `null`
      */
     protected function sanitizeUrl(string $url)
-    {
-        ;
+    {;
         if (filter_var($url, FILTER_VALIDATE_URL)) {
             return filter_var($url, FILTER_SANITIZE_URL);
         } else {
