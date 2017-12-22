@@ -253,7 +253,7 @@ trait Helpers
     {
         $offset = explode(':', $timeZone);
         $hourOffset = filter_var($offset[0], FILTER_VALIDATE_INT, $this->setTimeZoneFilterOptions());
-        $minuteOffset = (isset($offset[1]) && $hourOffset) ? $offset[1] : '00';
+        $minuteOffset = (isset($offset[1])) ? $offset[1] : '00';
 
         return ['hourOffset' => $hourOffset, 'minuteOffset' => $minuteOffset];
     }
@@ -284,11 +284,9 @@ trait Helpers
      * @return string|null Sanitized URL or `null`
      */
     protected function sanitizeUrl(string $url)
-    {
-        $url = filter_var($url, FILTER_SANITIZE_URL);
-
+    {;
         if (filter_var($url, FILTER_VALIDATE_URL)) {
-            return $url;
+            return filter_var($url, FILTER_SANITIZE_URL);
         } else {
             throw new ContactsException("Invalid url: '$url'");
         }
