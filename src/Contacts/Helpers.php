@@ -284,7 +284,8 @@ trait Helpers
      * @return string|null Sanitized URL or `null`
      */
     protected function sanitizeUrl(string $url)
-    {;
+    {
+        ;
         if (filter_var($url, FILTER_VALIDATE_URL)) {
             return filter_var($url, FILTER_SANITIZE_URL);
         } else {
