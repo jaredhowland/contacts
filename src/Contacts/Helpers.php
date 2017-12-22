@@ -200,7 +200,6 @@ trait Helpers
         $prefix = $this->getPrefixes($timeZone);
         $timeZone = $prefix['negative'].$this->cleanTimeZone($timeZone);
         if ($this->getTimeZoneOffset($timeZone)['hourOffset']) {
-
             return [
                 $prefix['sign'],
                 abs($this->getTimeZoneOffset($timeZone)['hourOffset']),
