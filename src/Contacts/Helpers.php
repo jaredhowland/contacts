@@ -252,26 +252,10 @@ trait Helpers
     private function getTimeZoneOffset(string $timeZone)
     {
         $offset = explode(':', $timeZone);
-        $hourOffset = filter_var($offset[0], FILTER_VALIDATE_INT, $this->setTimeZoneFilterOptions());
+        $hourOffset = filter_var($offset[0], FILTER_VALIDATE_INT, ['min_range' => -14, 'max_range' => 12]);
         $minuteOffset = (isset($offset[1])) ? $offset[1] : '00';
 
         return ['hourOffset' => $hourOffset, 'minuteOffset' => $minuteOffset];
-    }
-
-    /**
-     * Sanitize time zone filter options
-     *
-     * @param null
-     *
-     * @return array Valid time zone offset options
-     */
-    private function setTimeZoneFilterOptions()
-    {
-        $options = [];
-        $options['options']['min_range'] = -14;
-        $options['options']['max_range'] = 12;
-
-        return $options;
     }
 
     /**
