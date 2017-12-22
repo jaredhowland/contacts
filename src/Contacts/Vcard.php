@@ -1009,7 +1009,7 @@ class Vcard implements ContactsInterface
     private function constructElement(string $element, $value, string $delimiter = ',')
     {
         $value = is_array($value) ? array_map([$this, 'cleanString'], $value, [$delimiter]) : $this->cleanString($value);
-        if (!empty(Config::get($element)) && is_array($value)) {
+        if (!empty(Config::get($element)) && !empty($value)) {
             $this->setProperty($element, vsprintf(Config::get($element), $value));
         }
     }
