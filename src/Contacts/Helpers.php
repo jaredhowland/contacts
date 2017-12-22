@@ -162,7 +162,7 @@ trait Helpers
      */
     private function constrainLatLong(float $string, int $max, int $min)
     {
-        $string = ($string == 0) ? abs($string) : $string;
+        $string = ($string == 0) ? 0 : $string;
 
         return ($string >= $min && $string <= $max) ? sprintf("%0.6f", round($string, 6)) : null;
     }
@@ -178,10 +178,8 @@ trait Helpers
      */
     protected function sanitizeEmail(string $email = null)
     {
-        $email = filter_var($email, FILTER_SANITIZE_EMAIL);
-
         if (filter_var($email, FILTER_VALIDATE_EMAIL)) {
-            return $email;
+            return filter_var($email, FILTER_SANITIZE_EMAIL);
         } else {
             throw new ContactsException("Invalid email: '$email'");
         }
@@ -202,10 +200,9 @@ trait Helpers
         $prefix = $this->getPrefixes($timeZone);
         $timeZone = $prefix['negative'].$this->cleanTimeZone($timeZone);
         if ($this->getTimeZoneOffset($timeZone)['hourOffset']) {
-            $sign = abs($this->getTimeZoneOffset($timeZone)['hourOffset']) === 0 ? '+' : $prefix['sign'];
 
             return [
-                $sign,
+                $prefix['sign'],
                 abs($this->getTimeZoneOffset($timeZone)['hourOffset']),
                 $this->getTimeZoneOffset($timeZone)['minuteOffset'],
             ];
@@ -224,7 +221,7 @@ trait Helpers
      */
     private function getPrefixes(string $timeZone)
     {
-        $sign = ($timeZone[0] === '-') ? '-' : '+';
+        $sign = ($timeZone[0] === '-' && $timeZone[0] !== 0) ? '-' : '+';
         $negative = ($timeZone[0] === '-') ? '-' : null;
 
         return ['sign' => $sign, 'negative' => $negative];
