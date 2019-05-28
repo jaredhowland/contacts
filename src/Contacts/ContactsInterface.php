@@ -3,9 +3,8 @@
  * Create a vCard
  *
  * @author  Jared Howland <contacts@jaredhowland.com>
- * @version 2017-12-18
+ * @version 2019-05-28
  * @since   2016-10-05
- *
  */
 
 namespace Contacts;
@@ -17,7 +16,13 @@ interface ContactsInterface
 {
     public function addFullName(string $name);
 
-    public function addName(string $lastName, string $firstName, string $additionalNames, string $prefixes, string $suffixes);
+    public function addName(
+        string $lastName,
+        string $firstName,
+        string $additionalNames,
+        string $prefixes,
+        string $suffixes
+    );
 
     public function addNicknames(array $names);
 
@@ -25,7 +30,16 @@ interface ContactsInterface
 
     public function addBirthday(int $year, int $month, int $day);
 
-    public function addAddress(string $poBox, string $extended, string $street, string $city, string $state, string $zip, string $country, array $types);
+    public function addAddress(
+        string $poBox,
+        string $extended,
+        string $street,
+        string $city,
+        string $state,
+        string $zip,
+        string $country,
+        array $types
+    );
 
     public function addLabel(string $label, array $types);
 

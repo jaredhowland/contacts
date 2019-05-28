@@ -3,7 +3,7 @@
  * Share Contacts methods between classes
  *
  * @author  Jared Howland <contacts@jaredhowland.com>
- * @version 2017-12-19
+ * @version 2019-05-28
  * @since   2016-10-05
  *
  */
@@ -41,15 +41,13 @@ trait Helpers
      * @param string $defaultAreaCode Default area code to use for phone numbers without an area code. Default: `801`
      * @param string $defaultTimeZone Default time zone to use when adding a revision date to a vCard. Default:
      *                                `America/Denver`
-     *
-     * @return void
      */
     protected function setup(
         string $dataDirectory = null,
         string $defaultAreaCode = '801',
         string $defaultTimeZone = 'America/Denver'
     ) {
-        $this->dataDirectory = empty($dataDirectory) ? Config::get('dataDirectory') : $dataDirectory;
+        $this->dataDirectory   = empty($dataDirectory) ? Config::get('dataDirectory') : $dataDirectory;
         $this->defaultAreaCode = $defaultAreaCode;
         $this->defaultTimeZone = $defaultTimeZone;
         date_default_timezone_set($defaultTimeZone);
@@ -60,9 +58,9 @@ trait Helpers
      *
      * @param string $phone Phone number
      *
-     * @throws ContactsException if invalid phone number is used
-     *
      * @return string|null Return formatted phone number if valid. Null otherwise.
+     *
+     * @throws ContactsException if invalid phone number is used
      */
     protected function sanitizePhone(string $phone = null)
     {
@@ -90,9 +88,9 @@ trait Helpers
      *
      * **FORMULA**: decimal = degrees + minutes/60 + seconds/3600
      *
-     * @throws ContactsException if invalid latitude or longitude is used
-     *
      * @return array Array of sanitized latitude and longitude
+     *
+     * @throws ContactsException if invalid latitude or longitude is used
      */
     protected function sanitizeLatLong(float $lat, float $long)
     {
@@ -114,9 +112,9 @@ trait Helpers
      *
      * **FORMULA**: decimal = degrees + minutes/60 + seconds/3600
      *
-     * @throws ContactsException if invalid latitude or longitude is used
-     *
      * @return array Array of formatted latitude and longitude
+     *
+     * @throws ContactsException if invalid latitude or longitude is used
      */
     protected function formatGeo(float $lat, float $long)
     {
@@ -128,53 +126,13 @@ trait Helpers
     }
 
     /**
-     * Clean latitude and longitude
-     *
-     * @param float $lat  Geographic Positioning System latitude (decimal) (must be a number between -90 and 90)
-     *
-     * **FORMULA**: decimal = degrees + minutes/60 + seconds/3600
-     * @param float $long Geographic Positioning System longitude (decimal) (must be a number between -180 and 180)
-     *
-     * **FORMULA**: decimal = degrees + minutes/60 + seconds/3600
-     *
-     * @throws ContactsException if invalid latitude or longitude is used
-     *
-     * @return array Array of formatted latitude and longitude
-     */
-    private function cleanLatLong(float $lat, float $long)
-    {
-        $lat = $this->constrainLatLong($lat, 90, -90);
-        $long = $this->constrainLatLong($long, 180, -180);
-
-        return ['lat' => $lat, 'long' => $long];
-    }
-
-    /**
-     * Constrain latitude and longitude
-     *
-     * @param float $string Latitude or longitude value
-     * @param int   $max    Max value for latitude or longitude
-     * @param int   $min    Min value for latitude or longitude
-     *
-     * @throws ContactsException if invalid latitude or longitude is used
-     *
-     * @return mixed Latitude or longitude rounded to 6 decimal places. Default: `null`
-     */
-    private function constrainLatLong(float $string, int $max, int $min)
-    {
-        $string = ($string == 0) ? 0 : $string;
-
-        return ($string >= $min && $string <= $max) ? sprintf("%0.6f", round($string, 6)) : null;
-    }
-
-    /**
      * Sanitize email address
      *
      * @param string $email Email address
      *
-     * @throws ContactsException if invalid email is used
-     *
      * @return string|null Sanitized email address
+     *
+     * @throws ContactsException if invalid email is used
      */
     protected function sanitizeEmail(string $email = null)
     {
@@ -191,13 +149,13 @@ trait Helpers
      * @param string $timeZone Time zone (UTC-offset) as a number between -14 and +12 (inclusive).
      *                         Examples: `-7`, `-07`, `-12`, `-12:00`, `10:30`
      *
-     * @throws ContactsException if invalid time zone UTC offset is used
-     *
      * @return array Time zone offset
+     *
+     * @throws ContactsException if invalid time zone UTC offset is used
      */
     protected function sanitizeTimeZone(string $timeZone)
     {
-        $prefix = $this->getPrefixes($timeZone);
+        $prefix   = $this->getPrefixes($timeZone);
         $timeZone = $prefix['negative'].$this->cleanTimeZone($timeZone);
         if ($this->getTimeZoneOffset($timeZone)['hourOffset']) {
             return [
@@ -211,61 +169,13 @@ trait Helpers
     }
 
     /**
-     * Gets time zone prefixes
-     *
-     * @param string $timeZone Time zone (UTC-offset) as a number between -14 and +12 (inclusive).
-     *                         Examples: `-7`, `-07`, `-12`, `-12:00`, `10:30`
-     *
-     * @return array Time zone prefixes
-     */
-    private function getPrefixes(string $timeZone)
-    {
-        $sign = ($timeZone[0] === '-' && $timeZone[0] !== 0) ? '-' : '+';
-        $negative = ($timeZone[0] === '-') ? '-' : null;
-
-        return ['sign' => $sign, 'negative' => $negative];
-    }
-
-    /**
-     * Strip the time zone of all characters except numbers and `:`; trim leading `0`s
-     *
-     * @param string $timeZone Time zone (UTC-offset) as a number between -14 and +12 (inclusive).
-     *                         Examples: `-7`, `-07`, `-12`, `-12:00`, `10:30`
-     *
-     * @return string Cleaned time zone string
-     */
-    private function cleanTimeZone(string $timeZone)
-    {
-        $timeZone = preg_replace("/[^0-9:]/", '', $timeZone);
-
-        return ltrim($timeZone, '0');
-    }
-
-    /**
-     * Get the time zone offset
-     *
-     * @param string $timeZone Time zone (UTC-offset) as a number between -14 and +12 (inclusive).
-     *                         Examples: `-7`, `-07`, `-12`, `-12:00`, `10:30`
-     *
-     * @return array Time zone offsets for hour and minute
-     */
-    private function getTimeZoneOffset(string $timeZone)
-    {
-        $offset = explode(':', $timeZone);
-        $hourOffset = filter_var($offset[0], FILTER_VALIDATE_INT, ['options' => ['min_range' => -14, 'max_range' => 12]]);
-        $minuteOffset = (isset($offset[1])) ? $offset[1] : '00';
-
-        return ['hourOffset' => $hourOffset, 'minuteOffset' => $minuteOffset];
-    }
-
-    /**
      * Sanitize uniform resource locator (URL)
      *
      * @param string $url URL
      *
-     * @throws ContactsException if invalid URL is used
-     *
      * @return string|null Sanitized URL or `null`
+     *
+     * @throws ContactsException if invalid URL is used
      */
     protected function sanitizeUrl(string $url)
     {
@@ -304,12 +214,10 @@ trait Helpers
      * @param bool   $append   Whether or not to append data to end of file (overwrite is default). Default: `false`
      *
      * @throws ContactsException if file cannot be opened and/or written to
-     *
-     * @return void
-     **/
+     */
     protected function writeFile(string $fileName, string $data, bool $append = false)
     {
-        $rights = $append ? 'a' : 'w';
+        $rights   = $append ? 'a' : 'w';
         $fileName = $this->dataDirectory.$fileName;
         if (!$handle = fopen($fileName, $rights)) {
             throw new ContactsException("Cannot open file '$fileName'");
@@ -330,8 +238,93 @@ trait Helpers
     protected function getData(string $url)
     {
         $this->client = new Client();
-        $response = $this->client->get($url);
+        $response     = $this->client->get($url);
 
         return (string)$response->getBody();
+    }
+
+    /**
+     * Clean latitude and longitude
+     *
+     * @param float $lat  Geographic Positioning System latitude (decimal) (must be a number between -90 and 90)
+     *
+     * **FORMULA**: decimal = degrees + minutes/60 + seconds/3600
+     * @param float $long Geographic Positioning System longitude (decimal) (must be a number between -180 and 180)
+     *
+     * **FORMULA**: decimal = degrees + minutes/60 + seconds/3600
+     *
+     * @return array Array of formatted latitude and longitude
+     */
+    private function cleanLatLong(float $lat, float $long)
+    {
+        $lat  = $this->constrainLatLong($lat, 90, -90);
+        $long = $this->constrainLatLong($long, 180, -180);
+
+        return ['lat' => $lat, 'long' => $long];
+    }
+
+    /**
+     * Constrain latitude and longitude
+     *
+     * @param float $string Latitude or longitude value
+     * @param int   $max    Max value for latitude or longitude
+     * @param int   $min    Min value for latitude or longitude
+     *
+     * @return mixed Latitude or longitude rounded to 6 decimal places. Default: `null`
+     */
+    private function constrainLatLong(float $string, int $max, int $min)
+    {
+        $string = ($string == 0) ? 0 : $string;
+
+        return ($string >= $min && $string <= $max) ? sprintf("%0.6f", round($string, 6)) : null;
+    }
+
+    /**
+     * Gets time zone prefixes
+     *
+     * @param string $timeZone Time zone (UTC-offset) as a number between -14 and +12 (inclusive).
+     *                         Examples: `-7`, `-07`, `-12`, `-12:00`, `10:30`
+     *
+     * @return array Time zone prefixes
+     */
+    private function getPrefixes(string $timeZone)
+    {
+        $sign     = ($timeZone[0] === '-' && $timeZone[0] !== 0) ? '-' : '+';
+        $negative = ($timeZone[0] === '-') ? '-' : null;
+
+        return ['sign' => $sign, 'negative' => $negative];
+    }
+
+    /**
+     * Strip the time zone of all characters except numbers and `:`; trim leading `0`s
+     *
+     * @param string $timeZone Time zone (UTC-offset) as a number between -14 and +12 (inclusive).
+     *                         Examples: `-7`, `-07`, `-12`, `-12:00`, `10:30`
+     *
+     * @return string Cleaned time zone string
+     */
+    private function cleanTimeZone(string $timeZone)
+    {
+        $timeZone = preg_replace("/[^0-9:]/", '', $timeZone);
+
+        return ltrim($timeZone, '0');
+    }
+
+    /**
+     * Get the time zone offset
+     *
+     * @param string $timeZone Time zone (UTC-offset) as a number between -14 and +12 (inclusive).
+     *                         Examples: `-7`, `-07`, `-12`, `-12:00`, `10:30`
+     *
+     * @return array Time zone offsets for hour and minute
+     */
+    private function getTimeZoneOffset(string $timeZone)
+    {
+        $offset       = explode(':', $timeZone);
+        $hourOffset   = filter_var($offset[0], FILTER_VALIDATE_INT,
+            ['options' => ['min_range' => -14, 'max_range' => 12]]);
+        $minuteOffset = (isset($offset[1])) ? $offset[1] : '00';
+
+        return ['hourOffset' => $hourOffset, 'minuteOffset' => $minuteOffset];
     }
 }

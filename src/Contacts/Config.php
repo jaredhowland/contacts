@@ -3,12 +3,13 @@
  * App configuration
  *
  * @author  Jared Howland <contacts@jaredhowland.com>
- * @version 2017-12-11
+ * @version 2019-05-28
  * @since   2016-09-28
- *
  */
 
 namespace Contacts;
+
+use UnexpectedValueException;
 
 /**
  * Configuration class to import `Config.ini` file and set other defaults
@@ -24,8 +25,6 @@ class Config
      * Set error reporting based on if app is in development or production
      *
      * @param null
-     *
-     * @return void
      */
     public static function setErrorReporting()
     {
@@ -58,16 +57,16 @@ class Config
      *
      * @param string $setting Setting name to check for
      *
-     * @throws \UnexpectedValueException when `$setting` does not exist
-     *
      * @return string Setting value from `.ini` file
+     *
+     * @throws UnexpectedValueException when `$setting` does not exist
      */
     private static function settingExists(string $setting)
     {
         if (isset(self::$config[$setting])) {
             return self::$config[$setting];
         } else {
-            throw new \UnexpectedValueException("'$setting' is not a valid config setting. Please check your 'config.ini' file for valid config options.\n");
+            throw new UnexpectedValueExceptionAlias("'$setting' is not a valid config setting. Please check your 'config.ini' file for valid config options.\n");
         }
     }
 }
