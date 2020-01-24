@@ -6,7 +6,7 @@
   "license": "MIT",
   "autoload": {
     "psr-4": {
-      "Contacts\\": "src/Contacts/"
+      "Contacts\\": "src/"
     }
   },
   "autoload-dev": {
@@ -22,11 +22,12 @@
     }
   ],
   "require": {
-    "php": "^7.0",
-    "guzzlehttp/guzzle": "^6.0"
+    "php": "^7.2",
+    "guzzlehttp/guzzle": "^6.0",
+    "ext-fileinfo": "*"
   },
   "require-dev": {
     "phpdocumentor/phpdocumentor": "2.*",
-    "phpunit/phpunit": "^6.5"
+    "phpunit/phpunit": "^8"
   }
 }

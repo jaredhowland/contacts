@@ -118,27 +118,22 @@ class Vcard implements ContactsInterface
     /**
      * Print out properties and define elements to help with debugging
      *
-     * @param null
-     *
      * @return string
      */
     public function debug(): string
     {
         $properties      = print_r($this->properties);
         $definedElements = print_r($this->definedElements);
-        $message         = "<pre>**PROPERTIES**\n".$properties."\n\n**DEFINED ELEMENTS**\n".$definedElements;
 
-        return $message;
+        return "<pre>**PROPERTIES**\n".$properties."\n\n**DEFINED ELEMENTS**\n".$definedElements;
     }
 
     /**
      * Get defined properties array
      *
-     * @param null
-     *
      * @return array Array of defined properties
      */
-    public function getProperties()
+    public function getProperties(): array
     {
         return $this->properties;
     }
@@ -146,11 +141,9 @@ class Vcard implements ContactsInterface
     /**
      * Get defined elements array
      *
-     * @param null
-     *
      * @return array Array of defined elements
      */
-    public function getDefinedElements()
+    public function getDefinedElements(): array
     {
         return $this->definedElements;
     }
@@ -172,7 +165,7 @@ class Vcard implements ContactsInterface
      *
      * @throws ContactsException if an element that can only be defined once is defined more than once
      */
-    public function addFullName(string $name)
+    public function addFullName(string $name): self
     {
         $this->constructElement('FN', $name);
 
@@ -205,13 +198,15 @@ class Vcard implements ContactsInterface
         string $additionalNames = null,
         string $prefixes = null,
         string $suffixes = null
-    ) {
+    ): self {
         $additionalNames = str_replace(', ', ',', $additionalNames);
         $prefixes        = str_replace(', ', ',', $prefixes);
         $suffixes        = str_replace(', ', ',', $suffixes);
         // Set directly rather than going through $this->constructElement to avoid escaping valid commas in `$additionalNames`, `$prefixes`, and `$suffixes`
-        $this->setProperty('N',
-            vsprintf(Config::get('N'), [$lastName, $firstName, $additionalNames, $prefixes, $suffixes]));
+        $this->setProperty(
+            'N',
+            vsprintf(Config::get('N'), [$lastName, $firstName, $additionalNames, $prefixes, $suffixes])
+        );
 
         return $this;
     }
@@ -234,7 +229,7 @@ class Vcard implements ContactsInterface
      *
      * @throws ContactsException if an element that can only be defined once is defined more than once
      */
-    public function addNicknames(array $names)
+    public function addNicknames(array $names): self
     {
         $this->constructElement('NICKNAME', [$names]);
 
@@ -255,7 +250,7 @@ class Vcard implements ContactsInterface
      *
      * @throws ContactsException if an element that can only be defined once is defined more than once
      */
-    public function addPhoto(string $photo, bool $isUrl = true)
+    public function addPhoto(string $photo, bool $isUrl = true): self
     {
         $this->photoProperty('PHOTO', $photo, $isUrl);
 
@@ -280,18 +275,18 @@ class Vcard implements ContactsInterface
      *
      * @throws ContactsException if an element that can only be defined once is defined more than once
      */
-    public function addBirthday(int $year = null, int $month, int $day)
+    public function addBirthday(int $year = null, int $month, int $day): self
     {
         if ($year !== null) {
             $this->constructElement('BDAY', [$year, $month, $day]);
 
             return $this;
-        } else {
-            $this->definedElements['BDAY'] = true; // Define `BDAY` element
-            $this->constructElement('BDAY-NO-YEAR', [$month, $day]);
-
-            return $this;
         }
+
+        $this->definedElements['BDAY'] = true; // Define `BDAY` element
+        $this->constructElement('BDAY-NO-YEAR', [$month, $day]);
+
+        return $this;
     }
 
     /**
@@ -332,15 +327,15 @@ class Vcard implements ContactsInterface
         string $zip = null,
         string $country = null,
         array $types = ['intl', 'postal', 'parcel', 'work']
-    ) {
+    ): self {
         // Make sure all `$types`s are valid. If invalid `$types`(s), revert to standard default.
         if ($this->inArrayAll($types, $this->validAddressTypes)) {
             $this->constructElement('ADR', [$types, $poBox, $extended, $street, $city, $state, $zip, $country]);
 
             return $this;
-        } else {
-            throw new ContactsException("Invalid address type(s): '$types'");
         }
+
+        throw new ContactsException("Invalid address type(s): '$types'");
     }
 
     /**
@@ -366,7 +361,7 @@ class Vcard implements ContactsInterface
      *
      * @throws ContactsException if an element that can only be defined once is defined more than once
      */
-    public function addLabel(string $label, array $types = [])
+    public function addLabel(string $label, array $types = []): self
     {
         // Make sure all `$types`s are valid. If invalid `$types`(s), revert to standard default.
         $types = $this->inArrayAll($types, $this->validAddressTypes) ? $types : ['intl', 'postal', 'parcel', 'work'];
@@ -406,7 +401,7 @@ class Vcard implements ContactsInterface
      *
      * @throws ContactsException if an element that can only be defined once is defined more than once
      */
-    public function addTelephone(string $phone = null, array $types = [])
+    public function addTelephone(string $phone = null, array $types = []): self
     {
         // Make sure all `$types`s are valid. If invalid `$types`(s), revert to standard default.
         $types = $this->inArrayAll($types, $this->validTelephoneTypes) ? $types : ['voice'];
@@ -437,7 +432,7 @@ class Vcard implements ContactsInterface
      *
      * @throws ContactsException if an element that can only be defined once is defined more than once
      */
-    public function addEmail(string $email = null, array $types = null)
+    public function addEmail(string $email = null, array $types = null): self
     {
         $types = empty($types) ? ['internet'] : $types;
         $email = $this->sanitizeEmail($email);
@@ -459,7 +454,7 @@ class Vcard implements ContactsInterface
      *
      * @throws ContactsException if an element that can only be defined once is defined more than once
      */
-    public function addMailer(string $mailer)
+    public function addMailer(string $mailer): self
     {
         $this->constructElement('MAILER', $mailer);
 
@@ -484,13 +479,13 @@ class Vcard implements ContactsInterface
      *
      * @throws ContactsException if an element that can only be defined once is defined more than once
      */
-    public function addTimeZone(string $timeZone)
+    public function addTimeZone(string $timeZone): self
     {
         if ($this->sanitizeTimeZone($timeZone)) {
             $this->constructElement('TZ', $this->sanitizeTimeZone($timeZone));
-
-            return $this;
         }
+
+        return $this;
     }
 
     /**
@@ -511,13 +506,13 @@ class Vcard implements ContactsInterface
      *
      * @throws ContactsException if an element that can only be defined once is defined more than once
      */
-    public function addLatLong(float $lat, float $long)
+    public function addLatLong(float $lat, float $long): self
     {
         if ($this->sanitizeLatLong($lat, $long)) {
             $this->constructElement('GEO', $this->sanitizeLatLong($lat, $long));
-
-            return $this;
         }
+
+        return $this;
     }
 
     /**
@@ -533,7 +528,7 @@ class Vcard implements ContactsInterface
      *
      * @throws ContactsException if an element that can only be defined once is defined more than once
      */
-    public function addTitle(string $title)
+    public function addTitle(string $title): self
     {
         $this->constructElement('TITLE', $title);
 
@@ -553,7 +548,7 @@ class Vcard implements ContactsInterface
      *
      * @throws ContactsException if an element that can only be defined once is defined more than once
      */
-    public function addRole(string $role)
+    public function addRole(string $role): self
     {
         $this->constructElement('ROLE', $role);
 
@@ -574,7 +569,7 @@ class Vcard implements ContactsInterface
      *
      * @throws ContactsException if an element that can only be defined once is defined more than once
      */
-    public function addLogo(string $logo, bool $isUrl = true)
+    public function addLogo(string $logo, bool $isUrl = true): self
     {
         $this->photoProperty('LOGO', $logo, $isUrl);
 
@@ -592,7 +587,7 @@ class Vcard implements ContactsInterface
      *
      * @throws ContactsException if this unsupported method is called
      */
-    public function addAgent(string $agent = null)
+    public function addAgent(string $agent = null): void
     {
         throw new ContactsException('"AGENT" is not a currently supported element.');
     }
@@ -613,7 +608,7 @@ class Vcard implements ContactsInterface
      *
      * @throws ContactsException if an element that can only be defined once is defined more than once
      */
-    public function addOrganizations(array $organizations)
+    public function addOrganizations(array $organizations): self
     {
         $this->constructElement('ORG', [$organizations], ';');
 
@@ -633,7 +628,7 @@ class Vcard implements ContactsInterface
      *
      * @throws ContactsException if an element that can only be defined once is defined more than once
      */
-    public function addCategories(array $categories)
+    public function addCategories(array $categories): self
     {
         $this->constructElement('CATEGORIES', [$categories]);
 
@@ -653,7 +648,7 @@ class Vcard implements ContactsInterface
      *
      * @throws ContactsException if an element that can only be defined once is defined more than once
      */
-    public function addNote(string $note)
+    public function addNote(string $note): self
     {
         $this->constructElement('NOTE', $note);
 
@@ -673,7 +668,7 @@ class Vcard implements ContactsInterface
      *
      * @throws ContactsException if an element that can only be defined once is defined more than once
      */
-    public function addProductId(string $productId)
+    public function addProductId(string $productId): self
     {
         $this->constructElement('PRODID', $productId);
 
@@ -693,10 +688,12 @@ class Vcard implements ContactsInterface
      *
      * @throws ContactsException if an element that can only be defined once is defined more than once
      */
-    public function addRevision(string $dateTime = null)
+    public function addRevision(string $dateTime = null): self
     {
-        $dateTime = is_null($dateTime) ? date('Y-m-d\TH:i:s\Z') : date("Y-m-d\TH:i:s\Z",
-            /** @scrutinizer ignore-type */ strtotime($dateTime));
+        $dateTime = $dateTime === null ? (string)date('Y-m-d\TH:i:s\Z') : (string)date(
+            "Y-m-d\TH:i:s\Z",
+            strtotime($dateTime)
+        );
         // Set directly rather than going through $this->constructElement to avoid escaping valid timestamp characters
         $this->setProperty('REV', vsprintf(Config::get('REV'), [$dateTime]));
 
@@ -717,7 +714,7 @@ class Vcard implements ContactsInterface
      *
      * @throws ContactsException if an element that can only be defined once is defined more than once
      */
-    public function addSortString(string $sortString)
+    public function addSortString(string $sortString): self
     {
         $this->constructElement('SORT-STRING', $sortString);
 
@@ -735,7 +732,7 @@ class Vcard implements ContactsInterface
      *
      * @throws ContactsException if this unsupported method is called
      */
-    public function addSound(string $sound = null)
+    public function addSound(string $sound = null): void
     {
         throw new ContactsException('"SOUND" is not a currently supported element.');
     }
@@ -753,9 +750,9 @@ class Vcard implements ContactsInterface
      *
      * @throws ContactsException if an element that can only be defined once is defined more than once
      */
-    public function addUniqueIdentifier(string $uniqueIdentifier = null)
+    public function addUniqueIdentifier(string $uniqueIdentifier = null): self
     {
-        $uniqueIdentifier = is_null($uniqueIdentifier) ? uniqid('', true) : $uniqueIdentifier;
+        $uniqueIdentifier = $uniqueIdentifier ?? uniqid('', true);
         $this->constructElement('UID', $uniqueIdentifier);
 
         return $this;
@@ -774,14 +771,14 @@ class Vcard implements ContactsInterface
      *
      * @throws ContactsException if an element that can only be defined once is defined more than once
      */
-    public function addUrl(string $url)
+    public function addUrl(string $url): self
     {
         if ($this->sanitizeUrl($url) !== null) {
             // Set directly rather than going through $this->constructElement to avoid escaping valid URL characters
             $this->setProperty('URL', vsprintf(Config::get('URL'), [$this->sanitizeUrl($url)]));
-
-            return $this;
         }
+
+        return $this;
     }
 
     /**
@@ -801,15 +798,15 @@ class Vcard implements ContactsInterface
      *
      * @throws ContactsException if an element that can only be defined once is defined more than once
      */
-    public function addClassification(string $classification = 'PUBLIC')
+    public function addClassification(string $classification = 'PUBLIC'): self
     {
         if ($this->inArrayAll([$classification], $this->validClassifications)) {
             $this->constructElement('CLASS', $classification);
 
             return $this;
-        } else {
-            throw new ContactsException("Invalid classification: '$classification'");
         }
+
+        throw new ContactsException("Invalid classification: '$classification'");
     }
 
     /**
@@ -826,7 +823,7 @@ class Vcard implements ContactsInterface
      *
      * @throws ContactsException if an element that can only be defined once is defined more than once
      */
-    public function addExtendedType(string $label, string $value)
+    public function addExtendedType(string $label, string $value): self
     {
         $this->constructElement('X-', [$label, $value]);
 
@@ -844,7 +841,7 @@ class Vcard implements ContactsInterface
      *
      * @throws ContactsException if this unsupported method is called
      */
-    public function addKey(string $key = null)
+    public function addKey(string $key = null): void
     {
         throw new ContactsException('"KEY" is not a currently supported element.');
     }
@@ -858,7 +855,7 @@ class Vcard implements ContactsInterface
      *
      * @throws ContactsException if an element that can only be defined once is defined more than once
      */
-    public function addAnniversary(string $anniversary)
+    public function addAnniversary(string $anniversary): self
     {
         if (is_int(strtotime($anniversary))) {
             $anniversary = date('Y-m-d', strtotime($anniversary));
@@ -866,9 +863,9 @@ class Vcard implements ContactsInterface
             $this->extendedItemCount++;
 
             return $this;
-        } else {
-            throw new ContactsException("Invalid date for anniversary: '$anniversary'");
         }
+
+        throw new ContactsException("Invalid date for anniversary: '$anniversary'");
     }
 
     /**
@@ -880,7 +877,7 @@ class Vcard implements ContactsInterface
      *
      * @throws ContactsException if an element that can only be defined once is defined more than once
      */
-    public function addSupervisor(string $supervisor)
+    public function addSupervisor(string $supervisor): self
     {
         $this->constructElement('SUPERVISOR', [$supervisor, $this->extendedItemCount]);
         $this->extendedItemCount++;
@@ -897,7 +894,7 @@ class Vcard implements ContactsInterface
      *
      * @throws ContactsException if an element that can only be defined once is defined more than once
      */
-    public function addSpouse(string $spouse)
+    public function addSpouse(string $spouse): self
     {
         $this->constructElement('SPOUSE', [$spouse, $this->extendedItemCount]);
         $this->extendedItemCount++;
@@ -914,7 +911,7 @@ class Vcard implements ContactsInterface
      *
      * @throws ContactsException if an element that can only be defined once is defined more than once
      */
-    public function addChild(string $child)
+    public function addChild(string $child): self
     {
         $this->constructElement('CHILD', [$child, $this->extendedItemCount]);
         $this->extendedItemCount++;
@@ -932,9 +929,9 @@ class Vcard implements ContactsInterface
      *
      * @throws ContactsException if an element that can only be defined once is defined more than once
      */
-    public function buildVcard(bool $write = false, string $filename = null)
+    public function buildVcard(bool $write = false, string $filename = null): string
     {
-        $filename = empty($filename) ? date('Y.m.d.H.i.s') : $filename;
+        $filename = empty($filename) ? (string)date('Y.m.d.H.i.s') : $filename;
         if (!isset($this->definedElements['REV'])) {
             $this->addRevision();
         }
@@ -963,7 +960,7 @@ class Vcard implements ContactsInterface
      *
      * @return string Folded text
      */
-    protected function fold(string $text)
+    protected function fold(string $text): string
     {
         return (strlen($text) <= 75) ? $text : substr(chunk_split($text, 73, "\r\n "), 0, -3);
     }
@@ -979,7 +976,7 @@ class Vcard implements ContactsInterface
      *
      * @throws ContactsException if an element that can only be defined once is defined more than once
      */
-    private function photoProperty(string $element, string $photo, bool $isUrl = true)
+    private function photoProperty(string $element, string $photo, bool $isUrl = true): self
     {
         if ($isUrl) {
             $this->photoURL($element, $photo);
@@ -998,7 +995,7 @@ class Vcard implements ContactsInterface
      *
      * @throws ContactsException if an element that can only be defined once is defined more than once
      */
-    private function photoURL(string $element, string $photoUrl)
+    private function photoURL(string $element, string $photoUrl): void
     {
         // Set directly rather than going through $this->constructElement to avoid escaping valid URL characters
         if (!empty($this->sanitizeUrl($photoUrl))) {
@@ -1016,7 +1013,7 @@ class Vcard implements ContactsInterface
      *
      * @throws ContactsException if an element that can only be defined once is defined more than once
      */
-    private function photoBase64(string $element, string $photoString)
+    private function photoBase64(string $element, string $photoString): void
     {
         $img = base64_decode($photoString);
         if (!empty($img)) {
@@ -1035,15 +1032,16 @@ class Vcard implements ContactsInterface
      * @param string       $delimiter Delimiter to use for lists given via `$value` array.
      *                                Default: `,`.
      *
-     * @return void
-     *
      * @throws ContactsException if an element that can only be defined once is defined more than once
      */
-    private function constructElement(string $element, $value, string $delimiter = ',')
+    private function constructElement(string $element, $value, string $delimiter = ','): void
     {
-        $value = is_array($value) ? array_map([$this, 'cleanString'], $value,
-            [$delimiter]) : [$this->cleanString($value)];
-        if (!empty(Config::get($element)) && !empty($value)) {
+        $value = is_array($value) ? array_map(
+            [$this, 'cleanString'],
+            $value,
+            [$delimiter]
+        ) : [$this->cleanString($value)];
+        if (!empty($value) && !empty(Config::get($element))) {
             $this->setProperty($element, vsprintf(Config::get($element), $value));
         }
     }
@@ -1056,7 +1054,7 @@ class Vcard implements ContactsInterface
      *
      * @return string|null Returns cleaned string or `null`
      */
-    private function cleanString($string, $delimiter = ',')
+    private function cleanString($string, $delimiter = ','): ?string
     {
         // If it's an array, clean individual strings and return a delimited list of array values
         if (is_array($string)) {
@@ -1066,8 +1064,8 @@ class Vcard implements ContactsInterface
 
             return implode($delimiter, $string);
         }
-        $search  = array(',', ';', ':');
-        $replace = array('\,', '\;', '\:');
+        $search  = [',', ';', ':'];
+        $replace = ['\,', '\;', '\:'];
 
         return empty($string) ? null : str_replace($search, $replace, $string);
     }
@@ -1080,17 +1078,17 @@ class Vcard implements ContactsInterface
      *
      * @throws ContactsException if an element that can only be defined once is defined more than once
      */
-    private function setProperty(string $element, string $value)
+    private function setProperty(string $element, string $value): void
     {
-        if (!in_array($element, $this->multiplePropertiesAllowed) && isset($this->definedElements[$element])) {
+        if (isset($this->definedElements[$element]) && !in_array($element, $this->multiplePropertiesAllowed, true)) {
             throw new ContactsException('You can only set "'.$element.'" once.');
         }
         // Define that we set this element
         $this->definedElements[$element] = true;
         // Add property
-        $this->properties[] = array(
+        $this->properties[] = [
             'key' => $element,
             'value' => $value,
-        );
+        ];
     }
 }

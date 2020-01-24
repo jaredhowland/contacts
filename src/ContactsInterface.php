@@ -1,9 +1,9 @@
-<?php declare(strict_types=1);
+<?php
 /**
- * Create a vCard
+ * Interface to create contacts
  *
  * @author  Jared Howland <contacts@jaredhowland.com>
- * @version 2019-05-28
+ * @version 2020-01-24
  * @since   2016-10-05
  */
 

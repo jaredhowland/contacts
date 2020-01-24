@@ -37,7 +37,7 @@ trait Helpers
     /**
      * Setup Helper trait
      *
-     * @param string $dataDirectory   Directory to save vCard(s) to. Default: `/data/`
+     * @param string $dataDirectory   Directory to save vCard(s) to. Default: `Config::get('dataDirectory')` value
      * @param string $defaultAreaCode Default area code to use for phone numbers without an area code. Default: `801`
      * @param string $defaultTimeZone Default time zone to use when adding a revision date to a vCard. Default:
      *                                `America/Denver`
@@ -46,7 +46,7 @@ trait Helpers
         string $dataDirectory = null,
         string $defaultAreaCode = '801',
         string $defaultTimeZone = 'America/Denver'
-    ) {
+    ): void {
         $this->dataDirectory   = empty($dataDirectory) ? Config::get('dataDirectory') : $dataDirectory;
         $this->defaultAreaCode = $defaultAreaCode;
         $this->defaultTimeZone = $defaultTimeZone;
@@ -62,20 +62,22 @@ trait Helpers
      *
      * @throws ContactsException if invalid phone number is used
      */
-    protected function sanitizePhone(string $phone = null)
+    protected function sanitizePhone(string $phone = null): ?string
     {
-        $phone = preg_replace("/[^0-9]/", '', $phone);
-        if (strlen($phone) == 10) {
-            $phone = sprintf("(%s) %s-%s", substr($phone, 0, 3), substr($phone, 3, 3), substr($phone, 6));
+        $phone = preg_replace('/[\D]/', '', $phone);
+        if (strlen($phone) === 10) {
+            $phone = sprintf('(%s) %s-%s', substr($phone, 0, 3), substr($phone, 3, 3), substr($phone, 6));
 
             return $phone;
-        } elseif (strlen($phone) == 7) {
-            $phone = sprintf("(".$this->defaultAreaCode.") %s-%s", substr($phone, 0, 3), substr($phone, 3));
-
-            return $phone;
-        } else {
-            throw new ContactsException("Invalid phone: '$phone'");
         }
+
+        if (strlen($phone) === 7) {
+            $phone = sprintf('('.$this->defaultAreaCode.') %s-%s', substr($phone, 0, 3), substr($phone, 3));
+
+            return $phone;
+        }
+
+        throw new ContactsException("Invalid phone: '$phone'");
     }
 
     /**
@@ -92,14 +94,14 @@ trait Helpers
      *
      * @throws ContactsException if invalid latitude or longitude is used
      */
-    protected function sanitizeLatLong(float $lat, float $long)
+    protected function sanitizeLatLong(float $lat, float $long): array
     {
         $latLong = $this->formatGeo($lat, $long);
-        if (is_null($latLong['lat']) || is_null($latLong['long'])) {
+        if ($latLong['lat'] === null || $latLong['long'] === null) {
             throw new ContactsException("Invalid latitude or longitude. Latitude: '$lat' Longitude: '$long'");
-        } else {
-            return $latLong;
         }
+
+        return $latLong;
     }
 
     /**
@@ -116,13 +118,13 @@ trait Helpers
      *
      * @throws ContactsException if invalid latitude or longitude is used
      */
-    protected function formatGeo(float $lat, float $long)
+    protected function formatGeo(float $lat, float $long): array
     {
         if (is_numeric($lat) && is_numeric($long)) {
             return $this->cleanLatLong($lat, $long);
-        } else {
-            throw new ContactsException("Invalid latitude or longitude. Latitude: '$lat' Longitude: '$long'");
         }
+
+        throw new ContactsException("Invalid latitude or longitude. Latitude: '$lat' Longitude: '$long'");
     }
 
     /**
@@ -134,13 +136,13 @@ trait Helpers
      *
      * @throws ContactsException if invalid email is used
      */
-    protected function sanitizeEmail(string $email = null)
+    protected function sanitizeEmail(string $email = null): ?string
     {
         if (filter_var($email, FILTER_VALIDATE_EMAIL)) {
             return filter_var($email, FILTER_SANITIZE_EMAIL);
-        } else {
-            throw new ContactsException("Invalid email: '$email'");
         }
+
+        throw new ContactsException("Invalid email: '$email'");
     }
 
     /**
@@ -153,7 +155,7 @@ trait Helpers
      *
      * @throws ContactsException if invalid time zone UTC offset is used
      */
-    protected function sanitizeTimeZone(string $timeZone)
+    protected function sanitizeTimeZone(string $timeZone): array
     {
         $prefix   = $this->getPrefixes($timeZone);
         $timeZone = $prefix['negative'].$this->cleanTimeZone($timeZone);
@@ -163,9 +165,9 @@ trait Helpers
                 abs($this->getTimeZoneOffset($timeZone)['hourOffset']),
                 $this->getTimeZoneOffset($timeZone)['minuteOffset'],
             ];
-        } else {
-            throw new ContactsException("Invalid time zone: '$timeZone'. UTC offset only. Text values not valid.");
         }
+
+        throw new ContactsException("Invalid time zone: '$timeZone'. UTC offset only. Text values not valid.");
     }
 
     /**
@@ -177,14 +179,13 @@ trait Helpers
      *
      * @throws ContactsException if invalid URL is used
      */
-    protected function sanitizeUrl(string $url)
+    protected function sanitizeUrl(string $url): ?string
     {
-        ;
         if (filter_var($url, FILTER_VALIDATE_URL)) {
             return filter_var($url, FILTER_SANITIZE_URL);
-        } else {
-            throw new ContactsException("Invalid url: '$url'");
         }
+
+        throw new ContactsException("Invalid url: '$url'");
     }
 
     /**
@@ -197,7 +198,7 @@ trait Helpers
      *
      * @return bool TRUE if all appear. FALSE otherwise.
      */
-    protected function inArrayAll(array $needles = [], array $haystack)
+    protected function inArrayAll(array $needles, array $haystack): bool
     {
         return !array_diff($needles, $haystack);
     }
@@ -215,7 +216,7 @@ trait Helpers
      *
      * @throws ContactsException if file cannot be opened and/or written to
      */
-    protected function writeFile(string $fileName, string $data, bool $append = false)
+    protected function writeFile(string $fileName, string $data, bool $append = false): void
     {
         $rights   = $append ? 'a' : 'w';
         $fileName = $this->dataDirectory.$fileName;
@@ -235,7 +236,7 @@ trait Helpers
      *
      * @return string Contents of the passed URL
      */
-    protected function getData(string $url)
+    protected function getData(string $url): string
     {
         $this->client = new Client();
         $response     = $this->client->get($url);
@@ -255,7 +256,7 @@ trait Helpers
      *
      * @return array Array of formatted latitude and longitude
      */
-    private function cleanLatLong(float $lat, float $long)
+    private function cleanLatLong(float $lat, float $long): array
     {
         $lat  = $this->constrainLatLong($lat, 90, -90);
         $long = $this->constrainLatLong($long, 180, -180);
@@ -270,13 +271,11 @@ trait Helpers
      * @param int   $max    Max value for latitude or longitude
      * @param int   $min    Min value for latitude or longitude
      *
-     * @return mixed Latitude or longitude rounded to 6 decimal places. Default: `null`
+     * @return string|null Latitude or longitude rounded to 6 decimal places. Default if invalid: `null`
      */
-    private function constrainLatLong(float $string, int $max, int $min)
+    private function constrainLatLong(float $string, int $max, int $min): ?string
     {
-        $string = ($string == 0) ? 0 : $string;
-
-        return ($string >= $min && $string <= $max) ? sprintf("%0.6f", round($string, 6)) : null;
+        return ($string >= $min && $string <= $max) ? sprintf('%1.6f', round($string, 6)) : null;
     }
 
     /**
@@ -287,10 +286,10 @@ trait Helpers
      *
      * @return array Time zone prefixes
      */
-    private function getPrefixes(string $timeZone)
+    private function getPrefixes(string $timeZone): array
     {
-        $sign     = ($timeZone[0] === '-' && $timeZone[0] !== 0) ? '-' : '+';
-        $negative = ($timeZone[0] === '-') ? '-' : null;
+        $sign     = (strpos($timeZone, '-') === 0 && $timeZone[0] !== 0) ? '-' : '+';
+        $negative = strpos($timeZone, '-') === 0 ? '-' : null;
 
         return ['sign' => $sign, 'negative' => $negative];
     }
@@ -303,9 +302,9 @@ trait Helpers
      *
      * @return string Cleaned time zone string
      */
-    private function cleanTimeZone(string $timeZone)
+    private function cleanTimeZone(string $timeZone): string
     {
-        $timeZone = preg_replace("/[^0-9:]/", '', $timeZone);
+        $timeZone = preg_replace('/[^0-9:]/', '', $timeZone);
 
         return ltrim($timeZone, '0');
     }
@@ -318,12 +317,15 @@ trait Helpers
      *
      * @return array Time zone offsets for hour and minute
      */
-    private function getTimeZoneOffset(string $timeZone)
+    private function getTimeZoneOffset(string $timeZone): array
     {
         $offset       = explode(':', $timeZone);
-        $hourOffset   = filter_var($offset[0], FILTER_VALIDATE_INT,
-            ['options' => ['min_range' => -14, 'max_range' => 12]]);
-        $minuteOffset = (isset($offset[1])) ? $offset[1] : '00';
+        $hourOffset   = filter_var(
+            $offset[0],
+            FILTER_VALIDATE_INT,
+            ['options' => ['min_range' => -14, 'max_range' => 12]]
+        );
+        $minuteOffset = $offset[1] ?? '00';
 
         return ['hourOffset' => $hourOffset, 'minuteOffset' => $minuteOffset];
     }

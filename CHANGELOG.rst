@@ -4,7 +4,7 @@ The format is based on `Keep a Changelog <http://keepachangelog.com/en/1.0.0/>`_
 and this project adheres to `Semantic Versioning <http://semver.org/spec/v2.0.0.html>`_.
 
 ************
-[UNRELEASED]
+[v4.0.0]
 ************
 
 Added
@@ -17,6 +17,8 @@ Changed
 
 - Daisy-chaining methods allowed
 - Tests refactored
+- `Vcard.php` helpers moved to another class (`Helpers.php`)
+- `PSR-12` formatted code
 
 Deprecated
 ----------
@@ -26,7 +28,7 @@ Deprecated
 Removed
 -------
 
-- Nothing
+- `Contacts` subdirectory from `src`
 
 Fixed
 -----
@@ -36,7 +38,7 @@ Fixed
 Security
 --------
 
-- Nothing
+- `PHP 7.2` and above now required
 
 ************
 [Pre-v3.0.3]

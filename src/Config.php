@@ -1,9 +1,9 @@
-<?php
+<?php declare(strict_types=1);
 /**
  * App configuration
  *
  * @author  Jared Howland <contacts@jaredhowland.com>
- * @version 2019-05-28
+ * @version 2020-01-24
  * @since   2016-09-28
  */
 
@@ -23,16 +23,17 @@ class Config
 
     /**
      * Set error reporting based on if app is in development or production
-     *
-     * @param null
      */
-    public static function setErrorReporting()
+    public static function setErrorReporting(): void
     {
+        // Always report an error (but not always to end user)
+        ini_set('error_reporting', '1');
         if (self::get('development')) {
             ini_set('display_errors', '1');
-            ini_set('error_reporting', E_ALL ^ E_NOTICE);
         } else {
+            // Log all errors but do not display them to the end user
             ini_set('display_errors', '0');
+            ini_set('log_errors', '1');
         }
     }
 
@@ -43,7 +44,7 @@ class Config
      *
      * @return string Return setting value from `.ini` file
      */
-    public static function get(string $setting)
+    public static function get(string $setting): string
     {
         if (empty(self::$config) && is_array(parse_ini_file('Config.ini'))) {
             self::$config = parse_ini_file('Config.ini');
@@ -61,14 +62,16 @@ class Config
      *
      * @throws UnexpectedValueException when `$setting` does not exist
      */
-    private static function settingExists(string $setting)
+    private static function settingExists(string $setting): string
     {
         if (isset(self::$config[$setting])) {
             return self::$config[$setting];
-        } else {
-            throw new UnexpectedValueExceptionAlias("'$setting' is not a valid config setting. Please check your 'config.ini' file for valid config options.\n");
         }
+
+        throw new UnexpectedValueException(
+            "'$setting' is not a valid config setting. Please check your 'config.ini' file for valid config options.\n"
+        );
     }
 }
 
-config::setErrorReporting();
+Config::setErrorReporting();

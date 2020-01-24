@@ -17,7 +17,7 @@ class VcardTest extends TestCase
 {
     public $branch = 'dev';
 
-    public function testDebugReturnsString()
+    public function testDebugReturnsString(): void
     {
         $vcard = new Vcard();
 
@@ -27,7 +27,7 @@ class VcardTest extends TestCase
         $this->assertEquals($expectedResult, $result);
     }
 
-    public function testGetPropertiesReturnsAllProperties()
+    public function testGetPropertiesReturnsAllProperties(): void
     {
         $vcard = new Vcard();
         $vcard->addFullName('Jane Doe');
@@ -38,7 +38,7 @@ class VcardTest extends TestCase
         $this->assertEquals($expectedResult, $result);
     }
 
-    public function testGetDefinedElementsReturnsAllProperties()
+    public function testGetDefinedElementsReturnsAllProperties(): void
     {
         $vcard = new Vcard();
         $vcard->addFullName('Jane Doe');
@@ -49,7 +49,7 @@ class VcardTest extends TestCase
         $this->assertEquals($expectedResult, $result);
     }
 
-    public function testAddFullName()
+    public function testAddFullName(): void
     {
         $vcard = new Vcard();
         $vcard->addFullName('Jane Doe');
@@ -60,7 +60,7 @@ class VcardTest extends TestCase
         $this->assertEquals($expectedResult, $result);
     }
 
-    public function testAddName()
+    public function testAddName(): void
     {
         $vcard = new Vcard();
         $vcard->addName('Doe', 'Jane', 'Mary, Elizabeth', 'Mrs., Dr.', 'PhD, MD');
@@ -71,7 +71,7 @@ class VcardTest extends TestCase
         $this->assertEquals($expectedResult, $result);
     }
 
-    public function testAddNickname()
+    public function testAddNickname(): void
     {
         $vcard = new Vcard();
         $vcard->addNicknames(['Jan', 'Janet']);
@@ -82,7 +82,7 @@ class VcardTest extends TestCase
         $this->assertEquals($expectedResult, $result);
     }
 
-    public function testAddPhotoUrl()
+    public function testAddPhotoUrl(): void
     {
         $vcard = new Vcard();
         $vcard->addPhoto('https://raw.githubusercontent.com/jaredhowland/contacts/'.$this->branch.'/tests/files/photo.jpg');
@@ -93,7 +93,7 @@ class VcardTest extends TestCase
         $this->assertEquals($expectedResult, $result);
     }
 
-    public function testAddPhotoBinary()
+    public function testAddPhotoBinary(): void
     {
         $vcard = new Vcard();
         $vcard->addPhoto(file_get_contents('tests/files/photoBinary.txt'), false);
@@ -104,7 +104,7 @@ class VcardTest extends TestCase
         $this->assertEquals($expectedResult, $result);
     }
 
-    public function testAddBirthdayWithYear()
+    public function testAddBirthdayWithYear(): void
     {
         $vcard = new Vcard();
         $vcard->addBirthday(null, 10, 5);
@@ -115,7 +115,7 @@ class VcardTest extends TestCase
         $this->assertEquals($expectedResult, $result);
     }
 
-    public function testAddBirthdayWithoutYear()
+    public function testAddBirthdayWithoutYear(): void
     {
         $vcard = new Vcard();
         $vcard->addBirthday(1980, 10, 5);
@@ -126,7 +126,7 @@ class VcardTest extends TestCase
         $this->assertEquals($expectedResult, $result);
     }
 
-    public function testAddAddress()
+    public function testAddAddress(): void
     {
         $vcard = new Vcard();
         $vcard->addAddress('P.O. Box 1105', 'Big Corporation', '1540 Main St.', 'Provo', 'UT', '84602', 'USA',
@@ -138,7 +138,7 @@ class VcardTest extends TestCase
         $this->assertEquals($expectedResult, $result);
     }
 
-    public function testAddLabel()
+    public function testAddLabel(): void
     {
         $vcard = new Vcard();
         $vcard->addLabel('Big Corporation\n1105 Main St.\nProvo, UT 84602\nU.S.A.', ['home', 'postal', 'parcel']);
@@ -149,7 +149,7 @@ class VcardTest extends TestCase
         $this->assertEquals($expectedResult, $result);
     }
 
-    public function testAddTelephoneWithAreaCode()
+    public function testAddTelephoneWithAreaCode(): void
     {
         $vcard = new Vcard();
         $vcard->addTelephone('709.567-9087', ['cell', 'iphone', 'pref']);
@@ -160,7 +160,7 @@ class VcardTest extends TestCase
         $this->assertEquals($expectedResult, $result);
     }
 
-    public function testAddTelephoneWithoutAreaCode()
+    public function testAddTelephoneWithoutAreaCode(): void
     {
         $vcard = new Vcard();
         $vcard->addTelephone('567-9087', ['cell', 'pref']);
@@ -171,9 +171,9 @@ class VcardTest extends TestCase
         $this->assertEquals($expectedResult, $result);
     }
 
-    public function testAddTelephoneInvalid()
+    public function testAddTelephoneInvalid(): void
     {
-        $this->expectException('Contacts\ContactsException');
+        $this->expectException(ContactsException::class);
 
         $vcard = new Vcard();
         $vcard->addTelephone('709.567-90871', ['cell', 'iphone', 'pref']);
@@ -184,7 +184,7 @@ class VcardTest extends TestCase
         $this->assertEquals($expectedResult, $result);
     }
 
-    public function testAddEmailValid()
+    public function testAddEmailValid(): void
     {
         $vcard = new Vcard();
         $vcard->addEmail('test@test.com', ['internet', 'pref']);
@@ -195,9 +195,9 @@ class VcardTest extends TestCase
         $this->assertEquals($expectedResult, $result);
     }
 
-    public function testAddEmailInvalid()
+    public function testAddEmailInvalid(): void
     {
-        $this->expectException('Contacts\ContactsException');
+        $this->expectException(ContactsException::class);
 
         $vcard = new Vcard();
         $vcard->addEmail('test.com', ['internet', 'pref']);
@@ -208,7 +208,7 @@ class VcardTest extends TestCase
         $this->assertEquals($expectedResult, $result);
     }
 
-    public function testAddMailer()
+    public function testAddMailer(): void
     {
         $vcard = new Vcard();
         $vcard->addMailer('Outlook');
@@ -227,7 +227,7 @@ class VcardTest extends TestCase
      *
      * @throws ContactsException
      */
-    public function testAddTimeZoneValid($originalTimeZone, $expectedResult)
+    public function testAddTimeZoneValid($originalTimeZone, $expectedResult): void
     {
         $vcard = new Vcard();
         $vcard->addTimeZone($originalTimeZone);
@@ -237,7 +237,7 @@ class VcardTest extends TestCase
         $this->assertEquals($expectedResult, $result);
     }
 
-    public function providerTestAddTimeZoneValid()
+    public function providerTestAddTimeZoneValid(): array
     {
         return [
             ['-7', 'TZ:-07:00'],
@@ -258,9 +258,9 @@ class VcardTest extends TestCase
      *
      * @throws ContactsException
      */
-    public function testAddTimeZoneInvalid($originalTimeZone, $expectedResult)
+    public function testAddTimeZoneInvalid($originalTimeZone, $expectedResult): void
     {
-        $this->expectException('Contacts\ContactsException');
+        $this->expectException(ContactsException::class);
 
         $vcard = new Vcard();
         $vcard->addTimeZone($originalTimeZone);
@@ -270,7 +270,7 @@ class VcardTest extends TestCase
         $this->assertEquals($expectedResult, $result);
     }
 
-    public function providerTestAddTimeZoneInvalid()
+    public function providerTestAddTimeZoneInvalid(): array
     {
         return [
             ['', null],
@@ -282,14 +282,14 @@ class VcardTest extends TestCase
     }
 
     /**
-     * @param string $originalLatLong Latitude & longitude coordinates as passed to `addLatLong` method
-     * @param string $expectedResult  Expected value
-     *
-     * @dataProvider providerTestAddLatLongValid
+     * @param float  $originalLat    Latitude coordinates as passed to `addLatLong` method
+     * @param float  $originalLong   Longitude coordinates as passed to `addLatLong` method
+     * @param string $expectedResult Expected value
      *
      * @throws ContactsException
+     * @dataProvider providerTestAddLatLongValid
      */
-    public function testAddLatLongValid($originalLat, $originalLong, $expectedResult)
+    public function testAddLatLongValid(float $originalLat, float $originalLong, $expectedResult): void
     {
         $vcard = new Vcard();
         $vcard->addLatLong($originalLat, $originalLong);
@@ -299,7 +299,7 @@ class VcardTest extends TestCase
         $this->assertEquals($expectedResult, $result);
     }
 
-    public function providerTestAddLatLongValid()
+    public function providerTestAddLatLongValid(): array
     {
         return [
             [0, 0, 'GEO:0.000000;0.000000'],
@@ -310,16 +310,17 @@ class VcardTest extends TestCase
     }
 
     /**
-     * @param string $originalLatLong Latitude & longitude coordinates as passed to `addLatLong` method
-     * @param string $expectedResult  Expected value
+     * @param float  $originalLat    Latitude coordinates as passed to `addLatLong` method
+     * @param float  $originalLong   Longitude coordinates as passed to `addLatLong` method
+     * @param string $expectedResult Expected value
      *
      * @dataProvider providerTestAddLatLongInvalid
      *
      * @throws ContactsException
      */
-    public function testAddLatLongInvalid($originalLat, $originalLong, $expectedResult)
+    public function testAddLatLongInvalid($originalLat, $originalLong, $expectedResult): void
     {
-        $this->expectException('Contacts\ContactsException');
+        $this->expectException(ContactsException::class);
 
         $vcard = new Vcard();
         $vcard->addLatLong($originalLat, $originalLong);
@@ -329,7 +330,7 @@ class VcardTest extends TestCase
         $this->assertEquals($expectedResult, $result);
     }
 
-    public function providerTestAddLatLongInvalid()
+    public function providerTestAddLatLongInvalid(): array
     {
         return [
             [-90.123456, 180.654321, null],
@@ -338,7 +339,7 @@ class VcardTest extends TestCase
         ];
     }
 
-    public function testAddTitle()
+    public function testAddTitle(): void
     {
         $vcard = new Vcard();
         $vcard->addTitle('CEO');
@@ -349,7 +350,7 @@ class VcardTest extends TestCase
         $this->assertEquals($expectedResult, $result);
     }
 
-    public function testAddRole()
+    public function testAddRole(): void
     {
         $vcard = new Vcard();
         $vcard->addRole('CEO');
@@ -360,7 +361,7 @@ class VcardTest extends TestCase
         $this->assertEquals($expectedResult, $result);
     }
 
-    public function testAddLogoUrl()
+    public function testAddLogoUrl(): void
     {
         $vcard = new Vcard();
         $vcard->addLogo('https://raw.githubusercontent.com/jaredhowland/contacts/'.$this->branch.'/tests/files/photo.jpg');
@@ -371,7 +372,7 @@ class VcardTest extends TestCase
         $this->assertEquals($expectedResult, $result);
     }
 
-    public function testAddLogoBinary()
+    public function testAddLogoBinary(): void
     {
         $vcard = new Vcard();
         $vcard->addLogo(file_get_contents('tests/files/photoBinary.txt'), false);
@@ -382,9 +383,9 @@ class VcardTest extends TestCase
         $this->assertEquals($expectedResult, $result);
     }
 
-    public function testAddAgent()
+    public function testAddAgent(): void
     {
-        $this->expectException('Contacts\ContactsException');
+        $this->expectException(ContactsException::class);
 
         $vcard = new Vcard();
         $vcard->addAgent('Test');
@@ -395,7 +396,7 @@ class VcardTest extends TestCase
         $this->assertEquals($expectedResult, $result);
     }
 
-    public function testAddOrganizations()
+    public function testAddOrganizations(): void
     {
         $vcard = new Vcard();
         $vcard->addOrganizations(['Big Organization 1', 'Big Organization 2']);
@@ -406,7 +407,7 @@ class VcardTest extends TestCase
         $this->assertEquals($expectedResult, $result);
     }
 
-    public function testAddCategories()
+    public function testAddCategories(): void
     {
         $vcard = new Vcard();
         $vcard->addCategories(['Home', 'Work']);
@@ -417,7 +418,7 @@ class VcardTest extends TestCase
         $this->assertEquals($expectedResult, $result);
     }
 
-    public function testAddNote()
+    public function testAddNote(): void
     {
         $vcard = new Vcard();
         $vcard->addNote('What is this about?');
@@ -428,7 +429,7 @@ class VcardTest extends TestCase
         $this->assertEquals($expectedResult, $result);
     }
 
-    public function testAddProductId()
+    public function testAddProductId(): void
     {
         $vcard = new Vcard();
         $vcard->addProductId('My vCard Application');
@@ -439,7 +440,7 @@ class VcardTest extends TestCase
         $this->assertEquals($expectedResult, $result);
     }
 
-    public function testAddRevision()
+    public function testAddRevision(): void
     {
         $vcard = new Vcard();
         $vcard->addRevision('2017-12-13');
@@ -450,7 +451,7 @@ class VcardTest extends TestCase
         $this->assertEquals($expectedResult, $result);
     }
 
-    public function testAddSortString()
+    public function testAddSortString(): void
     {
         $vcard = new Vcard();
         $vcard->addSortString('Doe');
@@ -461,9 +462,9 @@ class VcardTest extends TestCase
         $this->assertEquals($expectedResult, $result);
     }
 
-    public function testAddSound()
+    public function testAddSound(): void
     {
-        $this->expectException('Contacts\ContactsException');
+        $this->expectException(ContactsException::class);
 
         $vcard = new Vcard();
         $vcard->addSound('Test');
@@ -474,7 +475,7 @@ class VcardTest extends TestCase
         $this->assertEquals($expectedResult, $result);
     }
 
-    public function testAddUniqueIdentifier()
+    public function testAddUniqueIdentifier(): void
     {
         $vcard = new Vcard();
         $vcard->addUniqueIdentifier('ID-1234567');
@@ -485,20 +486,20 @@ class VcardTest extends TestCase
         $this->assertEquals($expectedResult, $result);
     }
 
-    public function testAddUrlValid()
+    public function testAddUrlValid(): void
     {
         $vcard = new Vcard();
-        $vcard->addUrl('http://jaredhowland.com');
+        $vcard->addUrl('https://www.jaredhowland.com');
 
-        $expectedResult = 'URL:http://jaredhowland.com';
+        $expectedResult = 'URL:https://www.jaredhowland.com';
         $result         = $vcard->getProperties()[0]['value'];
 
         $this->assertEquals($expectedResult, $result);
     }
 
-    public function testAddUrlInvalid()
+    public function testAddUrlInvalid(): void
     {
-        $this->expectException('Contacts\ContactsException');
+        $this->expectException(ContactsException::class);
 
         $vcard = new Vcard();
         $vcard->addUrl('jaredhowland');
@@ -509,7 +510,7 @@ class VcardTest extends TestCase
         $this->assertEquals($expectedResult, $result);
     }
 
-    public function testAddClassificationValid()
+    public function testAddClassificationValid(): void
     {
         $vcard = new Vcard();
         $vcard->addClassification('PRIVATE');
@@ -520,9 +521,9 @@ class VcardTest extends TestCase
         $this->assertEquals($expectedResult, $result);
     }
 
-    public function testAddClassificationInvalid()
+    public function testAddClassificationInvalid(): void
     {
-        $this->expectException('Contacts\ContactsException');
+        $this->expectException(ContactsException::class);
 
         $vcard = new Vcard();
         $vcard->addClassification('jaredhowland');
@@ -533,9 +534,9 @@ class VcardTest extends TestCase
         $this->assertEquals($expectedResult, $result);
     }
 
-    public function testAddKey()
+    public function testAddKey(): void
     {
-        $this->expectException('Contacts\ContactsException');
+        $this->expectException(ContactsException::class);
 
         $vcard = new Vcard();
         $vcard->addKey('Test');
@@ -546,7 +547,7 @@ class VcardTest extends TestCase
         $this->assertEquals($expectedResult, $result);
     }
 
-    public function testAddExtendedType()
+    public function testAddExtendedType(): void
     {
         $vcard = new Vcard();
         $vcard->addExtendedType('TWITTER', '@jared_howland');
@@ -557,7 +558,7 @@ class VcardTest extends TestCase
         $this->assertEquals($expectedResult, $result);
     }
 
-    public function testAddAnniversary()
+    public function testAddAnniversary(): void
     {
         $vcard = new Vcard();
         $vcard->addAnniversary('2017-12-13');
@@ -568,7 +569,7 @@ class VcardTest extends TestCase
         $this->assertEquals($expectedResult, $result);
     }
 
-    public function testAddSupervisor()
+    public function testAddSupervisor(): void
     {
         $vcard = new Vcard();
         $vcard->addSupervisor('Jennifer');
@@ -579,7 +580,7 @@ class VcardTest extends TestCase
         $this->assertEquals($expectedResult, $result);
     }
 
-    public function testAddSpouse()
+    public function testAddSpouse(): void
     {
         $vcard = new Vcard();
         $vcard->addSpouse('John');
@@ -590,7 +591,7 @@ class VcardTest extends TestCase
         $this->assertEquals($expectedResult, $result);
     }
 
-    public function testAddChild()
+    public function testAddChild(): void
     {
         $vcard = new Vcard();
         $vcard->addChild('Emily');
@@ -601,7 +602,7 @@ class VcardTest extends TestCase
         $this->assertEquals($expectedResult, $result);
     }
 
-    public function testBuildVcard()
+    public function testBuildVcard(): void
     {
         $vcard = new Vcard('./tests/files/');
 
