@@ -1,8 +1,10 @@
 <?php
 
+use Contacts\Vcard;
+
 require_once '../vendor/autoload.php';
 
-$directory = new \Contacts\Vcard('./');
+$directory = new Vcard('./');
 $directory->addFullName('Jane Doe');
 $directory->addName('Doe', 'Jane');
 $directory->addNicknames(['Janie', 'Jan']);

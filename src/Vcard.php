@@ -13,7 +13,7 @@
  * Inspired by https://github.com/jeroendesloovere/vcard
  *
  * @author  Jared Howland <contacts@jaredhowland.com>
- * @version 2019-05-28
+ * @version 2020-01-24
  * @since   2016-10-05
  *
  */
@@ -266,16 +266,16 @@ class Vcard implements ContactsInterface
      *
      * @link https://tools.ietf.org/html/rfc2426#section-3.1.5 RFC 2426 Section 3.1.5 (p. 10)
      *
-     * @param int $year  Year of birth. If no year given, use iOS custom date field to indicate birth month and day
-     *                   only. Default: `null`
      * @param int $month Month of birth.
      * @param int $day   Day of birth.
+     * @param int $year  Year of birth. If no year given, use iOS custom date field to indicate birth month and day
+     *                   only. Default: `null`
      *
      * @return $this
      *
      * @throws ContactsException if an element that can only be defined once is defined more than once
      */
-    public function addBirthday(int $year = null, int $month, int $day): self
+    public function addBirthday(int $month, int $day, int $year = null): self
     {
         if ($year !== null) {
             $this->constructElement('BDAY', [$year, $month, $day]);

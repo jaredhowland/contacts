@@ -4,7 +4,7 @@ The format is based on `Keep a Changelog <http://keepachangelog.com/en/1.0.0/>`_
 and this project adheres to `Semantic Versioning <http://semver.org/spec/v2.0.0.html>`_.
 
 ************
-[v4.0.1]
+[v4.1.0]
 ************
 
 Added
@@ -16,6 +16,7 @@ Changed
 -------
 
 - Reduced code complexity
+- Date files were edited
 
 Deprecated
 ----------
@@ -30,7 +31,7 @@ Removed
 Fixed
 -----
 
-- Nothing
+- `addBirthday` method so optional `year` parameter comes after required methods parameters `month` and `day`
 
 Security
 --------

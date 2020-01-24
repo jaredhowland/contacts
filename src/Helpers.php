@@ -3,7 +3,7 @@
  * Share Contacts methods between classes
  *
  * @author  Jared Howland <contacts@jaredhowland.com>
- * @version 2019-05-28
+ * @version 2020-01-24
  * @since   2016-10-05
  *
  */
@@ -224,16 +224,16 @@ trait Helpers
     /**
      * Clean latitude and longitude
      *
-     * @param float $lat  Geographic Positioning System latitude (decimal) (must be a number between -90 and 90)
+     * @param mixed $lat  Geographic Positioning System latitude (decimal) (must be a number between -90 and 90)
      *
      * **FORMULA**: decimal = degrees + minutes/60 + seconds/3600
-     * @param float $long Geographic Positioning System longitude (decimal) (must be a number between -180 and 180)
+     * @param mixed $long Geographic Positioning System longitude (decimal) (must be a number between -180 and 180)
      *
      * **FORMULA**: decimal = degrees + minutes/60 + seconds/3600
      *
      * @return array Array of formatted latitude and longitude
      */
-    private function cleanLatLong(float $lat, float $long): array
+    private function cleanLatLong($lat, float $long): array
     {
         $lat  = $this->constrainLatLong($lat, 90, -90);
         $long = $this->constrainLatLong($long, 180, -180);
@@ -244,15 +244,15 @@ trait Helpers
     /**
      * Constrain latitude and longitude
      *
-     * @param float $string Latitude or longitude value
+     * @param float $float Latitude or longitude value
      * @param int   $max    Max value for latitude or longitude
      * @param int   $min    Min value for latitude or longitude
      *
      * @return string|null Latitude or longitude rounded to 6 decimal places. Default if invalid: `null`
      */
-    private function constrainLatLong(float $string, int $max, int $min): ?string
+    private function constrainLatLong(float $float, int $max, int $min): ?string
     {
-        return ($string >= $min && $string <= $max) ? sprintf('%1.6f', round($string, 6)) : null;
+        return ($float >= $min && $float <= $max) ? sprintf('%1.6f', round($float, 6)) : null;
     }
 
     /**
