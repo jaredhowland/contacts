@@ -996,7 +996,7 @@ class Vcard implements ContactsInterface
         // Set directly rather than going through $this->constructElement to avoid escaping valid URL characters
         if ($this->sanitizeUrl($photoUrl)) {
             $mimetype = strtoupper(str_replace('image/', '', getimagesize($photoUrl)['mime']));
-            $photo    = $this->getData($this->sanitizeUrl($photoUrl));
+            $photo    = $this->getData($photoUrl);
             $this->setProperty($element, vsprintf(Config::get('PHOTO-BINARY'), [$mimetype, base64_encode($photo)]));
         }
     }
