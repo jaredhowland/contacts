@@ -32,6 +32,8 @@ Fixed
 -----
 
 - `addBirthday` method so optional `year` parameter comes after required methods parameters `month` and `day`
+- `testAddBirthdayWithYear` so test passes again
+- `testAddBirthdayWithoutYear` so test passes again
 
 Security
 --------

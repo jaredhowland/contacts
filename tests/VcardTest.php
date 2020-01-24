@@ -109,7 +109,7 @@ class VcardTest extends TestCase
     public function testAddBirthdayWithYear(): void
     {
         $vcard = new Vcard();
-        $vcard->addBirthday(null, 10, 5);
+        $vcard->addBirthday(10, 5, null);
 
         $expectedResult = 'BDAY;X-APPLE-OMIT-YEAR=1604:1604-10-05';
         $result         = $vcard->getProperties()[0]['value'];
@@ -120,7 +120,7 @@ class VcardTest extends TestCase
     public function testAddBirthdayWithoutYear(): void
     {
         $vcard = new Vcard();
-        $vcard->addBirthday(1980, 10, 5);
+        $vcard->addBirthday(10, 5, 1980);
 
         $expectedResult = 'BDAY:1980-10-05';
         $result         = $vcard->getProperties()[0]['value'];
