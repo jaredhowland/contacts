@@ -927,10 +927,47 @@ class Vcard implements ContactsInterface
      */
     public function buildVcard(bool $write = false, string $filename = null): string
     {
-        $filename = empty($filename) ? (string)date('Y.m.d.H.i.s') : $filename;
+        $this->setRevisionDate();
+        $filename = $this->setFilename($filename);
+        $string   = $this->setVcardString();
+        if ($write) {
+            $this->writeFile($filename.'.vcf', $string, true);
+        }
+
+        return $string;
+    }
+
+    /**
+     * Set filename
+     *
+     * @param string|null $filename Name of file. Default: current date and time
+     *
+     * @return string Name of file
+     */
+    private function setFilename(string $filename = null): string
+    {
+        return $filename ?? (string)date('Y.m.d.H.i.s');
+    }
+
+    /**
+     * Set revision date
+     *
+     * @throws ContactsException if incorrectly set
+     */
+    private function setRevisionDate(): void
+    {
         if (!isset($this->definedElements['REV'])) {
             $this->addRevision();
         }
+    }
+
+    /**
+     * Set vCard string
+     *
+     * @return string vCard string
+     */
+    private function setVcardString(): string
+    {
         $string = "BEGIN:VCARD\r\n";
         $string .= "VERSION:3.0\r\n";
         foreach ($this->properties as $property) {
@@ -938,9 +975,6 @@ class Vcard implements ContactsInterface
             $string .= $this->fold($value."\r\n");
         }
         $string .= "END:VCARD\r\n\r\n";
-        if ($write) {
-            $this->writeFile($filename.'.vcf', $string, true);
-        }
 
         return $string;
     }
@@ -956,7 +990,7 @@ class Vcard implements ContactsInterface
      *
      * @return string Folded text
      */
-    protected function fold(string $text): string
+    private function fold(string $text): string
     {
         return (strlen($text) <= 75) ? $text : substr(chunk_split($text, 73, "\r\n "), 0, -3);
     }
