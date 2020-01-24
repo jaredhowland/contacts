@@ -190,7 +190,7 @@ Inspired by https://github.com/jeroendesloovere/vcard
 .. |Scrutinizer| image:: https://img.shields.io/scrutinizer/g/jaredhowland/contacts.svg?style=flat-square
 .. _Scrutinizer: https://scrutinizer-ci.com/g/jaredhowland/contacts/
 
-.. |StyleCI| image:: https://styleci.io/repos/71304265/shield?branch=dev
+.. |StyleCI| image:: https://styleci.io/repos/71304265/shield?branch=master
 .. _StyleCI: https://styleci.io/repos/71304265
 
 .. |Packagist| image:: https://img.shields.io/packagist/v/jaredhowland/contacts.svg?style=flat-square
