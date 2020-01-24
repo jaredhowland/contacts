@@ -15,7 +15,7 @@ use PHPUnit\Framework\TestCase;
 
 class VcardTest extends TestCase
 {
-    public $branch = 'dev';
+    public $branch = 'master';
 
     public function testDebugReturnsString(): void
     {
