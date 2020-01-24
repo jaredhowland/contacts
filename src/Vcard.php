@@ -434,7 +434,7 @@ class Vcard implements ContactsInterface
      */
     public function addEmail(string $email = null, array $types = null): self
     {
-        $types = empty($types) ? ['internet'] : $types;
+        $types = $types ?? ['internet'];
         $email = $this->sanitizeEmail($email);
         $this->constructElement('EMAIL', [$types, $email]);
 
@@ -1008,11 +1008,7 @@ class Vcard implements ContactsInterface
      */
     private function photoProperty(string $element, string $photo, bool $isUrl = true): self
     {
-        if ($isUrl) {
-            $this->photoUrl($element, $photo);
-        } else {
-            $this->photoBase64($element, $photo);
-        }
+        $isUrl ? $this->photoUrl($element, $photo) : $this->photoBase64($element, $photo);
 
         return $this;
     }
