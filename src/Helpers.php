@@ -152,7 +152,7 @@ trait Helpers
      *
      * @param string $url URL
      *
-     * @return string|null Sanitized URL or `null`
+     * @return string|bool Sanitized URL or `false` if not a valid URL
      *
      * @throws ContactsException if invalid URL is used
      */

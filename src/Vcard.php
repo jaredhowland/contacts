@@ -975,7 +975,7 @@ class Vcard implements ContactsInterface
     private function photoProperty(string $element, string $photo, bool $isUrl = true): self
     {
         if ($isUrl) {
-            $this->photoURL($element, $photo);
+            $this->photoUrl($element, $photo);
         } else {
             $this->photoBase64($element, $photo);
         }
@@ -991,10 +991,10 @@ class Vcard implements ContactsInterface
      *
      * @throws ContactsException if an element that can only be defined once is defined more than once
      */
-    private function photoURL(string $element, string $photoUrl): void
+    private function photoUrl(string $element, string $photoUrl): void
     {
         // Set directly rather than going through $this->constructElement to avoid escaping valid URL characters
-        if (!empty($this->sanitizeUrl($photoUrl))) {
+        if ($this->sanitizeUrl($photoUrl)) {
             $mimetype = strtoupper(str_replace('image/', '', getimagesize($photoUrl)['mime']));
             $photo    = $this->getData($this->sanitizeUrl($photoUrl));
             $this->setProperty($element, vsprintf(Config::get('PHOTO-BINARY'), [$mimetype, base64_encode($photo)]));
