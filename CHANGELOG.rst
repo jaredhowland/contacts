@@ -4,6 +4,40 @@ The format is based on `Keep a Changelog <http://keepachangelog.com/en/1.0.0/>`_
 and this project adheres to `Semantic Versioning <http://semver.org/spec/v2.0.0.html>`_.
 
 ************
+[v4.0.1]
+************
+
+Added
+-----
+
+- Nothing
+
+Changed
+-------
+
+- Reduced code complexity
+
+Deprecated
+----------
+
+- Nothing
+
+Removed
+-------
+
+- Nothing
+
+Fixed
+-----
+
+- Nothing
+
+Security
+--------
+
+- Nothing
+
+************
 [v4.0.0]
 ************
 

@@ -857,15 +857,11 @@ class Vcard implements ContactsInterface
      */
     public function addAnniversary(string $anniversary): self
     {
-        if (is_int(strtotime($anniversary))) {
-            $anniversary = date('Y-m-d', strtotime($anniversary));
-            $this->constructElement('ANNIVERSARY', [$anniversary, $this->extendedItemCount]);
-            $this->extendedItemCount++;
+        $anniversary = date('Y-m-d', strtotime($anniversary));
+        $this->constructElement('ANNIVERSARY', [$anniversary, $this->extendedItemCount]);
+        $this->extendedItemCount++;
 
-            return $this;
-        }
-
-        throw new ContactsException("Invalid date for anniversary: '$anniversary'");
+        return $this;
     }
 
     /**

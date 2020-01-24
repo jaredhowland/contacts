@@ -96,35 +96,12 @@ trait Helpers
      */
     protected function sanitizeLatLong(float $lat, float $long): array
     {
-        $latLong = $this->formatGeo($lat, $long);
+        $latLong = $this->cleanLatLong($lat, $long);
         if ($latLong['lat'] === null || $latLong['long'] === null) {
             throw new ContactsException("Invalid latitude or longitude. Latitude: '$lat' Longitude: '$long'");
         }
 
         return $latLong;
-    }
-
-    /**
-     * Format latitude and longitude
-     *
-     * @param float $lat  Geographic Positioning System latitude (decimal) (must be a number between -90 and 90)
-     *
-     * **FORMULA**: decimal = degrees + minutes/60 + seconds/3600
-     * @param float $long Geographic Positioning System longitude (decimal) (must be a number between -180 and 180)
-     *
-     * **FORMULA**: decimal = degrees + minutes/60 + seconds/3600
-     *
-     * @return array Array of formatted latitude and longitude
-     *
-     * @throws ContactsException if invalid latitude or longitude is used
-     */
-    protected function formatGeo(float $lat, float $long): array
-    {
-        if (is_numeric($lat) && is_numeric($long)) {
-            return $this->cleanLatLong($lat, $long);
-        }
-
-        throw new ContactsException("Invalid latitude or longitude. Latitude: '$lat' Longitude: '$long'");
     }
 
     /**
