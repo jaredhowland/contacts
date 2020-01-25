@@ -49,7 +49,7 @@ This is an extensive example. Most of the time, you will only need a tiny fracti
           $vcard->addName('Doe', 'Jane');
           $vcard->addNicknames(['Janie', 'Jan']);
           $vcard->addPhoto('https://raw.githubusercontent.com/jaredhowland/contacts/dev|/tests/files/photo.jpg');
-          $vcard->addBirthday(null, 2, 10);
+          $vcard->addBirthday(2, 10);
           $vcard->addAddress(null, null, '123 Main', 'Provo', 'UT', '84602', 'United States', ['dom', 'postal', 'parcel', 'work']);
           $vcard->addAddress(null, null, '123 Main', 'Provo', 'UT', '84602', 'United States', ['dom', 'postal', 'parcel', 'home']);
           $vcard->addLabel('Jane Doe\n123 Main St\nProvo, UT 84602', ['dom', 'parcel']);
@@ -93,7 +93,7 @@ Or you can chain methods together to build the vCard:
                 ->addName('Doe', 'Jane')
                 ->addNicknames(['Janie', 'Jan'])
                 ->addPhoto('https://raw.githubusercontent.com/jaredhowland/contacts/dev/tests/files/photo.jpg')
-                ->addBirthday(null, 2, 10)
+                ->addBirthday(2, 10)
                 ->addAddress(null, null, '123 Main', 'Provo', 'UT', '84602', 'United States', ['dom', 'postal', 'parcel', 'work'])
                 ->addAddress(null, null, '123 Main', 'Provo', 'UT', '84602', 'United States', ['dom', 'postal', 'parcel', 'home'])
                 ->addLabel('Jane Doe\n123 Main St\nProvo, UT 84602', ['dom', 'parcel'])

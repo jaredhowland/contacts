@@ -9,7 +9,7 @@ $directory->addFullName('Jane Doe');
 $directory->addName('Doe', 'Jane');
 $directory->addNicknames(['Janie', 'Jan']);
 $directory->addPhoto('https://raw.githubusercontent.com/jaredhowland/contacts/master/Test/files/photo.jpg');
-$directory->addBirthday(null, 2, 10);
+$directory->addBirthday(2, 10);
 $directory->addAddress(null, null, '123 Main St', 'Provo', 'UT', '84602', 'United States', ['dom', 'postal', 'parcel', 'work']);
 $directory->addAddress(null, null, '123 Main St', 'Provo', 'UT', '84602', 'United States', ['dom', 'postal', 'parcel', 'home']);
 $directory->addLabel('Jane Doe\n123 Main St\nProvo, UT 84602', ['dom', 'parcel']);
