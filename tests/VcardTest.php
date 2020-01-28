@@ -142,7 +142,7 @@ class VcardTest extends TestCase
     public function testAddLabel(): void
     {
         $vcard = new Vcard();
-        $vcard->addLabel('Big Corporation\n1105 Main St.\nProvo, UT 84602\nU.S.A.', ['home', 'postal', 'parcel']);
+        $vcard->addLabel(['home', 'postal', 'parcel'], 'Big Corporation\n1105 Main St.\nProvo, UT 84602\nU.S.A.');
 
         $expectedResult = 'LABEL;TYPE=home,postal,parcel:Big Corporation\n1105 Main St.\nProvo\, UT 84602\nU.S.A.';
         $result         = $vcard->getProperties()[0]['value'];
