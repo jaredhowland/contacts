@@ -26,7 +26,7 @@ Contacts is available as a `Composer <https://getcomposer.org>`_ `package <http:
 .. code-block:: javascript
 
    "require": {
-      "jaredhowland/contacts": "~4.0"
+      "jaredhowland/contacts": "~5.0"
    }
 
 =====
