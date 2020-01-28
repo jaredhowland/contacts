@@ -3,7 +3,7 @@
 ========
 Contacts
 ========
-Contacts is a small PHP library to create files containing address book/contact information for people. Currently, `vCard 3.0 <https://tools.ietf.org/html/rfc2426>`_ is the only supported export format.
+Contacts is a small PHP library to create files containing address book information for people. Currently, `vCard 3.0 <https://tools.ietf.org/html/rfc2426>`_ is the only supported export format.
 
 ========
 Features
