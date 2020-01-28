@@ -3,7 +3,7 @@
  * Interface to create contacts
  *
  * @author  Jared Howland <contacts@jaredhowland.com>
- * @version 2020-01-24
+ * @version 2020-01-28
  * @since   2016-10-05
  */
 
@@ -41,7 +41,7 @@ interface ContactsInterface
         string $country
     );
 
-    public function addLabel(string $label, array $types);
+    public function addLabel(array $types, string $label);
 
     public function addTelephone(string $phone, array $types);
 

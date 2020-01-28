@@ -131,8 +131,7 @@ class VcardTest extends TestCase
     public function testAddAddress(): void
     {
         $vcard = new Vcard();
-        $vcard->addAddress('P.O. Box 1105', 'Big Corporation', '1540 Main St.', 'Provo', 'UT', '84602', 'USA',
-            ['postal', 'parcel', 'home']);
+        $vcard->addAddress(['postal', 'parcel', 'home'], 'P.O. Box 1105', 'Big Corporation', '1540 Main St.', 'Provo', 'UT', '84602', 'USA');
 
         $expectedResult = 'ADR;TYPE=postal,parcel,home:P.O. Box 1105;Big Corporation;1540 Main St.;Provo;UT;84602;USA';
         $result         = $vcard->getProperties()[0]['value'];

@@ -13,7 +13,7 @@
  * Inspired by https://github.com/jeroendesloovere/vcard
  *
  * @author  Jared Howland <contacts@jaredhowland.com>
- * @version 2020-01-24
+ * @version 2020-01-28
  * @since   2016-10-05
  *
  */
@@ -345,7 +345,6 @@ class Vcard implements ContactsInterface
      *
      * @link https://tools.ietf.org/html/rfc2426#section-3.2.2 RFC 2426 Section 3.2.2 (p. 12)
      *
-     * @param string $label Mailing label
      * @param array  $types Array of mailing label types
      *                      * Valid `$types`s:
      *                      * `dom` - domestic delivery address
@@ -356,12 +355,13 @@ class Vcard implements ContactsInterface
      *                      * `work` - work delivery address
      *                      * `pref` - preferred delivery address when more than one address is specified
      *                      * Default: `intl,postal,parcel,work`
+     * @param string $label Mailing label
      *
      * @return $this
      *
      * @throws ContactsException if an element that can only be defined once is defined more than once
      */
-    public function addLabel(string $label, array $types = []): self
+    public function addLabel(array $types = [], string $label): self
     {
         // Make sure all `$types`s are valid. If invalid `$types`(s), revert to standard default.
         $types = $this->inArrayAll($types, $this->validAddressTypes) ? $types : ['intl', 'postal', 'parcel', 'work'];

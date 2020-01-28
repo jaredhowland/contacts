@@ -1,7 +1,39 @@
-All notable changes (begining with v3.0.3) to ``contacts`` will be documented in this file.
+All notable changes (beginning with v3.0.3) to ``contacts`` will be documented in this file.
 
 The format is based on `Keep a Changelog <http://keepachangelog.com/en/1.0.0/>`_
 and this project adheres to `Semantic Versioning <http://semver.org/spec/v2.0.0.html>`_.
+
+************
+[v5.0.0]
+************
+
+Added
+-----
+
+- Nothing
+
+Changed
+-------
+
+- Behavior of ``addAddress`` and ``addLabel`` (see Fixed section)
+
+Deprecated
+----------
+
+- Nothing
+
+Removed
+-------
+
+- Nothing
+
+Fixed
+-----
+
+- ``addAddress`` method so optional parameters come after required parameter ``types``
+- ``addLabel`` method to match ``addAddress`` in having ``types`` parameter before other parameters
+- ``CHANGELOG.rst`` file formatting problems
+- ``testAddAddress`` and ``testAddLabel`` tests to match new behaviors
 
 ************
 [v4.1.0]
@@ -31,9 +63,9 @@ Removed
 Fixed
 -----
 
-- `addBirthday` method so optional `year` parameter comes after required methods parameters `month` and `day`
-- `testAddBirthdayWithYear` so test passes again
-- `testAddBirthdayWithoutYear` so test passes again
+- ``addBirthday`` method so optional ``year`` parameter comes after required methods parameters ``month`` and ``day``
+- ``testAddBirthdayWithYear`` so test passes again
+- ``testAddBirthdayWithoutYear`` so test passes again
 
 Security
 --------
@@ -54,8 +86,8 @@ Changed
 
 - Daisy-chaining methods allowed
 - Tests refactored
-- `Vcard.php` helpers moved to another class (`Helpers.php`)
-- `PSR-12` formatted code
+- ``Vcard.php`` helpers moved to another class (``Helpers.php``)
+- ``PSR-12`` formatted code
 
 Deprecated
 ----------
@@ -65,7 +97,7 @@ Deprecated
 Removed
 -------
 
-- `Contacts` subdirectory from `src`
+- ``Contacts`` subdirectory from ``src``
 
 Fixed
 -----
@@ -75,7 +107,7 @@ Fixed
 Security
 --------
 
-- `PHP 7.2` and above now required
+- ``PHP 7.2`` and above now required
 
 ************
 [Pre-v3.0.3]
