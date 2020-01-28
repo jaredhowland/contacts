@@ -50,8 +50,8 @@ This is an extensive example. Most of the time, you will only need a tiny fracti
           $vcard->addNicknames(['Janie', 'Jan']);
           $vcard->addPhoto('https://raw.githubusercontent.com/jaredhowland/contacts/dev|/tests/files/photo.jpg');
           $vcard->addBirthday(2, 10);
-          $vcard->addAddress(null, null, '123 Main', 'Provo', 'UT', '84602', 'United States', ['dom', 'postal', 'parcel', 'work']);
-          $vcard->addAddress(null, null, '123 Main', 'Provo', 'UT', '84602', 'United States', ['dom', 'postal', 'parcel', 'home']);
+          $vcard->addAddress(['dom', 'postal', 'parcel', 'work'], null, null, '123 Main', 'Provo', 'UT', '84602', 'United States');
+          $vcard->addAddress(['dom', 'postal', 'parcel', 'home'], null, null, '123 Main', 'Provo', 'UT', '84602', 'United States');
           $vcard->addLabel('Jane Doe\n123 Main St\nProvo, UT 84602', ['dom', 'parcel']);
           $vcard->addTelephone('555-555-5555', ['cell', 'iphone']);
           $vcard->addEmail('jane_doe@domain.com');
@@ -94,8 +94,8 @@ Or you can chain methods together to build the vCard:
                 ->addNicknames(['Janie', 'Jan'])
                 ->addPhoto('https://raw.githubusercontent.com/jaredhowland/contacts/dev/tests/files/photo.jpg')
                 ->addBirthday(2, 10)
-                ->addAddress(null, null, '123 Main', 'Provo', 'UT', '84602', 'United States', ['dom', 'postal', 'parcel', 'work'])
-                ->addAddress(null, null, '123 Main', 'Provo', 'UT', '84602', 'United States', ['dom', 'postal', 'parcel', 'home'])
+                ->addAddress(['dom', 'postal', 'parcel', 'work'], null, null, '123 Main', 'Provo', 'UT', '84602', 'United States')
+                ->addAddress(['dom', 'postal', 'parcel', 'home'], null, null, '123 Main', 'Provo', 'UT', '84602', 'United States')
                 ->addLabel('Jane Doe\n123 Main St\nProvo, UT 84602', ['dom', 'parcel'])
                 ->addTelephone('555-555-5555', ['cell', 'iphone'])
                 ->addEmail('jane_doe@domain.com')
