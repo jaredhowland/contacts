@@ -133,7 +133,7 @@ Output
    N:Doe;Jane;;;
    NICKNAME:Janie,Jan
    PHOTO;ENCODING=b;TYPE=JPEG:/9j/4QBwRXhpZgAASUkqAAgAAAABAJiCAgBLAAAAGgAAAA
-    AAAABDb3B5cmlnaHQgQllVIFB …rest of binary-encoded photo
+    AAAABDb3B5cmlnaHQgQllVIFB … rest of binary-encoded photo
    BDAY;X-APPLE-OMIT-YEAR=1604:1604-02-10
    ADR;TYPE=dom,postal,parcel,work:;;123 Main;Provo;UT;84602;United States
    ADR;TYPE=dom,postal,parcel,home:;;123 Main;Provo;UT;84602;United States
