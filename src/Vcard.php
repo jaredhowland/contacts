@@ -296,13 +296,6 @@ class Vcard implements ContactsInterface
      *
      * @link https://tools.ietf.org/html/rfc2426#section-3.2.1 RFC 2426 Section 3.2.1 (pp. 10-11)
      *
-     * @param string $poBox    Post office box number
-     * @param string $extended Extended address
-     * @param string $street   Street address
-     * @param string $city     City
-     * @param string $state    State/province
-     * @param string $zip      Postal code
-     * @param string $country  Country
      * @param array  $types    Array of address types
      *                         * Valid `$types`s:
      *                         * `dom` - domestic delivery address
@@ -313,20 +306,27 @@ class Vcard implements ContactsInterface
      *                         * `work` - work delivery address
      *                         * `pref` - preferred delivery address when more than one address is specified
      *                         * Default: `intl,postal,parcel,work`
+     * @param string $poBox    Post office box number
+     * @param string $extended Extended address
+     * @param string $street   Street address
+     * @param string $city     City
+     * @param string $state    State/province
+     * @param string $zip      Postal code
+     * @param string $country  Country
      *
      * @return $this
      *
      * @throws ContactsException if an element that can only be defined once is defined more than once
      */
     public function addAddress(
+        array  $types = ['intl', 'postal', 'parcel', 'work'],
         string $poBox = null,
         string $extended = null,
         string $street = null,
         string $city = null,
         string $state = null,
         string $zip = null,
-        string $country = null,
-        array $types = ['intl', 'postal', 'parcel', 'work']
+        string $country = null
     ): self {
         // Make sure all `$types`s are valid. If invalid `$types`(s), revert to standard default.
         if ($this->inArrayAll($types, $this->validAddressTypes)) {
