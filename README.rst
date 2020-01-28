@@ -48,7 +48,7 @@ This is an extensive example. Most of the time, you will only need a tiny fracti
           $vcard->addFullName('Jane Doe');
           $vcard->addName('Doe', 'Jane');
           $vcard->addNicknames(['Janie', 'Jan']);
-          $vcard->addPhoto('https://raw.githubusercontent.com/jaredhowland/contacts/dev|/tests/files/photo.jpg');
+          $vcard->addPhoto('https://raw.githubusercontent.com/jaredhowland/contacts/dev/tests/files/photo.jpg');
           $vcard->addBirthday(2, 10);
           $vcard->addAddress(['dom', 'postal', 'parcel', 'work'], null, null, '123 Main', 'Provo', 'UT', '84602', 'United States');
           $vcard->addAddress(['dom', 'postal', 'parcel', 'home'], null, null, '123 Main', 'Provo', 'UT', '84602', 'United States');
