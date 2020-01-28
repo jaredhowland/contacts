@@ -319,7 +319,7 @@ class Vcard implements ContactsInterface
      * @throws ContactsException if an element that can only be defined once is defined more than once
      */
     public function addAddress(
-        array  $types = ['intl', 'postal', 'parcel', 'work'],
+        array $types = ['intl', 'postal', 'parcel', 'work'],
         string $poBox = null,
         string $extended = null,
         string $street = null,
