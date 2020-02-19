@@ -33,7 +33,7 @@ You can also just add the following to your app's ``composer.json`` file:
 .. code-block:: javascript
 
    "require": {
-      "jaredhowland/contacts": "~4.0"
+      "jaredhowland/contacts": "~5.0"
    }
 
 Local Download
