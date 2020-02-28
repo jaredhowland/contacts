@@ -27,7 +27,6 @@
     "ext-fileinfo": "*"
   },
   "require-dev": {
-    "phpdocumentor/phpdocumentor": "2.*",
-    "phpunit/phpunit": "^8"
+    "phpunit/phpunit": "^9"
   }
 }
