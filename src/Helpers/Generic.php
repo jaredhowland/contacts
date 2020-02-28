@@ -8,14 +8,16 @@
  *
  */
 
-namespace Contacts;
+namespace Contacts\Helpers;
 
+use Contacts\Config;
+use Contacts\ContactsException;
 use GuzzleHttp\Client;
 
 /**
  * Helper trait for methods shared between child classes
  */
-trait Helpers
+trait Generic
 {
     /**
      * @var string $defaultAreaCode String for default area code of phone numbers

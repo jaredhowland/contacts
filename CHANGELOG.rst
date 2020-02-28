@@ -15,7 +15,7 @@ Added
 Changed
 -------
 
-- ``addLabel`` method so ``types`` parameter is now required just like it is in ``addAddress``
+- Nothing
 
 Deprecated
 ----------
@@ -31,6 +31,37 @@ Fixed
 -----
 
 - Nothing
+
+************
+[5.0.1]
+************
+
+Added
+-----
+
+- New ``Helpers`` directory to hold the general, and all specific, helper classes (specific helper classes call the generic one)
+
+Changed
+-------
+
+- ``addLabel`` method so ``types`` parameter is now required just like it is in ``addAddress``
+- Moved some methods out of ``Vcard`` class into a ``Helpers\Vcard`` class
+- Fixed ``.travis.yml`` configuration to use `phpunit` version >=``9.0`` and PHP version >=``7.3`` (library still works with version ``7.2`` but ``phpunit`` requires ``7.3``)
+
+Deprecated
+----------
+
+- Nothing
+
+Removed
+-------
+
+- Old and inaccurate documentation
+
+Fixed
+-----
+
+- Bad ``Examples\example.php`` file so works with new behavior of ``Contacts`` library
 
 ************
 [v5.0.0]
