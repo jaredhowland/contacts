@@ -123,7 +123,7 @@ trait Vcard
         $string = "BEGIN:VCARD\r\n";
         $string .= "VERSION:3.0\r\n";
         foreach ($this->properties as $property) {
-            $value  = str_replace('\r\n', "\r\n", $property['value']);
+            $value = str_replace('\r\n', "\r\n", $property['value']);
             $string .= $this->fold($value."\r\n");
         }
         $string .= "END:VCARD\r\n\r\n";
