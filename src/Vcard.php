@@ -870,7 +870,7 @@ class Vcard implements ContactsInterface
      *
      * @throws ContactsException if an element that can only be defined once is defined more than once
      */
-    protected function setRevisionDate(): void
+    private function setRevisionDate(): void
     {
         if (!isset($this->definedElements['REV'])) {
             $this->addRevision();
