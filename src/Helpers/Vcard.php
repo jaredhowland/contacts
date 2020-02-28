@@ -104,16 +104,6 @@ trait Vcard
     }
 
     /**
-     * Set revision date
-     */
-    protected function setRevisionDate(): void
-    {
-        if (!isset($this->definedElements['REV'])) {
-            $this->addRevision();
-        }
-    }
-
-    /**
      * Set vCard string
      *
      * @return string vCard string
