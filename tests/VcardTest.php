@@ -87,7 +87,7 @@ class VcardTest extends TestCase
     public function testAddPhotoUrl(): void
     {
         $vcard = new Vcard();
-        $vcard->addPhoto('https://github.com/jaredhowland/contacts/raw/'.$this->branch.'/tests/files/photo.jpg');
+        $vcard->addPhoto('https://github.com/jaredhowland/contacts/raw/' . $this->branch . '/tests/files/photo.jpg');
 
         $expectedResult = file_get_contents('tests/files/expectedPhoto.txt');
         $result         = $vcard->getProperties()[0]['value'];
@@ -365,7 +365,7 @@ class VcardTest extends TestCase
     public function testAddLogoUrl(): void
     {
         $vcard = new Vcard();
-        $vcard->addLogo('https://raw.githubusercontent.com/jaredhowland/contacts/'.$this->branch.'/tests/files/photo.jpg');
+        $vcard->addLogo('https://raw.githubusercontent.com/jaredhowland/contacts/' . $this->branch . '/tests/files/photo.jpg');
 
         $expectedResult = file_get_contents('tests/files/expectedPhoto.txt');
         $result         = $vcard->getProperties()[0]['value'];
