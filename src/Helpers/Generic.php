@@ -74,7 +74,7 @@ trait Generic
         }
 
         if (strlen($phone) === 7) {
-            $phone = sprintf('('.$this->defaultAreaCode.') %s-%s', substr($phone, 0, 3), substr($phone, 3));
+            $phone = sprintf('(' . $this->defaultAreaCode . ') %s-%s', substr($phone, 0, 3), substr($phone, 3));
 
             return $phone;
         }
@@ -137,7 +137,7 @@ trait Generic
     protected function sanitizeTimeZone(string $timeZone): array
     {
         $prefix   = $this->getPrefixes($timeZone);
-        $timeZone = $prefix['negative'].$this->cleanTimeZone($timeZone);
+        $timeZone = $prefix['negative'] . $this->cleanTimeZone($timeZone);
         if ($this->getTimeZoneOffset($timeZone)['hourOffset']) {
             return [
                 $prefix['sign'],
@@ -198,7 +198,7 @@ trait Generic
     protected function writeFile(string $fileName, string $data, bool $append = false): void
     {
         $rights   = $append ? 'a' : 'w';
-        $fileName = $this->dataDirectory.$fileName;
+        $fileName = $this->dataDirectory . $fileName;
         if (!$handle = fopen($fileName, $rights)) {
             throw new ContactsException("Cannot open file '$fileName'");
         }
