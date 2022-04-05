@@ -53,7 +53,7 @@ class Vcard implements ContactsInterface
         $properties      = print_r($this->properties);
         $definedElements = print_r($this->definedElements);
 
-        return "<pre>**PROPERTIES**\n".$properties."\n\n**DEFINED ELEMENTS**\n".$definedElements;
+        return "<pre>**PROPERTIES**\n" . $properties . "\n\n**DEFINED ELEMENTS**\n" . $definedElements;
     }
 
     /**
@@ -859,7 +859,7 @@ class Vcard implements ContactsInterface
         $filename = $this->setFilename($filename);
         $string   = $this->setVcardString();
         if ($write) {
-            $this->writeFile($filename.'.vcf', $string, true);
+            $this->writeFile($filename . '.vcf', $string, true);
         }
 
         return $string;

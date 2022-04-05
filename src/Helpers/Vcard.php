@@ -114,7 +114,7 @@ trait Vcard
         $string .= "VERSION:3.0\r\n";
         foreach ($this->properties as $property) {
             $value = str_replace('\r\n', "\r\n", $property['value']);
-            $string .= $this->fold($value."\r\n");
+            $string .= $this->fold($value . "\r\n");
         }
         $string .= "END:VCARD\r\n\r\n";
 
@@ -249,7 +249,7 @@ trait Vcard
     protected function setProperty(string $element, string $value): void
     {
         if (isset($this->definedElements[$element]) && !in_array($element, $this->multiplePropertiesAllowed, true)) {
-            throw new ContactsException('You can only set "'.$element.'" once.');
+            throw new ContactsException('You can only set "' . $element . '" once.');
         }
         // Define that we set this element
         $this->definedElements[$element] = true;
