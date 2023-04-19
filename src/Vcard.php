@@ -50,8 +50,8 @@ class Vcard implements ContactsInterface
      */
     public function debug(): string
     {
-        $properties      = print_r($this->properties);
-        $definedElements = print_r($this->definedElements);
+        $properties      = print_r((string)$this->properties);
+        $definedElements = print_r((string)$this->definedElements);
 
         return "<pre>**PROPERTIES**\n" . $properties . "\n\n**DEFINED ELEMENTS**\n" . $definedElements;
     }
