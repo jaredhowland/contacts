@@ -982,4 +982,63 @@ class Vcard implements ContactsInterface
             'value' => $value,
         ];
     }
+
+    /**
+     * Add photo to `PHOTO` or `LOGO` elements
+     *
+     * @param string $element Element to add photo to
+     * @param string $photoUrl URL-referenced or base-64 encoded photo
+     *
+     * @throws ContactsException|GuzzleException if an element that can only be defined once is defined more than once
+     */
+    private function photoURL(string $element, string $photoUrl): void
+    {
+        // Set directly rather than going through $this->constructElement to avoid escaping valid URL characters
+        if (!empty($this->sanitizeUrl($photoUrl))) {
+            $mimetype = strtoupper(str_replace('image/', '', getimagesize($photoUrl)['mime']));
+            $photo = $this->getData($this->sanitizeUrl($photoUrl));
+            $this->setProperty($element, vsprintf(Config::get('PHOTO-BINARY'), [$mimetype, base64_encode($photo)]));
+        }
+    }
+
+    /**
+     * Add photo to `PHOTO` or `LOGO` elements
+     *
+     * @param string $element Element to add photo to
+     * @param string $photoString URL-referenced or base-64 encoded photo
+     *
+     * @throws ContactsException if an element that can only be defined once is defined more than once
+     */
+    private function photoBase64(string $element, string $photoString): void
+    {
+        $img = base64_decode($photoString);
+        if (!empty($img)) {
+            $file = finfo_open();
+            $mimetype = finfo_buffer($file, $img, FILEINFO_MIME_TYPE);
+            $mimetype = strtoupper(str_replace('image/', '', $mimetype));
+            $this->setProperty($element, vsprintf(Config::get('PHOTO-BINARY'), [$mimetype, $photoString]));
+        }
+    }
+
+    /**
+     * Construct the element
+     *
+     * @param string $element Name of the vCard element
+     * @param array|string $value Value to construct. If it's an array, make it a list using the proper `delimiter`
+     * @param string $delimiter Delimiter to use for lists given via `$value` array.
+     *                                Default: `,`.
+     *
+     * @throws ContactsException if an element that can only be defined once is defined more than once
+     */
+    private function constructElement(string $element, array|string $value, string $delimiter = ','): void
+    {
+        $value = is_array($value) ? array_map(
+            [$this, 'cleanString'],
+            $value,
+            [$delimiter]
+        ) : [$this->cleanString($value)];
+        if (!empty($value) && !empty(Config::get($element))) {
+            $this->setProperty($element, vsprintf(Config::get($element), $value));
+        }
+    }
 }
