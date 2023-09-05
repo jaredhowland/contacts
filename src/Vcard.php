@@ -341,8 +341,8 @@ class Vcard implements ContactsInterface
             return $this;
         }
 
-        $types = is_array($types) ? implode(', ', $types) : $types;
-        throw new ContactsException("Invalid address type(s): '$types'");
+        $typesMessage = implode(', ', $types);
+        throw new ContactsException("Invalid address type(s): '$typesMessage'");
     }
 
     /**
@@ -981,6 +981,29 @@ class Vcard implements ContactsInterface
             'key' => $element,
             'value' => $value,
         ];
+    }
+
+    /**
+     * Add photo to `PHOTO` or `LOGO` elements
+     *
+     * @param string $element Element to add photo to
+     * @param string $photo   URL-referenced or base-64 encoded photo
+     * @param bool   $isUrl   Optional. Is it a URL-referenced photo or a base-64 encoded photo? Default: `true`
+     *
+     * @return $this
+     *
+     * @throws ContactsException
+     * @throws GuzzleException
+     */
+    private function photoProperty(string $element, string $photo, bool $isUrl = true): self
+    {
+        if ($isUrl) {
+            $this->photoURL($element, $photo);
+        } else {
+            $this->photoBase64($element, $photo);
+        }
+
+        return $this;
     }
 
     /**

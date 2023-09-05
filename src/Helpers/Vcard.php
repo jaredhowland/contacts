@@ -36,29 +36,6 @@ trait Vcard
     }
 
     /**
-     * Add photo to `PHOTO` or `LOGO` elements
-     *
-     * @param string $element Element to add photo to
-     * @param string $photo   URL-referenced or base-64 encoded photo
-     * @param bool   $isUrl   Optional. Is it a URL-referenced photo or a base-64 encoded photo? Default: `true`
-     *
-     * @return $this
-     *
-     * @throws ContactsException
-     * @throws GuzzleException
-     */
-    private function photoProperty(string $element, string $photo, bool $isUrl = true): self
-    {
-        if ($isUrl) {
-            $this->photoURL($element, $photo);
-        } else {
-            $this->photoBase64($element, $photo);
-        }
-
-        return $this;
-    }
-
-    /**
      * Clean a string by escaping `,` and `;` and `:`
      *
      * @param array|string|null $string $string String to escape
