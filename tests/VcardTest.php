@@ -25,7 +25,7 @@ class VcardTest extends TestCase
     {
         $vcard = new Vcard();
 
-        $expectedResult = "<pre>**PROPERTIES**\n1\n\n**DEFINED ELEMENTS**\n1";
+        $expectedResult = "<pre>**PROPERTIES**\nArray\n(\n)\n\n\n**DEFINED ELEMENTS**\nArray\n(\n)\n";
         $result = $vcard->debug();
 
         $this->assertEquals($expectedResult, $result);
@@ -319,11 +319,11 @@ class VcardTest extends TestCase
     public static function providerTestAddTimeZoneInvalid(): array
     {
         return [
-            ['', null],
-            ['-15', null],
-            ['13:30', null],
-            ['-00:00', null],
-            ['monkey', null],
+            ['', 'rat'],
+            ['-15', '900'],
+            ['13:30', 'bus'],
+            ['-00:00', 'vcard'],
+            ['monkey', 'run'],
         ];
     }
 
@@ -345,7 +345,7 @@ class VcardTest extends TestCase
         $this->assertEquals($expectedResult, $result);
     }
 
-    public function providerTestAddLatLongValid(): array
+    public static function providerTestAddLatLongValid(): array
     {
         return [
             [0, 0, 'GEO:0.000000;0.000000'],
@@ -379,9 +379,9 @@ class VcardTest extends TestCase
     public static function providerTestAddLatLongInvalid(): array
     {
         return [
-            [-90.123456, 180.654321, null],
-            [-90, 181, null],
-            [-91, 180, null],
+            [-90.123456, 180.654321, 'bad'],
+            [-90, 181, 'latlong'],
+            [-91, 180, 'given'],
         ];
     }
 

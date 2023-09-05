@@ -22,6 +22,8 @@ $options = new Options();
 $options->dataDirectory('./');
 
 $directory = new Vcard($options);
+var_dump($directory->debug());
+die();
 $directory->addFullName('Jane Doe');
 $directory->addName('Doe', 'Jane');
 $directory->addNicknames(['Janie', 'Jan']);
