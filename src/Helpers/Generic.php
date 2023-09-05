@@ -8,15 +8,16 @@
  *
  */
 
-namespace Contacts;
+namespace Contacts\Helpers;
 
+use Contacts\ContactsException;
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\GuzzleException;
 
 /**
  * Helper trait for methods shared between child classes
  */
-trait Helpers
+trait Generic
 {
     /**
      * @var object $client Guzzle object for downloading files (photos, logos, etc.)
@@ -292,7 +293,7 @@ trait Helpers
      */
     private function cleanTimeZone(string $timeZone): string
     {
-        $timeZone = preg_replace('/[^0-9:]/', '', $timeZone);
+        $timeZone = preg_replace('/[^0-9:]/', null, $timeZone);
 
         return ltrim($timeZone, '0');
     }
