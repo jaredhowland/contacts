@@ -15,7 +15,7 @@ Added
 Changed
 -------
 
-- Now requires PHP 8.2 or greater
+- Now requires PHP 8.0 or greater
 - Format code according to ``PRS-12`` coding standards
 - Options are now passed to the ``Vcard`` class constructor as an object instead of as an array
 
@@ -32,7 +32,7 @@ Removed
 Fixed
 -----
 
-- Tests to work with PHP 8.2
+- Tests to work with PHP 8.0
 - Example files to work with new version
 - Interface so ``addBirthday`` method parameters match current behavior
 
