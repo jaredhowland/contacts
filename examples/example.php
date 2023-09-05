@@ -1,16 +1,3 @@
-<html lang="en">
-<head>
-    <title>Example</title>
-    <style>
-        html {
-            background: black;
-            color: white;
-            font-family: monospace;
-        }
-    </style>
-</head>
-<pre>
-
 <?php
 
 use Contacts\Options;
@@ -22,8 +9,6 @@ $options = new Options();
 $options->dataDirectory('./');
 
 $directory = new Vcard($options);
-var_dump($directory->debug());
-die();
 $directory->addFullName('Jane Doe');
 $directory->addName('Doe', 'Jane');
 $directory->addNicknames(['Janie', 'Jan']);
