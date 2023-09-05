@@ -1,4 +1,4 @@
-|TravisCI|_ |Scrutinizer|_ |StyleCI|_ |Packagist|_ |MIT License|_
+|Scrutinizer|_ |StyleCI|_ |Packagist|_ |MIT License|_
 
 ========
 Contacts
@@ -184,11 +184,8 @@ Known Issues
 
 Inspired by https://github.com/jeroendesloovere/vcard
 
-.. |TravisCI| image:: https://img.shields.io/travis/jaredhowland/contacts/dev.svg?style=flat-square
-.. _TravisCI: https://travis-ci.org/jaredhowland/contacts
-
 .. |Scrutinizer| image:: https://img.shields.io/scrutinizer/g/jaredhowland/contacts.svg?style=flat-square
-.. _Scrutinizer: https://scrutinizer-ci.com/g/jaredhowland/contacts/
+.. _Scrutinizer: https://scrutinizer-ci.com/g/jaredhowland/contacts/?branch=master
 
 .. |StyleCI| image:: https://styleci.io/repos/71304265/shield?branch=master
 .. _StyleCI: https://styleci.io/repos/71304265
