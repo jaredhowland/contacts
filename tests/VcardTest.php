@@ -204,7 +204,7 @@ class VcardTest extends TestCase
         $vcard = new Vcard();
         $vcard->addTelephone('709.567-9087', ['cell', 'iphone', 'pref']);
 
-        $expectedResult = 'TEL;TYPE=cell,iphone,pref:709.567-9087';
+        $expectedResult = 'TEL;TYPE=cell,iphone,pref:(709) 567-9087';
         $result = $vcard->getProperties()[0]['value'];
 
         $this->assertEquals($expectedResult, $result);

@@ -26,7 +26,7 @@ Contacts is available as a `Composer <https://getcomposer.org>`_ `package <http:
 .. code-block:: javascript
 
    "require": {
-      "jaredhowland/contacts": "~4.0"
+      "jaredhowland/contacts": "~6.0"
    }
 
 =====
@@ -42,14 +42,19 @@ This is an extensive example. Most of the time, you will only need a tiny fracti
        <?php
           require 'vendor/autoload.php';
 
+          use \Contacts\Options;
           use \Contacts\Vcard;
 
-          $vcard = new Vcard('./'); // Tell app where to save `.vcf` file
+          // Set desired options
+          $options = new Options();
+          $options->dataDirectory('./'); // Tell app where to save `.vcf` file
+
+          $vcard = new Vcard($options);
           $vcard->addFullName('Jane Doe');
           $vcard->addName('Doe', 'Jane');
           $vcard->addNicknames(['Janie', 'Jan']);
-          $vcard->addPhoto('https://raw.githubusercontent.com/jaredhowland/contacts/dev|/tests/files/photo.jpg');
-          $vcard->addBirthday(null, 2, 10);
+          $vcard->addPhoto('https://raw.githubusercontent.com/jaredhowland/contacts/master/tests/files/photo.jpg');
+          $vcard->addBirthday(10, 2, null);
           $vcard->addAddress(null, null, '123 Main', 'Provo', 'UT', '84602', 'United States', ['dom', 'postal', 'parcel', 'work']);
           $vcard->addAddress(null, null, '123 Main', 'Provo', 'UT', '84602', 'United States', ['dom', 'postal', 'parcel', 'home']);
           $vcard->addLabel('Jane Doe\n123 Main St\nProvo, UT 84602', ['dom', 'parcel']);
@@ -65,7 +70,7 @@ This is an extensive example. Most of the time, you will only need a tiny fracti
           $vcard->addNote('Not much is known about Jane Doe.');
           $vcard->addSortString('Doe');
           // $vcard->addSound($sound); NOT SUPPORTED
-          $vcard->addUrl('http://www.example.com');
+          $vcard->addUrl('https://www.example.com');
           // $vcard->addKey($key); NOT SUPPORTED
           $vcard->addAnniversary('2010-10-10');
           $vcard->addSupervisor('Jane Smith');
@@ -74,9 +79,9 @@ This is an extensive example. Most of the time, you will only need a tiny fracti
           $vcard->addChild('Lisa Doe');
           $vcard->addExtendedType('TWITTER', '@jared_howland');
           $vcard->addUniqueIdentifier();
-          $vcard->addRevision('2017-12-14'); // Added automatically if you don't call this method
+          $vcard->addRevision('2023-09-04'); // Added automatically if you don't call this method
 
-          $directory->buildVcard(true, 'example'); // Writes to `./data/` directory by default unless you set a different directory when you create a new `Contacts` object
+          $directory->buildVcard(true, 'example');
        ?>
 
 Or you can chain methods together to build the vCard:
@@ -86,13 +91,18 @@ Or you can chain methods together to build the vCard:
         <?php
           require '../vendor/autoload.php';
 
+          use \Contacts\Options;
           use \Contacts\Vcard;
 
-          $vcard = new Vcard('./'); // Tell app where to save `.vcf` file
+          // Set desired options
+          $options = new Options();
+          $options->dataDirectory('./'); // Tell app where to save `.vcf` file
+
+          $vcard = new Vcard($options);
           $vcard->addFullName('Jane Doe')
                 ->addName('Doe', 'Jane')
                 ->addNicknames(['Janie', 'Jan'])
-                ->addPhoto('https://raw.githubusercontent.com/jaredhowland/contacts/dev/tests/files/photo.jpg')
+                ->addPhoto('https://raw.githubusercontent.com/jaredhowland/contacts/master/tests/files/photo.jpg')
                 ->addBirthday(null, 2, 10)
                 ->addAddress(null, null, '123 Main', 'Provo', 'UT', '84602', 'United States', ['dom', 'postal', 'parcel', 'work'])
                 ->addAddress(null, null, '123 Main', 'Provo', 'UT', '84602', 'United States', ['dom', 'postal', 'parcel', 'home'])
@@ -115,8 +125,8 @@ Or you can chain methods together to build the vCard:
                 ->addChild('Lisa Doe')
                 ->addExtendedType('TWITTER', '@jared_howland')
                 ->addUniqueIdentifier()
-                ->addRevision('2017-12-14') /* Added automatically with the current date and time if you don't call this method */
-                ->buildVcard(true, 'example'); // Writes to `./data/` directory by default unless you set a different directory when you create a new `Contacts` object
+                ->addRevision('2023-09-05') /* Added automatically with the current date and time if you don't call this method */
+                ->buildVcard(true, 'example');
           // $vcard->addAgent($agent); NOT SUPPORTED
           // $vcard->addSound($sound); NOT SUPPORTED
           // $vcard->addKey($key); NOT SUPPORTED
@@ -148,7 +158,7 @@ Output
    CATEGORIES:School,Work
    NOTE:Not much is known about Jane Doe.
    SORT-STRING:Doe
-   URL:http://www.example.com
+   URL:https://www.example.com
    item1.X-ABDATE;type=pref:2010-10-10
    item1.X-ABLabel:_$!<Anniversary>!$_
    item2.X-ABRELATEDNAMES:Jane Smith
@@ -161,8 +171,17 @@ Output
    item5.X-ABLabel:_$!<Child>!$_
    X-TWITTER:@jared_howland
    UID:5a32a74023b097.12918287
-   REV:2017-12-14T00:00:00Z
+   REV:2023-09-05T00:00:00Z
    END:VCARD
+
+Options
+-------
+
+Available options and defaults in the ``Options`` class:
+
+- ``dataDirectory``: ``./data/``
+- ``defaultAreaCode``: ``null``
+- ``formatUsTelephone``: ``true``
 
 ==========
 Contribute

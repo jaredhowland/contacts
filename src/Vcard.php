@@ -169,7 +169,7 @@ class Vcard implements ContactsInterface
      *
      * @throws ContactsException if an element that can only be defined once is defined more than once
      */
-    public function addFullName(string $name): self
+    public function addFullName(string $name): Vcard
     {
         $this->constructElement('FN', $name);
 
@@ -202,7 +202,7 @@ class Vcard implements ContactsInterface
         string $additionalNames = null,
         string $prefixes = null,
         string $suffixes = null
-    ): self {
+    ): Vcard {
         $additionalNames = str_replace(search: ', ', replace: ',', subject: $additionalNames ?? '');
         $prefixes = str_replace(search: ', ', replace: ',', subject: $prefixes ?? '');
         $suffixes = str_replace(search: ', ', replace: ',', subject: $suffixes ?? '');
@@ -233,7 +233,7 @@ class Vcard implements ContactsInterface
      *
      * @throws ContactsException if an element that can only be defined once is defined more than once
      */
-    public function addNicknames(array $names): self
+    public function addNicknames(array $names): Vcard
     {
         $this->constructElement('NICKNAME', [$names]);
 
@@ -248,13 +248,14 @@ class Vcard implements ContactsInterface
      * @link https://tools.ietf.org/html/rfc2426#section-3.1.4 RFC 2426 Section 3.1.4 (pp. 9-10)
      *
      * @param string $photo URL-referenced or base-64 encoded photo
-     * @param bool $isUrl Optional. Is it a URL-referenced photo or a base-64 encoded photo? Default: `true`
+     * @param bool   $isUrl Optional. Is it a URL-referenced photo or a base-64 encoded photo? Default: `true`
      *
      * @return $this
      *
-     * @throws ContactsException|GuzzleException if an element that can only be defined once is defined more than once
+     * @throws ContactsException if an element that can only be defined once is defined more than once
+     * @throws GuzzleException
      */
-    public function addPhoto(string $photo, bool $isUrl = true): self
+    public function addPhoto(string $photo, bool $isUrl = true): Vcard
     {
         $this->photoProperty('PHOTO', $photo, $isUrl);
 
@@ -279,7 +280,7 @@ class Vcard implements ContactsInterface
      *
      * @throws ContactsException if an element that can only be defined once is defined more than once
      */
-    public function addBirthday(int $month, int $day, ?int $year = null): self
+    public function addBirthday(int $month, int $day, ?int $year = null): Vcard
     {
         if ($year !== null) {
             $this->constructElement('BDAY', [$year, $month, $day]);
@@ -331,7 +332,7 @@ class Vcard implements ContactsInterface
         string $zip = null,
         string $country = null,
         array $types = ['intl', 'postal', 'parcel', 'work']
-    ): self {
+    ): Vcard {
         // Make sure all `$types`s are valid. If invalid `$types`(s), revert to standard default.
         if ($this->inArrayAll($types, $this->validAddressTypes)) {
             $this->constructElement('ADR', [$types, $poBox, $extended, $street, $city, $state, $zip, $country]);
@@ -366,7 +367,7 @@ class Vcard implements ContactsInterface
      *
      * @throws ContactsException if an element that can only be defined once is defined more than once
      */
-    public function addLabel(string $label, array $types = []): self
+    public function addLabel(string $label, array $types = []): Vcard
     {
         // Make sure all `$types`s are valid. If invalid `$types`(s), revert to standard default.
         $types = $this->inArrayAll($types, $this->validAddressTypes) ? $types : ['intl', 'postal', 'parcel', 'work'];
@@ -406,50 +407,17 @@ class Vcard implements ContactsInterface
      *
      * @throws ContactsException if an element that can only be defined once is defined more than once
      */
-    public function addTelephone(string $phone = null, array $types = []): self
+    public function addTelephone(string $phone = null, array $types = []): Vcard
     {
+        // Format phone number if requested
+        if ($this->options->formatUsTelephone) {
+            $phone = $this->formatUsTelephone($phone);
+        }
         // Make sure all `$types`s are valid. If invalid `$types`(s), revert to standard default.
         $types = $this->inArrayAll($types, $this->validTelephoneTypes) ? $types : ['voice'];
         $this->constructElement('TEL', [$types, $phone]);
 
         return $this;
-    }
-
-    /**
-     * TODO: MOVE AND FIX
-     * Format phone numbers to be formatted for U.S. numbers
-     *
-     * @param string $phone Phone number to format
-     * @return string Formatted phone number
-     */
-    public function formatUsTelephone(string $phone): string
-    {
-        if (strlen($phone) > 10) {
-            $countryCode = substr($phone, 0, strlen($phone) - 10);
-            $areaCode = substr($phone, -10, 3);
-            $nextThree = substr($phone, -7, 3);
-            $lastFour = substr($phone, -4, 4);
-            if ($countryCode < 2) {
-                $phone = "($areaCode) $nextThree-$lastFour";
-            } else {
-                $phone = "+$countryCode ($areaCode) $nextThree-$lastFour";
-            }
-        } elseif (strlen($phone) == 10) {
-            $areaCode = substr($phone, 0, 3);
-            $nextThree = substr($phone, 3, 3);
-            $lastFour = substr($phone, 6, 4);
-            $phone = "($areaCode) $nextThree-$lastFour";
-        } elseif (strlen($phone) == 7) {
-            $nextThree = substr($phone, 0, 3);
-            $lastFour = substr($phone, 3, 4);
-            if ($this->defaultAreaCode) {
-                $phone = "($this->defaultAreaCode) $nextThree-$lastFour";
-            } else {
-                $phone = "$nextThree-$lastFour";
-            }
-        }
-
-        return $phone;
     }
 
     /**
@@ -473,7 +441,7 @@ class Vcard implements ContactsInterface
      *
      * @throws ContactsException if an element that can only be defined once is defined more than once
      */
-    public function addEmail(string $email = null, array $types = null): self
+    public function addEmail(string $email = null, array $types = null): Vcard
     {
         $types = empty($types) ? ['internet'] : $types;
         $email = $this->sanitizeEmail($email);
@@ -495,7 +463,7 @@ class Vcard implements ContactsInterface
      *
      * @throws ContactsException if an element that can only be defined once is defined more than once
      */
-    public function addMailer(string $mailer): self
+    public function addMailer(string $mailer): Vcard
     {
         $this->constructElement('MAILER', $mailer);
 
@@ -520,7 +488,7 @@ class Vcard implements ContactsInterface
      *
      * @throws ContactsException if an element that can only be defined once is defined more than once
      */
-    public function addTimeZone(string $timeZone): self
+    public function addTimeZone(string $timeZone): Vcard
     {
         if ($this->sanitizeTimeZone($timeZone)) {
             $this->constructElement('TZ', $this->sanitizeTimeZone($timeZone));
@@ -547,7 +515,7 @@ class Vcard implements ContactsInterface
      *
      * @throws ContactsException if an element that can only be defined once is defined more than once
      */
-    public function addLatLong(float $lat, float $long): self
+    public function addLatLong(float $lat, float $long): Vcard
     {
         if ($this->sanitizeLatLong($lat, $long)) {
             $this->constructElement('GEO', $this->sanitizeLatLong($lat, $long));
@@ -569,7 +537,7 @@ class Vcard implements ContactsInterface
      *
      * @throws ContactsException if an element that can only be defined once is defined more than once
      */
-    public function addTitle(string $title): self
+    public function addTitle(string $title): Vcard
     {
         $this->constructElement('TITLE', $title);
 
@@ -589,7 +557,7 @@ class Vcard implements ContactsInterface
      *
      * @throws ContactsException if an element that can only be defined once is defined more than once
      */
-    public function addRole(string $role): self
+    public function addRole(string $role): Vcard
     {
         $this->constructElement('ROLE', $role);
 
@@ -610,7 +578,7 @@ class Vcard implements ContactsInterface
      *
      * @throws ContactsException|GuzzleException if an element that can only be defined once is defined more than once
      */
-    public function addLogo(string $logo, bool $isUrl = true): self
+    public function addLogo(string $logo, bool $isUrl = true): Vcard
     {
         $this->photoProperty('LOGO', $logo, $isUrl);
 
@@ -649,7 +617,7 @@ class Vcard implements ContactsInterface
      *
      * @throws ContactsException if an element that can only be defined once is defined more than once
      */
-    public function addOrganizations(array $organizations): self
+    public function addOrganizations(array $organizations): Vcard
     {
         $this->constructElement('ORG', [$organizations], ';');
 
@@ -669,7 +637,7 @@ class Vcard implements ContactsInterface
      *
      * @throws ContactsException if an element that can only be defined once is defined more than once
      */
-    public function addCategories(array $categories): self
+    public function addCategories(array $categories): Vcard
     {
         $this->constructElement('CATEGORIES', [$categories]);
 
@@ -689,7 +657,7 @@ class Vcard implements ContactsInterface
      *
      * @throws ContactsException if an element that can only be defined once is defined more than once
      */
-    public function addNote(string $note): self
+    public function addNote(string $note): Vcard
     {
         $this->constructElement('NOTE', $note);
 
@@ -709,7 +677,7 @@ class Vcard implements ContactsInterface
      *
      * @throws ContactsException if an element that can only be defined once is defined more than once
      */
-    public function addProductId(string $productId): self
+    public function addProductId(string $productId): Vcard
     {
         $this->constructElement('PRODID', $productId);
 
@@ -729,7 +697,7 @@ class Vcard implements ContactsInterface
      *
      * @throws ContactsException if an element that can only be defined once is defined more than once
      */
-    public function addRevision(string $dateTime = null): self
+    public function addRevision(string $dateTime = null): Vcard
     {
         $dateTime = $dateTime === null ? date('Y-m-d\TH:i:s\Z') : date(
             "Y-m-d\TH:i:s\Z",
@@ -755,7 +723,7 @@ class Vcard implements ContactsInterface
      *
      * @throws ContactsException if an element that can only be defined once is defined more than once
      */
-    public function addSortString(string $sortString): self
+    public function addSortString(string $sortString): Vcard
     {
         $this->constructElement('SORT-STRING', $sortString);
 
@@ -791,7 +759,7 @@ class Vcard implements ContactsInterface
      *
      * @throws ContactsException if an element that can only be defined once is defined more than once
      */
-    public function addUniqueIdentifier(string $uniqueIdentifier = null): self
+    public function addUniqueIdentifier(string $uniqueIdentifier = null): Vcard
     {
         $uniqueIdentifier = $uniqueIdentifier ?? uniqid('', true);
         $this->constructElement('UID', $uniqueIdentifier);
@@ -812,7 +780,7 @@ class Vcard implements ContactsInterface
      *
      * @throws ContactsException if an element that can only be defined once is defined more than once
      */
-    public function addUrl(string $url): self
+    public function addUrl(string $url): Vcard
     {
         if ($this->sanitizeUrl($url) !== null) {
             // Set directly rather than going through $this->constructElement to avoid escaping valid URL characters
@@ -839,7 +807,7 @@ class Vcard implements ContactsInterface
      *
      * @throws ContactsException if an element that can only be defined once is defined more than once
      */
-    public function addClassification(string $classification = 'PUBLIC'): self
+    public function addClassification(string $classification = 'PUBLIC'): Vcard
     {
         if ($this->inArrayAll([$classification], $this->validClassifications)) {
             $this->constructElement('CLASS', $classification);
@@ -864,7 +832,7 @@ class Vcard implements ContactsInterface
      *
      * @throws ContactsException if an element that can only be defined once is defined more than once
      */
-    public function addExtendedType(string $label, string $value): self
+    public function addExtendedType(string $label, string $value): Vcard
     {
         $this->constructElement('X-', [$label, $value]);
 
@@ -896,7 +864,7 @@ class Vcard implements ContactsInterface
      *
      * @throws ContactsException if an element that can only be defined once is defined more than once
      */
-    public function addAnniversary(string $anniversary): self
+    public function addAnniversary(string $anniversary): Vcard
     {
         if (is_int(strtotime($anniversary))) {
             $anniversary = date('Y-m-d', strtotime($anniversary));
@@ -918,7 +886,7 @@ class Vcard implements ContactsInterface
      *
      * @throws ContactsException if an element that can only be defined once is defined more than once
      */
-    public function addSupervisor(string $supervisor): self
+    public function addSupervisor(string $supervisor): Vcard
     {
         $this->constructElement('SUPERVISOR', [$supervisor, $this->extendedItemCount]);
         $this->extendedItemCount++;
@@ -935,7 +903,7 @@ class Vcard implements ContactsInterface
      *
      * @throws ContactsException if an element that can only be defined once is defined more than once
      */
-    public function addSpouse(string $spouse): self
+    public function addSpouse(string $spouse): Vcard
     {
         $this->constructElement('SPOUSE', [$spouse, $this->extendedItemCount]);
         $this->extendedItemCount++;
@@ -952,24 +920,12 @@ class Vcard implements ContactsInterface
      *
      * @throws ContactsException if an element that can only be defined once is defined more than once
      */
-    public function addChild(string $child): self
+    public function addChild(string $child): Vcard
     {
         $this->constructElement('CHILD', [$child, $this->extendedItemCount]);
         $this->extendedItemCount++;
 
         return $this;
-    }
-
-    /**
-     * Clean phone numbers so only numbers are left.
-     *
-     * @param string|null $phone Phone number to clean
-     *
-     * @return string|null Cleaned phone number
-     */
-    private function cleanPhone(?string $phone): ?string
-    {
-        return preg_replace('/[^0-9]/', null, $phone);
     }
 
     /**
@@ -1031,7 +987,7 @@ class Vcard implements ContactsInterface
      *
      * @throws ContactsException|GuzzleException if an element that can only be defined once is defined more than once
      */
-    private function photoProperty(string $element, string $photo, bool $isUrl = true): self
+    private function photoProperty(string $element, string $photo, bool $isUrl = true): Vcard
     {
         if ($isUrl) {
             $this->photoURL($element, $photo);
@@ -1122,7 +1078,7 @@ class Vcard implements ContactsInterface
         $search = [',', ';', ':'];
         $replace = ['\,', '\;', '\:'];
 
-        return empty($string) ? null : str_replace($search, $replace, $string ?? '');
+        return empty($string) ? null : str_replace($search, $replace, $string);
     }
 
     /**

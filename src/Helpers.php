@@ -3,7 +3,7 @@
  * Share Contacts methods between classes
  *
  * @author  Jared Howland <contacts@jaredhowland.com>
- * @version 2023-09-03
+ * @version 2023-09-05
  * @since   2016-10-05
  *
  */
@@ -62,6 +62,57 @@ trait Helpers
     protected function formatGeo(float $lat, float $long): array
     {
         return $this->cleanLatLong($lat, $long);
+    }
+
+    /**
+     * Format phone numbers to be formatted for U.S. numbers
+     * This does not validate phone numbers—it only formats them
+     *
+     * @param string $phone Phone number to format
+     * @return string Formatted phone number (or original if not exactly 7 or >10 digits)
+     */
+    protected function formatUsTelephone(string $phone): string
+    {
+        $phone = $this->cleanPhone($phone);
+        if (strlen($phone) > 10) {
+            $countryCode = substr($phone, 0, -10);
+            $areaCode = substr($phone, -10, 3);
+            $nextThree = substr($phone, -7, 3);
+            $lastFour = substr($phone, -4, 4);
+            if ($countryCode < 2) {
+                $phone = "($areaCode) $nextThree-$lastFour";
+            } else {
+                $phone = "+$countryCode ($areaCode) $nextThree-$lastFour";
+            }
+        } elseif (strlen($phone) === 10) {
+            $areaCode = substr($phone, 0, 3);
+            $nextThree = substr($phone, 3, 3);
+            $lastFour = substr($phone, 6, 4);
+            $phone = "($areaCode) $nextThree-$lastFour";
+        } elseif (strlen($phone) === 7) {
+            $nextThree = substr($phone, 0, 3);
+            $lastFour = substr($phone, 3, 4);
+            if ($this->options->defaultAreaCode) {
+                $phone = "($this->options->defaultAreaCode) $nextThree-$lastFour";
+            } else {
+                $phone = "$nextThree-$lastFour";
+            }
+        }
+
+        // Return formatted phone number (or original if not exactly 7 or >10 digits)
+        return $phone;
+    }
+
+    /**
+     * Clean phone numbers so only numbers are left.
+     *
+     * @param string $phone Phone number to clean
+     *
+     * @return string Cleaned phone number
+     */
+    private function cleanPhone(string $phone): string
+    {
+        return preg_replace('/[^0-9]/', null, $phone);
     }
 
     /**
