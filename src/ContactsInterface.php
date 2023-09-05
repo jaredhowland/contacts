@@ -3,7 +3,7 @@
  * Interface to create contacts
  *
  * @author  Jared Howland <contacts@jaredhowland.com>
- * @version 2020-01-24
+ * @version 2023-09-03
  * @since   2016-10-05
  */
 
@@ -28,7 +28,7 @@ interface ContactsInterface
 
     public function addPhoto(string $photo, bool $isUrl);
 
-    public function addBirthday(int $year, int $month, int $day);
+    public function addBirthday(int $month, int $day, int $year);
 
     public function addAddress(
         string $poBox,

@@ -1,9 +1,11 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 /**
  * App configuration
  *
  * @author  Jared Howland <contacts@jaredhowland.com>
- * @version 2020-01-24
+ * @version 2023-09-02
  * @since   2016-09-28
  */
 
@@ -19,23 +21,7 @@ class Config
     /**
      * @var array|false $config Array of values in `Config.ini`. `false` if file cannot be parsed.
      */
-    private static $config;
-
-    /**
-     * Set error reporting based on if app is in development or production
-     */
-    public static function setErrorReporting(): void
-    {
-        // Always report an error (but not always to end user)
-        ini_set('error_reporting', '1');
-        if (self::get('development')) {
-            ini_set('display_errors', '1');
-        } else {
-            // Log all errors but do not display them to the end user
-            ini_set('display_errors', '0');
-            ini_set('log_errors', '1');
-        }
-    }
+    private static array|false $config;
 
     /**
      * Get config setting from `.ini` file
@@ -74,4 +60,6 @@ class Config
     }
 }
 
-Config::setErrorReporting();
+// Log all errors but do not display them to the end user
+ini_set('display_errors', '0');
+ini_set('log_errors', '1');

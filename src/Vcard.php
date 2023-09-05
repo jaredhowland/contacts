@@ -13,12 +13,14 @@
  * Inspired by https://github.com/jeroendesloovere/vcard
  *
  * @author  Jared Howland <contacts@jaredhowland.com>
- * @version 2019-05-28
+ * @version 2023-09-03
  * @since   2016-10-05
  *
  */
 
 namespace Contacts;
+
+use GuzzleHttp\Exception\GuzzleException;
 
 /**
  * vCard class to create a vCard. Extends `Contacts` and implements `ContactsInterface`
@@ -28,14 +30,19 @@ class Vcard implements ContactsInterface
     use Helpers;
 
     /**
+     * @var object $options Object containing all options for this class
+     */
+    private object $options;
+
+    /**
      * @var array $properties Array of properties added to the vCard object
      */
-    private $properties;
+    private array $properties = [];
 
     /**
      * @var array $multiplePropertiesAllowed Array of properties that can be set more than once
      */
-    private $multiplePropertiesAllowed = [
+    private array $multiplePropertiesAllowed = [
         'EMAIL',
         'ADR',
         'LABEL',
@@ -49,7 +56,7 @@ class Vcard implements ContactsInterface
     /**
      * @var array $validAddressTypes Array of valid address types
      */
-    private $validAddressTypes = [
+    private array $validAddressTypes = [
         'dom',
         'intl',
         'postal',
@@ -62,7 +69,7 @@ class Vcard implements ContactsInterface
     /**
      * @var array $validTelephoneTypes Array of valid telephone types
      */
-    private $validTelephoneTypes = [
+    private array $validTelephoneTypes = [
         'home',
         'msg',
         'work',
@@ -83,7 +90,7 @@ class Vcard implements ContactsInterface
     /**
      * @var array $validClassifications Array of valid classification types
      */
-    private $validClassifications = [
+    private array $validClassifications = [
         'PUBLIC',
         'PRIVATE',
         'CONFIDENTIAL',
@@ -92,27 +99,24 @@ class Vcard implements ContactsInterface
     /**
      * @var int $extendedItemCount Count of custom iOS elements set
      */
-    private $extendedItemCount = 1;
+    private int $extendedItemCount = 1;
 
     /**
      * @var array $definedElements Array of defined vCard elements added to the vCard object
      */
-    private $definedElements;
+    private array $definedElements = [];
 
     /**
      * Construct Vcard Class
      *
-     * @param string $dataDirectory   Directory to save vCard(s) to. Default: `./data/`
-     * @param string $defaultAreaCode Default area code to use for phone numbers. Default: `801`
-     * @param string $defaultTimeZone Default time zone to use for Vcard revision date and time. Default:
-     *                                `America/Denver`
+     * @param object|null $options
      */
-    public function __construct(
-        string $dataDirectory = null,
-        string $defaultAreaCode = '801',
-        string $defaultTimeZone = 'America/Denver'
-    ) {
-        $this->setup($dataDirectory, $defaultAreaCode, $defaultTimeZone);
+    public function __construct(object $options = null)
+    {
+        if (is_null($options)) {
+            $options = new Options();
+        }
+        $this->options = $options;
     }
 
     /**
@@ -122,10 +126,10 @@ class Vcard implements ContactsInterface
      */
     public function debug(): string
     {
-        $properties      = print_r($this->properties);
-        $definedElements = print_r($this->definedElements);
+        $properties = print_r($this->properties, true);
+        $definedElements = print_r($this->definedElements, true);
 
-        return "<pre>**PROPERTIES**\n".$properties."\n\n**DEFINED ELEMENTS**\n".$definedElements;
+        return "<pre>**PROPERTIES**\n" . $properties . "\n\n**DEFINED ELEMENTS**\n" . $definedElements;
     }
 
     /**
@@ -182,11 +186,11 @@ class Vcard implements ContactsInterface
      *
      * @link https://tools.ietf.org/html/rfc2426#section-3.1.2 RFC 2426 Section 3.1.2 (p. 8)
      *
-     * @param string $lastName        Family name
-     * @param string $firstName       Given name. Default: `null`
-     * @param string $additionalNames Middle name(s). Comma-delimited. Default: `null`
-     * @param string $prefixes        Honorific prefix(es). Comma-delimited. Default: `null`
-     * @param string $suffixes        Honorific suffix(es). Comma-delimited. Default: `null`
+     * @param string $lastName Family name
+     * @param string|null $firstName Given name. Default: `null`
+     * @param string|null $additionalNames Middle name(s). Comma-delimited. Default: `null`
+     * @param string|null $prefixes Honorific prefix(es). Comma-delimited. Default: `null`
+     * @param string|null $suffixes Honorific suffix(es). Comma-delimited. Default: `null`
      *
      * @return $this
      *
@@ -199,9 +203,9 @@ class Vcard implements ContactsInterface
         string $prefixes = null,
         string $suffixes = null
     ): self {
-        $additionalNames = str_replace(', ', ',', $additionalNames);
-        $prefixes        = str_replace(', ', ',', $prefixes);
-        $suffixes        = str_replace(', ', ',', $suffixes);
+        $additionalNames = str_replace(search: ', ', replace: ',', subject: $additionalNames ?? '');
+        $prefixes = str_replace(search: ', ', replace: ',', subject: $prefixes ?? '');
+        $suffixes = str_replace(search: ', ', replace: ',', subject: $suffixes ?? '');
         // Set directly rather than going through $this->constructElement to avoid escaping valid commas in `$additionalNames`, `$prefixes`, and `$suffixes`
         $this->setProperty(
             'N',
@@ -244,11 +248,11 @@ class Vcard implements ContactsInterface
      * @link https://tools.ietf.org/html/rfc2426#section-3.1.4 RFC 2426 Section 3.1.4 (pp. 9-10)
      *
      * @param string $photo URL-referenced or base-64 encoded photo
-     * @param bool   $isUrl Optional. Is it a URL-referenced photo or a base-64 encoded photo? Default: `true`
+     * @param bool $isUrl Optional. Is it a URL-referenced photo or a base-64 encoded photo? Default: `true`
      *
      * @return $this
      *
-     * @throws ContactsException if an element that can only be defined once is defined more than once
+     * @throws ContactsException|GuzzleException if an element that can only be defined once is defined more than once
      */
     public function addPhoto(string $photo, bool $isUrl = true): self
     {
@@ -266,16 +270,16 @@ class Vcard implements ContactsInterface
      *
      * @link https://tools.ietf.org/html/rfc2426#section-3.1.5 RFC 2426 Section 3.1.5 (p. 10)
      *
-     * @param int $year  Year of birth. If no year given, use iOS custom date field to indicate birth month and day
-     *                   only. Default: `null`
      * @param int $month Month of birth.
-     * @param int $day   Day of birth.
+     * @param int $day Day of birth.
+     * @param int|null $year Year of birth. If no year given, use iOS custom date field to indicate birth month and day
+     *                    only. Default: `null`
      *
      * @return $this
      *
      * @throws ContactsException if an element that can only be defined once is defined more than once
      */
-    public function addBirthday(int $year = null, int $month, int $day): self
+    public function addBirthday(int $month, int $day, ?int $year = null): self
     {
         if ($year !== null) {
             $this->constructElement('BDAY', [$year, $month, $day]);
@@ -296,14 +300,14 @@ class Vcard implements ContactsInterface
      *
      * @link https://tools.ietf.org/html/rfc2426#section-3.2.1 RFC 2426 Section 3.2.1 (pp. 10-11)
      *
-     * @param string $poBox    Post office box number
-     * @param string $extended Extended address
-     * @param string $street   Street address
-     * @param string $city     City
-     * @param string $state    State/province
-     * @param string $zip      Postal code
-     * @param string $country  Country
-     * @param array  $types    Array of address types
+     * @param string|null $poBox Post office box number
+     * @param string|null $extended Extended address
+     * @param string|null $street Street address
+     * @param string|null $city City
+     * @param string|null $state State/province
+     * @param string|null $zip Postal code
+     * @param string|null $country Country
+     * @param array $types Array of address types
      *                         * Valid `$types`s:
      *                         * `dom` - domestic delivery address
      *                         * `intl` - international delivery address
@@ -335,6 +339,7 @@ class Vcard implements ContactsInterface
             return $this;
         }
 
+        $types = is_array($types) ? implode(', ', $types) : $types;
         throw new ContactsException("Invalid address type(s): '$types'");
     }
 
@@ -346,7 +351,7 @@ class Vcard implements ContactsInterface
      * @link https://tools.ietf.org/html/rfc2426#section-3.2.2 RFC 2426 Section 3.2.2 (p. 12)
      *
      * @param string $label Mailing label
-     * @param array  $types Array of mailing label types
+     * @param array $types Array of mailing label types
      *                      * Valid `$types`s:
      *                      * `dom` - domestic delivery address
      *                      * `intl` - international delivery address
@@ -377,8 +382,8 @@ class Vcard implements ContactsInterface
      *
      * @link https://tools.ietf.org/html/rfc2426#section-3.3.1 RFC 2426 Section 3.3.1 (p. 13)
      *
-     * @param string $phone Phone number
-     * @param array  $types Array of telephone types
+     * @param string|null $phone Phone number
+     * @param array $types Array of telephone types
      *                      * Valid `$types`s:
      *                      * `home` - telephone number associated with a residence
      *                      * `msg` - telephone number has voice messaging support
@@ -405,10 +410,46 @@ class Vcard implements ContactsInterface
     {
         // Make sure all `$types`s are valid. If invalid `$types`(s), revert to standard default.
         $types = $this->inArrayAll($types, $this->validTelephoneTypes) ? $types : ['voice'];
-        $phone = $this->sanitizePhone($phone);
         $this->constructElement('TEL', [$types, $phone]);
 
         return $this;
+    }
+
+    /**
+     * TODO: MOVE AND FIX
+     * Format phone numbers to be formatted for U.S. numbers
+     *
+     * @param string $phone Phone number to format
+     * @return string Formatted phone number
+     */
+    public function formatUsTelephone(string $phone): string
+    {
+        if (strlen($phone) > 10) {
+            $countryCode = substr($phone, 0, strlen($phone) - 10);
+            $areaCode = substr($phone, -10, 3);
+            $nextThree = substr($phone, -7, 3);
+            $lastFour = substr($phone, -4, 4);
+            if ($countryCode < 2) {
+                $phone = "($areaCode) $nextThree-$lastFour";
+            } else {
+                $phone = "+$countryCode ($areaCode) $nextThree-$lastFour";
+            }
+        } elseif (strlen($phone) == 10) {
+            $areaCode = substr($phone, 0, 3);
+            $nextThree = substr($phone, 3, 3);
+            $lastFour = substr($phone, 6, 4);
+            $phone = "($areaCode) $nextThree-$lastFour";
+        } elseif (strlen($phone) == 7) {
+            $nextThree = substr($phone, 0, 3);
+            $lastFour = substr($phone, 3, 4);
+            if ($this->defaultAreaCode) {
+                $phone = "($this->defaultAreaCode) $nextThree-$lastFour";
+            } else {
+                $phone = "$nextThree-$lastFour";
+            }
+        }
+
+        return $phone;
     }
 
     /**
@@ -418,8 +459,8 @@ class Vcard implements ContactsInterface
      *
      * @link https://tools.ietf.org/html/rfc2426#section-3.3.2 RFC 2426 Section 3.3.2 (p. 14)
      *
-     * @param string $email Email address
-     * @param array  $types Array of email address types
+     * @param string|null $email Email address
+     * @param array|null $types Array of email address types
      *                      * Valid `$types`s:
      *                      * `internet` - Internet addressing type
      *                      * `x400` - X.400 addressing type
@@ -495,7 +536,7 @@ class Vcard implements ContactsInterface
      *
      * @link https://tools.ietf.org/html/rfc2426#section-3.4.2 RFC 2426 Section 3.4.2 (pp. 15-16)
      *
-     * @param float $lat  Geographic Positioning System latitude (decimal) (must be a number between -90 and 90)
+     * @param float $lat Geographic Positioning System latitude (decimal) (must be a number between -90 and 90)
      *
      * **FORMULA**: decimal = degrees + minutes/60 + seconds/3600
      * @param float $long Geographic Positioning System longitude (decimal) (must be a number between -180 and 180)
@@ -562,12 +603,12 @@ class Vcard implements ContactsInterface
      *
      * @link https://tools.ietf.org/html/rfc2426#section-3.5.3 RFC 2426 Section 3.5.3 (pp. 17-18)
      *
-     * @param string $logo  URL-referenced or base-64 encoded photo
-     * @param bool   $isUrl Optional. Is it a URL-referenced photo or a base-64 encoded photo? Default: `true`
+     * @param string $logo URL-referenced or base-64 encoded photo
+     * @param bool $isUrl Optional. Is it a URL-referenced photo or a base-64 encoded photo? Default: `true`
      *
      * @return $this
      *
-     * @throws ContactsException if an element that can only be defined once is defined more than once
+     * @throws ContactsException|GuzzleException if an element that can only be defined once is defined more than once
      */
     public function addLogo(string $logo, bool $isUrl = true): self
     {
@@ -583,7 +624,7 @@ class Vcard implements ContactsInterface
      *
      * @link https://tools.ietf.org/html/rfc2426#section-3.5.4 RFC 2426 Section 3.5.4 (pp. 18-19)
      *
-     * @param string $agent Not supported. Default `null`
+     * @param string|null $agent Not supported. Default `null`
      *
      * @throws ContactsException if this unsupported method is called
      */
@@ -598,7 +639,7 @@ class Vcard implements ContactsInterface
      * RFC 2426 p. 19
      *
      * Structured type consisting of the organization name, followed by
-     * one or more levels of organizational unit names (semi-colon delimited).
+     * one or more levels of organizational unit names (semicolon delimited).
      *
      * @link https://tools.ietf.org/html/rfc2426#section-3.5.5 RFC 2426 Section 3.5.5 (p. 19)
      *
@@ -682,7 +723,7 @@ class Vcard implements ContactsInterface
      *
      * @link https://tools.ietf.org/html/rfc2426#section-3.6.4 RFC 2426 Section 3.6.4 (p. 21)
      *
-     * @param string $dateTime Date and time to add to card as the revision time. Default: `creation timestamp`
+     * @param string|null $dateTime Date and time to add to card as the revision time. Default: `creation timestamp`
      *
      * @return $this
      *
@@ -690,7 +731,7 @@ class Vcard implements ContactsInterface
      */
     public function addRevision(string $dateTime = null): self
     {
-        $dateTime = $dateTime === null ? (string)date('Y-m-d\TH:i:s\Z') : (string)date(
+        $dateTime = $dateTime === null ? date('Y-m-d\TH:i:s\Z') : date(
             "Y-m-d\TH:i:s\Z",
             strtotime($dateTime)
         );
@@ -728,7 +769,7 @@ class Vcard implements ContactsInterface
      *
      * @link https://tools.ietf.org/html/rfc2426#section-3.6.6 RFC 2426 Section 3.6.6 (pp. 22-23)
      *
-     * @param string $sound Not supported. Default `null`
+     * @param string|null $sound Not supported. Default `null`
      *
      * @throws ContactsException if this unsupported method is called
      */
@@ -744,7 +785,7 @@ class Vcard implements ContactsInterface
      *
      * @link https://tools.ietf.org/html/rfc2426#section-3.6.7 RFC 2426 Section 3.6.7 (p. 23)
      *
-     * @param string $uniqueIdentifier Unique identifier. Default: `PHP-generated unique identifier`
+     * @param string|null $uniqueIdentifier Unique identifier. Default: `PHP-generated unique identifier`
      *
      * @return $this
      *
@@ -837,7 +878,7 @@ class Vcard implements ContactsInterface
      *
      * @link https://tools.ietf.org/html/rfc2426#section-3.7.2 RFC 2426 Section 3.7.2 (pp. 25-26)
      *
-     * @param string $key Not supported. Default `null`
+     * @param string|null $key Not supported. Default `null`
      *
      * @throws ContactsException if this unsupported method is called
      */
@@ -920,10 +961,22 @@ class Vcard implements ContactsInterface
     }
 
     /**
+     * Clean phone numbers so only numbers are left.
+     *
+     * @param string|null $phone Phone number to clean
+     *
+     * @return string|null Cleaned phone number
+     */
+    private function cleanPhone(?string $phone): ?string
+    {
+        return preg_replace('/[^0-9]/', null, $phone);
+    }
+
+    /**
      * Build the vCard
      *
-     * @param bool   $write    Write vCard to file or not. Default: `false`
-     * @param string $filename Name of vCard file. Default: `timestamp`
+     * @param bool $write Write vCard to file or not. Default: `false`
+     * @param string|null $filename Name of vCard file. Default: `timestamp`
      *
      * @return string vCard as a string
      *
@@ -931,26 +984,28 @@ class Vcard implements ContactsInterface
      */
     public function buildVcard(bool $write = false, string $filename = null): string
     {
-        $filename = empty($filename) ? (string)date('Y.m.d.H.i.s') : $filename;
+        $filename = empty($filename) ?
+            $this->options->dataDirectory . date('Y.m.d.H.i.s') :
+            $this->options->dataDirectory . $filename;
         if (!isset($this->definedElements['REV'])) {
             $this->addRevision();
         }
         $string = "BEGIN:VCARD\r\n";
         $string .= "VERSION:3.0\r\n";
         foreach ($this->properties as $property) {
-            $value  = str_replace('\r\n', "\r\n", $property['value']);
-            $string .= $this->fold($value."\r\n");
+            $value = str_replace('\r\n', "\r\n", $property['value']);
+            $string .= $this->fold($value . "\r\n");
         }
         $string .= "END:VCARD\r\n\r\n";
         if ($write) {
-            $this->writeFile($filename.'.vcf', $string, true);
+            $this->writeFile($filename . '.vcf', $string, true);
         }
 
         return $string;
     }
 
     /**
-     * Fold vCard text so each line is 75 characters or less
+     * Fold vCard text so each line is 75 characters or fewer
      *
      * RFC 2426 p. 7
      *
@@ -969,12 +1024,12 @@ class Vcard implements ContactsInterface
      * Add photo to `PHOTO` or `LOGO` elements
      *
      * @param string $element Element to add photo to
-     * @param string $photo   URL-referenced or base-64 encoded photo
-     * @param bool   $isUrl   Optional. Is it a URL-referenced photo or a base-64 encoded photo? Default: `true`
+     * @param string $photo URL-referenced or base-64 encoded photo
+     * @param bool $isUrl Optional. Is it a URL-referenced photo or a base-64 encoded photo? Default: `true`
      *
      * @return $this
      *
-     * @throws ContactsException if an element that can only be defined once is defined more than once
+     * @throws ContactsException|GuzzleException if an element that can only be defined once is defined more than once
      */
     private function photoProperty(string $element, string $photo, bool $isUrl = true): self
     {
@@ -990,17 +1045,17 @@ class Vcard implements ContactsInterface
     /**
      * Add photo to `PHOTO` or `LOGO` elements
      *
-     * @param string $element  Element to add photo to
+     * @param string $element Element to add photo to
      * @param string $photoUrl URL-referenced or base-64 encoded photo
      *
-     * @throws ContactsException if an element that can only be defined once is defined more than once
+     * @throws ContactsException|GuzzleException if an element that can only be defined once is defined more than once
      */
     private function photoURL(string $element, string $photoUrl): void
     {
         // Set directly rather than going through $this->constructElement to avoid escaping valid URL characters
         if (!empty($this->sanitizeUrl($photoUrl))) {
             $mimetype = strtoupper(str_replace('image/', '', getimagesize($photoUrl)['mime']));
-            $photo    = $this->getData($this->sanitizeUrl($photoUrl));
+            $photo = $this->getData($this->sanitizeUrl($photoUrl));
             $this->setProperty($element, vsprintf(Config::get('PHOTO-BINARY'), [$mimetype, base64_encode($photo)]));
         }
     }
@@ -1008,7 +1063,7 @@ class Vcard implements ContactsInterface
     /**
      * Add photo to `PHOTO` or `LOGO` elements
      *
-     * @param string $element     Element to add photo to
+     * @param string $element Element to add photo to
      * @param string $photoString URL-referenced or base-64 encoded photo
      *
      * @throws ContactsException if an element that can only be defined once is defined more than once
@@ -1017,7 +1072,7 @@ class Vcard implements ContactsInterface
     {
         $img = base64_decode($photoString);
         if (!empty($img)) {
-            $file     = finfo_open();
+            $file = finfo_open();
             $mimetype = finfo_buffer($file, $img, FILEINFO_MIME_TYPE);
             $mimetype = strtoupper(str_replace('image/', '', $mimetype));
             $this->setProperty($element, vsprintf(Config::get('PHOTO-BINARY'), [$mimetype, $photoString]));
@@ -1027,14 +1082,14 @@ class Vcard implements ContactsInterface
     /**
      * Construct the element
      *
-     * @param string       $element   Name of the vCard element
-     * @param string|array $value     Value to construct. If it's an array, make it a list using the proper `delimiter`
-     * @param string       $delimiter Delimiter to use for lists given via `$value` array.
+     * @param string $element Name of the vCard element
+     * @param array|string $value Value to construct. If it's an array, make it a list using the proper `delimiter`
+     * @param string $delimiter Delimiter to use for lists given via `$value` array.
      *                                Default: `,`.
      *
      * @throws ContactsException if an element that can only be defined once is defined more than once
      */
-    private function constructElement(string $element, $value, string $delimiter = ','): void
+    private function constructElement(string $element, array|string $value, string $delimiter = ','): void
     {
         $value = is_array($value) ? array_map(
             [$this, 'cleanString'],
@@ -1049,12 +1104,12 @@ class Vcard implements ContactsInterface
     /**
      * Clean a string by escaping `,` and `;` and `:`
      *
-     * @param string|array $string    String to escape
-     * @param string       $delimiter Delimiter to create a list from an array. Default: `,`.
+     * @param array|string|null $string $string String to escape
+     * @param string|null $delimiter Delimiter to create a list from an array. Default: `,`.
      *
      * @return string|null Returns cleaned string or `null`
      */
-    private function cleanString($string, $delimiter = ','): ?string
+    private function cleanString(array|string|null $string, ?string $delimiter = ','): ?string
     {
         // If it's an array, clean individual strings and return a delimited list of array values
         if (is_array($string)) {
@@ -1064,24 +1119,24 @@ class Vcard implements ContactsInterface
 
             return implode($delimiter, $string);
         }
-        $search  = [',', ';', ':'];
+        $search = [',', ';', ':'];
         $replace = ['\,', '\;', '\:'];
 
-        return empty($string) ? null : str_replace($search, $replace, $string);
+        return empty($string) ? null : str_replace($search, $replace, $string ?? '');
     }
 
     /**
      * Set vCard property
      *
      * @param string $element vCard element to set
-     * @param string $value   Value to set vCard element to
+     * @param string $value Value to set vCard element to
      *
      * @throws ContactsException if an element that can only be defined once is defined more than once
      */
     private function setProperty(string $element, string $value): void
     {
         if (isset($this->definedElements[$element]) && !in_array($element, $this->multiplePropertiesAllowed, true)) {
-            throw new ContactsException('You can only set "'.$element.'" once.');
+            throw new ContactsException('You can only set "' . $element . '" once.');
         }
         // Define that we set this element
         $this->definedElements[$element] = true;
