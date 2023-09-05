@@ -960,4 +960,26 @@ class Vcard implements ContactsInterface
 
         return $string;
     }
+
+    /**
+     * Set vCard property
+     *
+     * @param string $element vCard element to set
+     * @param string $value Value to set vCard element to
+     *
+     * @throws ContactsException if an element that can only be defined once is defined more than once
+     */
+    private function setProperty(string $element, string $value): void
+    {
+        if (isset($this->definedElements[$element]) && !in_array($element, $this->multiplePropertiesAllowed, true)) {
+            throw new ContactsException('You can only set "' . $element . '" once.');
+        }
+        // Define that we set this element
+        $this->definedElements[$element] = true;
+        // Add property
+        $this->properties[] = [
+            'key' => $element,
+            'value' => $value,
+        ];
+    }
 }
