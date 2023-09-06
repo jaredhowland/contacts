@@ -130,9 +130,7 @@ class Vcard implements ContactsInterface
         $properties = print_r($this->properties, true);
         $definedElements = print_r($this->definedElements, true);
 
-        /** @var string $properties */
-        /** @var string $definedElements */
-        return "<pre>**PROPERTIES**\n" . $properties . "\n\n**DEFINED ELEMENTS**\n" . $definedElements;
+        return "<pre>**PROPERTIES**\n" . /** @scrutinizer ignore-type */ $properties . "\n\n**DEFINED ELEMENTS**\n" . /** @scrutinizer ignore-type */ $definedElements;
     }
 
     /**
@@ -786,7 +784,7 @@ class Vcard implements ContactsInterface
      */
     public function addUrl(string $url): Vcard
     {
-        if ($this->sanitizeUrl($url) !== null) {
+        if (!empty($this->sanitizeUrl($url))) {
             // Set directly rather than going through $this->constructElement to avoid escaping valid URL characters
             $this->setProperty('URL', vsprintf(Config::get('URL'), [$this->sanitizeUrl($url)]));
         }
