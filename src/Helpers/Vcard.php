@@ -11,7 +11,6 @@
 namespace Contacts\Helpers;
 
 use Contacts\ContactsException;
-use Contacts\Config;
 use GuzzleHttp\Exception\GuzzleException;
 
 /**
@@ -19,6 +18,8 @@ use GuzzleHttp\Exception\GuzzleException;
  */
 trait Vcard
 {
+    use Generic;
+
     /**
      * Fold vCard text so each line is 75 characters or fewer
      *
