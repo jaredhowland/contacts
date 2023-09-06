@@ -130,6 +130,8 @@ class Vcard implements ContactsInterface
         $properties = print_r($this->properties, true);
         $definedElements = print_r($this->definedElements, true);
 
+        /** @var string $properties */
+        /** @var string $definedElements */
         return "<pre>**PROPERTIES**\n" . $properties . "\n\n**DEFINED ELEMENTS**\n" . $definedElements;
     }
 
@@ -412,7 +414,7 @@ class Vcard implements ContactsInterface
     public function addTelephone(string $phone = null, array $types = []): Vcard
     {
         // Format phone number if requested
-        if ($this->options->formatUsTelephone) {
+        if ($this->options->formatUsTelephone && !is_null($phone)) {
             $phone = $this->formatUsTelephone($phone);
         }
         // Make sure all `$types`s are valid. If invalid `$types`(s), revert to standard default.
@@ -1056,7 +1058,7 @@ class Vcard implements ContactsInterface
      *
      * @throws ContactsException if an element that can only be defined once is defined more than once
      */
-    private function constructElement(string $element, array|string $value, string $delimiter = ','): void
+    private function constructElement(string $element, mixed $value, string $delimiter = ','): void
     {
         $value = is_array($value) ? array_map(
             [$this, 'cleanString'],

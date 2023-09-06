@@ -44,7 +44,7 @@ trait Vcard
      *
      * @return string|null Returns cleaned string or `null`
      */
-    private function cleanString(array|string|null $string, ?string $delimiter = ','): ?string
+    private function cleanString(mixed $string, ?string $delimiter = ','): ?string
     {
         // If it's an array, clean individual strings and return a delimited list of array values
         if (is_array($string)) {
@@ -52,7 +52,7 @@ trait Vcard
                 $string[$key] = $this->cleanString($value, $delimiter);
             }
 
-            return implode($delimiter, $string);
+            return implode(/** @scrutinizer ignore-type */$delimiter, $string);
         }
         $search = [',', ';', ':'];
         $replace = ['\,', '\;', '\:'];

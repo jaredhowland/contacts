@@ -141,11 +141,11 @@ trait Generic
      *
      * @param string $url URL
      *
-     * @return string|null Sanitized URL or `null`
+     * @return string Sanitized URL
      *
-     * @throws ContactsException if invalid URL is used
+     * @throws ContactsException If invalid URL is used
      */
-    protected function sanitizeUrl(string $url): ?string
+    protected function sanitizeUrl(string $url): string
     {
         if (filter_var($url, FILTER_VALIDATE_URL)) {
             return filter_var($url, FILTER_SANITIZE_URL);
