@@ -70,50 +70,21 @@ trait Generic
      * This does not validate phone numbers—it only formats them
      *
      * @param string $phone Phone number to format
-     * @return string Formatted phone number (or original if not exactly 7 or >10 digits)
+     * @return string Formatted phone number (or original if not exactly 7 or >=10 digits)
      */
     protected function formatUsTelephone(string $phone): string
     {
         $phone = $this->cleanPhone($phone);
         if (strlen($phone) > 10) {
-            $countryCode = substr($phone, 0, -10);
-            $areaCode = substr($phone, -10, 3);
-            $nextThree = substr($phone, -7, 3);
-            $lastFour = substr($phone, -4, 4);
-            if ($countryCode < 2) {
-                $phone = "($areaCode) $nextThree-$lastFour";
-            } else {
-                $phone = "+$countryCode ($areaCode) $nextThree-$lastFour";
-            }
+            $phone = $this->phoneDigitsMoreThanTen($phone);
         } elseif (strlen($phone) === 10) {
-            $areaCode = substr($phone, 0, 3);
-            $nextThree = substr($phone, 3, 3);
-            $lastFour = substr($phone, 6, 4);
-            $phone = "($areaCode) $nextThree-$lastFour";
+            $phone = $this->phoneDigitsEqualTen($phone);
         } elseif (strlen($phone) === 7) {
-            $nextThree = substr($phone, 0, 3);
-            $lastFour = substr($phone, 3, 4);
-            if ($this->options->defaultAreaCode) {
-                $phone = "($this->options->defaultAreaCode) $nextThree-$lastFour";
-            } else {
-                $phone = "$nextThree-$lastFour";
-            }
+            $phone = $this->phoneDigitsEqualSeven($phone);
         }
 
-        // Return formatted phone number (or original if not exactly 7 or >10 digits)
+        // Return formatted phone number (or original if not exactly 7 or >=10 digits)
         return $phone;
-    }
-
-    /**
-     * Clean phone numbers so only numbers are left.
-     *
-     * @param string $phone Phone number to clean
-     *
-     * @return string Cleaned phone number
-     */
-    private function cleanPhone(string $phone): string
-    {
-        return preg_replace('/[^0-9]/', null, $phone);
     }
 
     /**
@@ -231,6 +202,69 @@ trait Generic
         $response = $this->client->get($url);
 
         return (string)$response->getBody();
+    }
+
+    /**
+     * Clean phone numbers so only numbers are left.
+     *
+     * @param string $phone Phone number to clean
+     *
+     * @return string Cleaned phone number
+     */
+    private function cleanPhone(string $phone): string
+    {
+        return preg_replace('/[^0-9]/', null, $phone);
+    }
+
+    /**
+     * Phone number formatted if more than 10 digits long
+     *
+     * @param string $phone Unformatted, stripped phone number
+     *
+     * @return string Formatted phone number
+     */
+    private function phoneDigitsMoreThanTen(string $phone): string
+    {
+        $countryCode = substr($phone, 0, -10);
+        $areaCode = substr($phone, -10, 3);
+        $nextThree = substr($phone, -7, 3);
+        $lastFour = substr($phone, -4, 4);
+        if ($countryCode < 2) {
+            return "($areaCode) $nextThree-$lastFour";
+        }
+        return "+$countryCode ($areaCode) $nextThree-$lastFour";
+    }
+
+    /**
+     * Phone number formatted if exactly 10 digits long
+     *
+     * @param string $phone Unformatted, stripped phone number
+     *
+     * @return string Formatted phone number
+     */
+    private function phoneDigitsEqualTen(string $phone): string
+    {
+        $areaCode = substr($phone, 0, 3);
+        $nextThree = substr($phone, 3, 3);
+        $lastFour = substr($phone, 6, 4);
+        return "($areaCode) $nextThree-$lastFour";
+    }
+
+    /**
+     * Phone number formatted if exactly 7 digits long
+     *
+     * @param string $phone Unformatted, stripped phone number
+     *
+     * @return string Formatted phone number
+     */
+    private function phoneDigitsEqualSeven(string $phone): string
+    {
+        $nextThree = substr($phone, 0, 3);
+        $lastFour = substr($phone, 3, 4);
+        if ($this->options->defaultAreaCode) {
+            return "($this->options->defaultAreaCode) $nextThree-$lastFour";
+        }
+        return "$nextThree-$lastFour";
     }
 
     /**
