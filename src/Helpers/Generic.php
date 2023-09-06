@@ -51,7 +51,7 @@ trait Generic
     /**
      * Format latitude and longitude
      *
-     * @param float $lat Geographic Positioning System latitude (decimal) (must be a number between -90 and 90)
+     * @param float $lat  Geographic Positioning System latitude (decimal) (must be a number between -90 and 90)
      *
      * **FORMULA**: decimal = degrees + minutes/60 + seconds/3600
      * @param float $long Geographic Positioning System longitude (decimal) (must be a number between -180 and 180)
@@ -59,6 +59,7 @@ trait Generic
      * **FORMULA**: decimal = degrees + minutes/60 + seconds/3600
      *
      * @return array Array of formatted latitude and longitude
+     * @throws ContactsException
      */
     protected function formatGeo(float $lat, float $long): array
     {
@@ -70,17 +71,22 @@ trait Generic
      * This does not validate phone numbers—it only formats them
      *
      * @param string $phone Phone number to format
+     *
      * @return string Formatted phone number (or original if not exactly 7 or >=10 digits)
      */
     protected function formatUsTelephone(string $phone): string
     {
         $phone = $this->cleanPhone($phone);
         if (strlen($phone) > 10) {
-            $phone = $this->phoneDigitsMoreThanTen($phone);
-        } elseif (strlen($phone) === 10) {
-            $phone = $this->phoneDigitsEqualTen($phone);
-        } elseif (strlen($phone) === 7) {
-            $phone = $this->phoneDigitsEqualSeven($phone);
+            return $this->phoneDigitsMoreThanTen($phone);
+        }
+
+        if (strlen($phone) === 10) {
+            return $this->phoneDigitsEqualTen($phone);
+        }
+
+        if (strlen($phone) === 7) {
+            return $this->phoneDigitsEqualSeven($phone);
         }
 
         // Return formatted phone number (or original if not exactly 7 or >=10 digits)
@@ -166,8 +172,6 @@ trait Generic
     /**
      * Writes data to appropriate file
      *
-     * @access protected
-     *
      * @param string $fileName Name of file inside directory defined
      *                         in by `$this->dataDirectory`
      * @param string $data String containing all data to write to file
@@ -194,6 +198,7 @@ trait Generic
      * @param string $url URL of data to grab
      *
      * @return string Contents of the passed URL
+     *
      * @throws GuzzleException
      */
     protected function getData(string $url): string
@@ -213,7 +218,7 @@ trait Generic
      */
     private function cleanPhone(string $phone): string
     {
-        return preg_replace('/[^0-9]/', null, $phone);
+        return preg_replace('/\D/', null, $phone);
     }
 
     /**
@@ -270,16 +275,17 @@ trait Generic
     /**
      * Clean latitude and longitude
      *
-     * @param float $lat Geographic Positioning System latitude (decimal) (must be a number between -90 and 90)
+     * @param string $lat  Geographic Positioning System latitude (decimal) (must be a number between -90 and 90)
+     *                    **FORMULA**: decimal = degrees + minutes/60 + seconds/3600
      *
-     * **FORMULA**: decimal = degrees + minutes/60 + seconds/3600
-     * @param float $long Geographic Positioning System longitude (decimal) (must be a number between -180 and 180)
-     *
-     * **FORMULA**: decimal = degrees + minutes/60 + seconds/3600
+     * @param string $long Geographic Positioning System longitude (decimal) (must be a number between -180 and 180)
+     *                    **FORMULA**: decimal = degrees + minutes/60 + seconds/3600
      *
      * @return array Array of formatted latitude and longitude
+     *
+     * @throws ContactsException If invalid latitude or longitude is used
      */
-    private function cleanLatLong(float $lat, float $long): array
+    private function cleanLatLong(string $lat, string $long): array
     {
         $lat = $this->constrainLatLong($lat, 90, -90);
         $long = $this->constrainLatLong($long, 180, -180);
@@ -290,15 +296,22 @@ trait Generic
     /**
      * Constrain latitude and longitude
      *
-     * @param float $string Latitude or longitude value
-     * @param int $max Max value for latitude or longitude
-     * @param int $min Min value for latitude or longitude
+     * @param float $float Latitude or longitude
+     * @param int   $max Max value for latitude or longitude
+     * @param int   $min Min value for latitude or longitude
      *
-     * @return string|null Latitude or longitude rounded to 6 decimal places. Default if invalid: `null`
+     * @return string Latitude or longitude rounded to 6 decimal places
+     *
+     * @throws ContactsException If invalid latitude or longitude is used
      */
-    private function constrainLatLong(float $string, int $max, int $min): ?string
+    private function constrainLatLong(float $float, int $max, int $min): string
     {
-        return ($string >= $min && $string <= $max) ? sprintf('%1.6f', round($string, 6)) : null;
+        if ($float >= $min && $float <= $max) {
+            $float = round($float, 6);
+            return sprintf('%1.6f', $float);
+        }
+
+        return throw new ContactsException("Invalid latitude or longitude: '$float'");
     }
 
     /**
@@ -311,7 +324,7 @@ trait Generic
      */
     private function getPrefixes(string $timeZone): array
     {
-        $sign = (str_starts_with($timeZone, '-') && $timeZone[0] != 0) ? '-' : '+';
+        $sign = (str_starts_with($timeZone, '-') && ((int)$timeZone !== 0)) ? '-' : '+';
         $negative = str_starts_with($timeZone, '-') ? '-' : null;
 
         return ['sign' => $sign, 'negative' => $negative];

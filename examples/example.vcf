@@ -794,7 +794,7 @@ ADR;TYPE=dom,postal,parcel,work:;;123 Main St;Provo;UT;84602;United State
 ADR;TYPE=dom,postal,parcel,home:;;123 Main St;Provo;UT;84602;United State
  s
 LABEL;TYPE=dom,parcel:Jane Doe\n123 Main St\nProvo\, UT 84602
-TEL;TYPE=cell,iphone:555-555-5555
+TEL;TYPE=cell,iphone:(555) 555-5555
 EMAIL;TYPE=internet:jane_doe@domain.com
 TZ:-07:00
 GEO:40.333333;-111.777778
@@ -816,7 +816,7 @@ item4.X-ABLabel:_$!<Child>!$_
 item5.X-ABRELATEDNAMES:Lisa Doe
 item5.X-ABLabel:_$!<Child>!$_
 X-TWITTER:@jared_howland
-UID:64f77943729396.27359464
+UID:64f897f8057e31.18778107
 REV:2023-09-05T00:00:00Z
 END:VCARD
 
