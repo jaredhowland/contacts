@@ -58,4 +58,15 @@ trait Vcard
 
         return empty($string) ? null : str_replace($search, $replace, $string);
     }
+
+    /**
+     * Remove spaces from comma-delimited list
+     *
+     * @param string|null $list List to remove spaces from
+     * @return string Cleaned or empty string
+     */
+    private function removeSpacesFromList(?string $list): string
+    {
+        return str_replace(search: ', ', replace: ',', subject: $list ?? '');
+    }
 }

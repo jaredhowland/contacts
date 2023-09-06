@@ -204,9 +204,9 @@ class Vcard implements ContactsInterface
         string $prefixes = null,
         string $suffixes = null
     ): Vcard {
-        $additionalNames = str_replace(search: ', ', replace: ',', subject: $additionalNames ?? '');
-        $prefixes = str_replace(search: ', ', replace: ',', subject: $prefixes ?? '');
-        $suffixes = str_replace(search: ', ', replace: ',', subject: $suffixes ?? '');
+        $additionalNames = $this->removeSpacesFromList($additionalNames);
+        $prefixes = $this->removeSpacesFromList($prefixes);
+        $suffixes = $this->removeSpacesFromList($suffixes);
         // Set directly rather than going through $this->constructElement to avoid escaping valid commas in `$additionalNames`, `$prefixes`, and `$suffixes`
         $this->setProperty(
             'N',
@@ -249,7 +249,7 @@ class Vcard implements ContactsInterface
      * @link https://tools.ietf.org/html/rfc2426#section-3.1.4 RFC 2426 Section 3.1.4 (pp. 9-10)
      *
      * @param string $photo URL-referenced or base-64 encoded photo
-     * @param bool   $isUrl Optional. Is it a URL-referenced photo or a base-64 encoded photo? Default: `true`
+     * @param bool $isUrl Optional. Is it a URL-referenced photo or a base-64 encoded photo? Default: `true`
      *
      * @return $this
      *
@@ -283,14 +283,15 @@ class Vcard implements ContactsInterface
      */
     public function addBirthday(int $month, int $day, ?int $year = null): Vcard
     {
-        if ($year !== null) {
-            $this->constructElement('BDAY', [$year, $month, $day]);
+        if (empty($year)) {
+            $this->definedElements['BDAY'] = true; // Define `BDAY` element
+            $this->constructElement('BDAY-NO-YEAR', [$month, $day]);
 
             return $this;
         }
 
-        $this->definedElements['BDAY'] = true; // Define `BDAY` element
-        $this->constructElement('BDAY-NO-YEAR', [$month, $day]);
+        $this->definedElements['BDAY-NO-YEAR'] = true; // Define `BDAY-NO-YEAR` element
+        $this->constructElement('BDAY', [$year, $month, $day]);
 
         return $this;
     }
@@ -701,7 +702,7 @@ class Vcard implements ContactsInterface
     public function addRevision(string $dateTime = null): Vcard
     {
         $dateTime = $dateTime === null ? date('Y-m-d\TH:i:s\Z') : date(
-            "Y-m-d\TH:i:s\Z",
+            'Y-m-d\TH:i:s\Z',
             strtotime($dateTime)
         );
         // Set directly rather than going through $this->constructElement to avoid escaping valid timestamp characters
@@ -987,8 +988,8 @@ class Vcard implements ContactsInterface
      * Add photo to `PHOTO` or `LOGO` elements
      *
      * @param string $element Element to add photo to
-     * @param string $photo   URL-referenced or base-64 encoded photo
-     * @param bool   $isUrl   Optional. Is it a URL-referenced photo or a base-64 encoded photo? Default: `true`
+     * @param string $photo URL-referenced or base-64 encoded photo
+     * @param bool $isUrl Optional. Is it a URL-referenced photo or a base-64 encoded photo? Default: `true`
      *
      * @return $this
      *
