@@ -41,7 +41,7 @@ trait Generic
     protected function sanitizeLatLong(float $lat, float $long): array
     {
         $latLong = $this->formatGeo($lat, $long);
-        if ($latLong['lat'] === null || $latLong['long'] === null) {
+        if (empty($latLong['lat']) || empty($latLong['long'])) {
             throw new ContactsException("Invalid latitude or longitude. Latitude: '$lat' Longitude: '$long'");
         }
 
@@ -287,8 +287,8 @@ trait Generic
      */
     private function cleanLatLong(string $lat, string $long): array
     {
-        $lat = $this->constrainLatLong($lat, 90, -90);
-        $long = $this->constrainLatLong($long, 180, -180);
+        $lat = $this->constrainLatLong((float)$lat, 90, -90);
+        $long = $this->constrainLatLong((float)$long, 180, -180);
 
         return ['lat' => $lat, 'long' => $long];
     }
