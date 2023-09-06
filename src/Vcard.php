@@ -1018,10 +1018,12 @@ class Vcard implements ContactsInterface
     private function photoURL(string $element, string $photoUrl): void
     {
         // Set directly rather than going through $this->constructElement to avoid escaping valid URL characters
-        if (!empty($this->sanitizeUrl($photoUrl))) {
-            $mimetype = strtoupper(str_replace('image/', '', getimagesize($photoUrl)['mime']));
-            $photo = $this->getData($this->sanitizeUrl($photoUrl));
-            $this->setProperty($element, vsprintf(Config::get('PHOTO-BINARY'), [$mimetype, base64_encode($photo)]));
+        $data = $this->getPhotoUrl($photoUrl);
+        if (!is_null($data)) {
+            $this->setProperty(
+                $element,
+                vsprintf(Config::get('PHOTO-BINARY'), [$data['mimetype'], base64_encode($data['photo'])])
+            );
         }
     }
 
@@ -1035,12 +1037,12 @@ class Vcard implements ContactsInterface
      */
     private function photoBase64(string $element, string $photoString): void
     {
-        $img = base64_decode($photoString);
-        if (!empty($img)) {
-            $file = finfo_open();
-            $mimetype = finfo_buffer($file, $img, FILEINFO_MIME_TYPE);
-            $mimetype = strtoupper(str_replace('image/', '', $mimetype));
-            $this->setProperty($element, vsprintf(Config::get('PHOTO-BINARY'), [$mimetype, $photoString]));
+        $data = $this->getPhotoBase64($photoString);
+        if (!is_null($data)) {
+            $this->setProperty(
+                $element,
+                vsprintf(Config::get('PHOTO-BINARY'), [$data['mimetype'], $data['photoString']])
+            );
         }
     }
 

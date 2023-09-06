@@ -69,4 +69,45 @@ trait Vcard
     {
         return str_replace(search: ', ', replace: ',', subject: $list ?? '');
     }
+
+    /**
+     * Get the photo from a URL
+     *
+     * @param string $photoUrl URL of photo to grab
+     *
+     * @return array|null Info about photo in the URL or null if empty
+     *
+     * @throws ContactsException
+     * @throws GuzzleException
+     */
+    private function getPhotoUrl(string $photoUrl): ?array
+    {
+        if (!empty($this->sanitizeUrl($photoUrl))) {
+            $mimetype = strtoupper(str_replace('image/', '', getimagesize($photoUrl)['mime']));
+            $photo = $this->getData($this->sanitizeUrl($photoUrl));
+            return ['mimetype' => $mimetype, 'photo' => $photo];
+        }
+
+        return null;
+    }
+
+    /**
+     * Get the base 64 version of a photo
+     *
+     * @param string $photoString Photo to convert to base 64
+     * @return array|null Array with data or null if empty
+     */
+    private function getPhotoBase64(string $photoString): ?array
+    {
+        $img = base64_decode($photoString);
+        if (!empty($img)) {
+            $file = finfo_open();
+            $mimetype = finfo_buffer($file, $img, FILEINFO_MIME_TYPE);
+            $mimetype = strtoupper(str_replace('image/', '', $mimetype));
+
+            return ['mimetype' => $mimetype, 'photoString' => $photoString];
+        }
+
+        return null;
+    }
 }
