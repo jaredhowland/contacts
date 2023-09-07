@@ -179,9 +179,15 @@ Options
 
 Available options and defaults in the ``Options`` class:
 
-- ``dataDirectory``: ``./data/``
-- ``defaultAreaCode``: ``null``
-- ``formatUsTelephone``: ``true``
+- ``setDataDirectory``: ``./data/``
+- ``setDefaultAreaCode``: ``null``
+- ``setFormatUsTelephone``: ``true``
+
+With appropriate getters:
+
+- ``getDataDirectory()``
+- ``getDefaultAreaCode()``
+- ``isFormatUsTelephone()``
 
 ==========
 Contribute
