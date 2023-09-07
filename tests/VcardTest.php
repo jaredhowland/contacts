@@ -111,7 +111,7 @@ class VcardTest extends TestCase
             'https://raw.githubusercontent.com/jaredhowland/contacts/master/tests/files/photo.jpg'
         );
 
-        $expectedResult = file_get_contents('./files/expectedPhoto.txt');
+        $expectedResult = file_get_contents('tests/files/expectedPhoto.txt');
         $result = $vcard->getProperties()[0]['value'];
 
         $this->assertEquals($expectedResult, $result);
@@ -123,9 +123,9 @@ class VcardTest extends TestCase
     public function testAddPhotoBinary(): void
     {
         $vcard = new Vcard();
-        $vcard->addPhoto(file_get_contents('./files/photoBinary.txt'), false);
+        $vcard->addPhoto(file_get_contents('tests/files/photoBinary.txt'), false);
 
-        $expectedResult = file_get_contents('./files/expectedPhoto.txt');
+        $expectedResult = file_get_contents('tests/files/expectedPhoto.txt');
         $result = $vcard->getProperties()[0]['value'];
 
         $this->assertEquals($expectedResult, $result);
@@ -424,7 +424,7 @@ class VcardTest extends TestCase
             'https://raw.githubusercontent.com/jaredhowland/contacts/master/tests/files/photo.jpg'
         );
 
-        $expectedResult = file_get_contents('./files/expectedPhoto.txt');
+        $expectedResult = file_get_contents('tests/files/expectedPhoto.txt');
         $result = $vcard->getProperties()[0]['value'];
 
         $this->assertEquals($expectedResult, $result);
@@ -437,9 +437,9 @@ class VcardTest extends TestCase
     public function testAddLogoBinary(): void
     {
         $vcard = new Vcard();
-        $vcard->addLogo(file_get_contents('./files/photoBinary.txt'), false);
+        $vcard->addLogo(file_get_contents('tests/files/photoBinary.txt'), false);
 
-        $expectedResult = file_get_contents('./files/expectedPhoto.txt');
+        $expectedResult = file_get_contents('tests/files/expectedPhoto.txt');
         $result = $vcard->getProperties()[0]['value'];
 
         $this->assertEquals($expectedResult, $result);
@@ -712,7 +712,7 @@ class VcardTest extends TestCase
     public function testBuildVcard(): void
     {
         $options = new Options();
-        $options->dataDirectory('./files/');
+        $options->setDataDirectory('tests/files/');
 
         $vcard = new Vcard($options);
 
@@ -724,8 +724,8 @@ class VcardTest extends TestCase
         $expectedResult = "BEGIN:VCARD\r\nVERSION:3.0\r\nN:Doe;Jane;Mary;;\r\nROLE:Accountant\r\nitem1.X-ABRELATEDNAMES:Emily\r\nitem1.X-ABLabel:_\$!<Child>!\$_\r\nREV:2017-12-13T00:00:00Z\r\nEND:VCARD\r\n\r\n";
         $result = $vcard->buildVcard(true, 'test');
 
-        $this->assertFileExists('./files/test.vcf');
+        $this->assertFileExists('tests/files/test.vcf');
         $this->assertEquals($expectedResult, $result);
-        unlink('./files/test.vcf');
+        unlink('tests/files/test.vcf');
     }
 }

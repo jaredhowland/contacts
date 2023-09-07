@@ -412,7 +412,7 @@ class Vcard implements ContactsInterface
     public function addTelephone(string $phone = null, array $types = []): Vcard
     {
         // Format phone number if requested
-        if ($this->options->formatUsTelephone && !is_null($phone)) {
+        if ($this->options->isFormatUsTelephone() && !is_null($phone)) {
             $phone = $this->formatUsTelephone($phone);
         }
         // Make sure all `$types`s are valid. If invalid `$types`(s), revert to standard default.
@@ -943,8 +943,8 @@ class Vcard implements ContactsInterface
     public function buildVcard(bool $write = false, string $filename = null): string
     {
         $filename = empty($filename) ?
-            $this->options->dataDirectory . date('Y.m.d.H.i.s') :
-            $this->options->dataDirectory . $filename;
+            $this->options->getDataDirectory() . date('Y.m.d.H.i.s') :
+            $this->options->getDataDirectory() . $filename;
         if (!isset($this->definedElements['REV'])) {
             $this->addRevision();
         }
