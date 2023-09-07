@@ -137,6 +137,34 @@ trait Generic
     }
 
     /**
+     * Get a datetime stamp
+     *
+     * @param string|null $dateTime Datetime stamp to format, current datetime if `null`
+     * @return string Formatted datetime string
+     */
+    private function getDateTime(?string $dateTime = null): string
+    {
+        if (is_null($dateTime)) {
+            return date('Y-m-d\TH:i:s\Z');
+        }
+        return date('Y-m-d\TH:i:s\Z', strtotime($dateTime));
+    }
+
+    /**
+     * Get the file name and path to save the file to
+     *
+     * @param string|null $fileName Name of file
+     *
+     * @return string Name of file, including path
+     */
+    private function getFileName(?string $fileName): string
+    {
+        return empty($fileName) ?
+            $this->options->getDataDirectory() . date('Y.m.d.H.i.s') :
+            $this->options->getDataDirectory() . $fileName;
+    }
+
+    /**
      * Sanitize uniform resource locator (URL)
      *
      * @param string $url URL

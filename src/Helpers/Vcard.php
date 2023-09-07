@@ -37,6 +37,23 @@ trait Vcard
     }
 
     /**
+     * Add the properties and return a string
+     *
+     * @param array $properties Properties to add to string
+     * @return string String of properties
+     */
+    private function addProperties(array $properties): string
+    {
+        $string = null;
+        foreach ($properties as $property) {
+            $value = str_replace('\r\n', "\r\n", $property['value']);
+            $string .= $this->fold($value . "\r\n");
+        }
+
+        return $string;
+    }
+
+    /**
      * Clean a string by escaping `,` and `;` and `:`
      *
      * @param array|string|null $string $string String to escape
@@ -52,7 +69,7 @@ trait Vcard
                 $string[$key] = $this->cleanString($value, $delimiter);
             }
 
-            return implode(/** @scrutinizer ignore-type */$delimiter, $string);
+            return implode(/** @scrutinizer ignore-type */ $delimiter, $string);
         }
         $search = [',', ';', ':'];
         $replace = ['\,', '\;', '\:'];

@@ -701,10 +701,7 @@ class Vcard implements ContactsInterface
      */
     public function addRevision(string $dateTime = null): Vcard
     {
-        $dateTime = $dateTime === null ? date('Y-m-d\TH:i:s\Z') : date(
-            'Y-m-d\TH:i:s\Z',
-            strtotime($dateTime)
-        );
+        $dateTime = $this->getDateTime($dateTime);
         // Set directly rather than going through $this->constructElement to avoid escaping valid timestamp characters
         $this->setProperty('REV', vsprintf(Config::get('REV'), [$dateTime]));
 
@@ -942,18 +939,13 @@ class Vcard implements ContactsInterface
      */
     public function buildVcard(bool $write = false, string $filename = null): string
     {
-        $filename = empty($filename) ?
-            $this->options->getDataDirectory() . date('Y.m.d.H.i.s') :
-            $this->options->getDataDirectory() . $filename;
+        $filename = $this->getFileName($filename);
         if (!isset($this->definedElements['REV'])) {
             $this->addRevision();
         }
         $string = "BEGIN:VCARD\r\n";
         $string .= "VERSION:3.0\r\n";
-        foreach ($this->properties as $property) {
-            $value = str_replace('\r\n', "\r\n", $property['value']);
-            $string .= $this->fold($value . "\r\n");
-        }
+        $string .= $this->addProperties($this->properties);
         $string .= "END:VCARD\r\n\r\n";
         if ($write) {
             $this->writeFile($filename . '.vcf', $string, true);
