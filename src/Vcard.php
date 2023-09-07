@@ -13,7 +13,7 @@
  * Inspired by https://github.com/jeroendesloovere/vcard
  *
  * @author  Jared Howland <contacts@jaredhowland.com>
- * @version 2023-09-03
+ * @version 2023-09-06
  * @since   2016-10-05
  *
  */

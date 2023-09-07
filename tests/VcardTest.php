@@ -5,7 +5,7 @@ declare(strict_types=1);
  * Tests for the Vcard class
  *
  * @author  Jared Howland <contacts@jaredhowland.com>
- * @version 2019-05-28
+ * @version 2023-09-06
  * @since   2017-12-12
  */
 
