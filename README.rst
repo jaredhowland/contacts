@@ -47,7 +47,7 @@ This is an extensive example. Most of the time, you will only need a tiny fracti
 
           // Set desired options
           $options = new Options();
-          $options->dataDirectory('./'); // Tell app where to save `.vcf` file
+          $options->setDataDirectory('./'); // Tell app where to save `.vcf` file
 
           $vcard = new Vcard($options);
           $vcard->addFullName('Jane Doe');
@@ -96,7 +96,7 @@ Or you can chain methods together to build the vCard:
 
           // Set desired options
           $options = new Options();
-          $options->dataDirectory('./'); // Tell app where to save `.vcf` file
+          $options->setDataDirectory('./'); // Tell app where to save `.vcf` file
 
           $vcard = new Vcard($options);
           $vcard->addFullName('Jane Doe')

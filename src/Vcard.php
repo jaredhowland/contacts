@@ -983,20 +983,16 @@ class Vcard implements ContactsInterface
      * @param string $photo URL-referenced or base-64 encoded photo
      * @param bool $isUrl Optional. Is it a URL-referenced photo or a base-64 encoded photo? Default: `true`
      *
-     * @return $this
-     *
      * @throws ContactsException
      * @throws GuzzleException
      */
-    private function photoProperty(string $element, string $photo, bool $isUrl = true): self
+    private function photoProperty(string $element, string $photo, bool $isUrl = true): void
     {
         if ($isUrl) {
             $this->photoURL($element, $photo);
         } else {
             $this->photoBase64($element, $photo);
         }
-
-        return $this;
     }
 
     /**
