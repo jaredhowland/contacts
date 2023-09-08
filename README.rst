@@ -52,7 +52,7 @@ This is an extensive example. Most of the time, you will only need a tiny fracti
           $vcard = new Vcard($options);
           $vcard->addFullName('Jane Doe');
           $vcard->addName('Doe', 'Jane');
-          $vcard->addNicknames(['Janie', 'Jan']);
+          $vcard->addNickname('Janie, Jan');
           $vcard->addPhoto('https://raw.githubusercontent.com/jaredhowland/contacts/master/tests/files/photo.jpg');
           $vcard->addBirthday(10, 2, null);
           $vcard->addAddress(null, null, '123 Main', 'Provo', 'UT', '84602', 'United States', ['dom', 'postal', 'parcel', 'work']);
@@ -101,7 +101,7 @@ Or you can chain methods together to build the vCard:
           $vcard = new Vcard($options);
           $vcard->addFullName('Jane Doe')
                 ->addName('Doe', 'Jane')
-                ->addNicknames(['Janie', 'Jan'])
+                ->addNickname('Janie, Jan')
                 ->addPhoto('https://raw.githubusercontent.com/jaredhowland/contacts/master/tests/files/photo.jpg')
                 ->addBirthday(null, 2, 10)
                 ->addAddress(null, null, '123 Main', 'Provo', 'UT', '84602', 'United States', ['dom', 'postal', 'parcel', 'work'])

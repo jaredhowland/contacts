@@ -18,7 +18,7 @@ $options->setDataDirectory('./');
 $directory = new Vcard($options);
 $directory->addFullName('Jane Doe')
     ->addName('Doe', 'Jane')
-    ->addNicknames(['Janie', 'Jan'])
+    ->addNickname('Janie, Jan')
     ->addPhoto('https://raw.githubusercontent.com/jaredhowland/contacts/master/tests/files/photo.jpg')
     ->addBirthday(2, 10)
     ->addAddress(
