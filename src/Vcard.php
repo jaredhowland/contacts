@@ -114,23 +114,7 @@ class Vcard implements ContactsInterface
      */
     public function __construct(object $options = null)
     {
-        if (is_null($options)) {
-            $options = new Options();
-        }
-        $this->options = $options;
-    }
-
-    /**
-     * Print out properties and define elements to help with debugging
-     *
-     * @return string
-     */
-    public function debug(): string
-    {
-        $properties = print_r($this->properties, true);
-        $definedElements = print_r($this->definedElements, true);
-
-        return "<pre>**PROPERTIES**\n" . /** @scrutinizer ignore-type */ $properties . "\n\n**DEFINED ELEMENTS**\n" . /** @scrutinizer ignore-type */ $definedElements;
+        $this->options = $options ?? new Options();
     }
 
     /**
@@ -217,7 +201,8 @@ class Vcard implements ContactsInterface
     }
 
     /**
-     * Add nickname(s) to vCard
+     * Add nickname to vCard
+     * Make list comma delimited if you have more than one nickname to add
      *
      * RFC 2426 pp. 8–9
      *
@@ -228,15 +213,20 @@ class Vcard implements ContactsInterface
      *
      * @link https://tools.ietf.org/html/rfc2426#section-3.1.3 RFC 2426 Section 3.1.3 (pp. 8-9)
      *
-     * @param array $names Nickname(s). Array of nicknames
+     * @param string $name Nickname(s), comma delimited string if more than one nickname
      *
      * @return $this
      *
      * @throws ContactsException if an element that can only be defined once is defined more than once
      */
-    public function addNicknames(array $names): Vcard
+    public function addNickname(string $name): Vcard
     {
-        $this->constructElement('NICKNAME', [$names]);
+        $name = $this->removeSpacesFromList($name);
+        // Set directly rather than going through $this->constructElement to avoid escaping valid commas in `$additionalNames`, `$prefixes`, and `$suffixes`
+        $this->setProperty(
+            'NICKNAME',
+            vsprintf(Config::get('NICKNAME'), [$name])
+        );
 
         return $this;
     }

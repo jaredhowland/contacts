@@ -21,16 +21,6 @@ class VcardTest extends TestCase
 {
     public string $branch = 'dev';
 
-    public function testDebugReturnsString(): void
-    {
-        $vcard = new Vcard();
-
-        $expectedResult = "<pre>**PROPERTIES**\nArray\n(\n)\n\n\n**DEFINED ELEMENTS**\nArray\n(\n)\n";
-        $result = $vcard->debug();
-
-        $this->assertEquals($expectedResult, $result);
-    }
-
     /**
      * @throws ContactsException if `addFullName()` does not work
      */
@@ -88,12 +78,12 @@ class VcardTest extends TestCase
     }
 
     /**
-     * @throws ContactsException if `addNicknames()` does not work
+     * @throws ContactsException if `addNickname()` does not work
      */
     public function testAddNickname(): void
     {
         $vcard = new Vcard();
-        $vcard->addNicknames(['Jan', 'Janet']);
+        $vcard->addNickname('Jan, Janet');
 
         $expectedResult = 'NICKNAME:Jan,Janet';
         $result = $vcard->getProperties()[0]['value'];

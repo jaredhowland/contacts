@@ -24,7 +24,7 @@ interface ContactsInterface
         string $suffixes
     );
 
-    public function addNicknames(array $names);
+    public function addNickname(string $name);
 
     public function addPhoto(string $photo, bool $isUrl);
 
