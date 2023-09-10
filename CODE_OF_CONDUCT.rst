@@ -128,8 +128,7 @@ Attribution
 ===========
 
 This Code of Conduct is adapted from the `Contributor Covenant <https://www.contributor-covenant.org>`_,
-version 2.1, available at
-`v2.1 <https://www.contributor-covenant.org/version/2/1/code_of_conduct.html>`_.
+version `v2.1 <https://www.contributor-covenant.org/version/2/1/code_of_conduct.html>`_.
 
 Community Impact Guidelines were inspired by
 `Mozilla's code of conduct enforcement ladder <https://github.com/mozilla/diversity>`_.
