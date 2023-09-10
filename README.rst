@@ -194,6 +194,7 @@ Contribute
 ==========
 * Issue Tracker: https://github.com/jaredhowland/contacts/issues
 * Source Code: https://github.com/jaredhowland/contacts
+* Code of conduct: https://github.com/jaredhowland/contacts/blob/master/CODE_OF_CONDUCT.rst
 
 ============
 Known Issues
