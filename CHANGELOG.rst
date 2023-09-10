@@ -23,11 +23,12 @@ Deprecated
 ----------
 
 - ``debug`` method in ``Vcard``
+- ``addNicknames`` is now ``addNickname``
 
 Removed
 -------
 
-- None
+- ``addNicknames`` method is now ``addNickname``
 
 Fixed
 -----
