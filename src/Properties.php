@@ -2,6 +2,8 @@
 
 namespace Contacts;
 
+use GuzzleHttp\Exception\GuzzleException;
+
 class Properties
 {
     use Helpers\Vcard;
@@ -88,21 +90,101 @@ class Properties
         return $this->properties;
     }
 
+    /**
+     * Get valid address types
+     *
+     * @return array|string[]
+     */
     public function getValidAddressTypes(): array
     {
         return $this->validAddressTypes;
     }
 
+    /**
+     * Get valid phone types
+     *
+     * @return array|string[]
+     */
     public function getValidTelephoneTypes(): array
     {
         return $this->validTelephoneTypes;
     }
 
+    /**
+     * Get valid classifications
+     *
+     * @return array|string[]
+     */
     public function getValidClassifications(): array
     {
         return $this->validClassifications;
     }
 
+    /**
+     * Add photo to `PHOTO` or `LOGO` elements
+     *
+     * @param string $element Element to add photo to
+     * @param string $photo URL-referenced or base-64 encoded photo
+     * @param bool $isUrl Optional. Is it a URL-referenced photo or a base-64 encoded photo? Default: `true`
+     *
+     * @throws ContactsException
+     * @throws GuzzleException
+     */
+    public function photoProperty(string $element, string $photo, bool $isUrl = true): void
+    {
+        if ($isUrl) {
+            $this->photoURL($element, $photo);
+        } else {
+            $this->photoBase64($element, $photo);
+        }
+    }
+
+    /**
+     * Add photo to `PHOTO` or `LOGO` elements
+     *
+     * @param string $element Element to add photo to
+     * @param string $photoUrl URL-referenced or base-64 encoded photo
+     *
+     * @throws ContactsException|GuzzleException if an element that can only be defined once is defined more than once
+     */
+    private function photoURL(string $element, string $photoUrl): void
+    {
+        // Set directly rather than going through $this->properties->constructElement to avoid escaping valid URL characters
+        $data = $this->getPhotoUrl($photoUrl);
+        if (!is_null($data)) {
+            $this->setProperty(
+                $element,
+                vsprintf(Config::get('PHOTO-BINARY'), [$data['mimetype'], base64_encode($data['photo'])])
+            );
+        }
+    }
+
+    /**
+     * Add photo to `PHOTO` or `LOGO` elements
+     *
+     * @param string $element Element to add photo to
+     * @param string $photoString URL-referenced or base-64 encoded photo
+     *
+     * @throws ContactsException if an element that can only be defined once is defined more than once
+     */
+    private function photoBase64(string $element, string $photoString): void
+    {
+        $data = $this->getPhotoBase64($photoString);
+        if (!is_null($data)) {
+            $this->setProperty(
+                $element,
+                vsprintf(Config::get('PHOTO-BINARY'), [$data['mimetype'], $data['photoString']])
+            );
+        }
+    }
+
+    /**
+     * Set a defined element
+     *
+     * @param string $element
+     *
+     * @return $this
+     */
     public function setDefinedElements(string $element): Properties
     {
         $this->definedElements[$element] = true;
@@ -178,6 +260,7 @@ class Properties
      * Add the properties and return a string
      *
      * @param array $properties Properties to add to string
+     *
      * @return string String of properties
      */
     public function addProperties(array $properties): string
