@@ -103,7 +103,7 @@ Or you can chain methods together to build the vCard:
                 ->addName('Doe', 'Jane')
                 ->addNickname('Janie, Jan')
                 ->addPhoto('https://raw.githubusercontent.com/jaredhowland/contacts/master/tests/files/photo.jpg')
-                ->addBirthday(null, 2, 10)
+                ->addBirthday(10, 2, null)
                 ->addAddress(null, null, '123 Main', 'Provo', 'UT', '84602', 'United States', ['dom', 'postal', 'parcel', 'work'])
                 ->addAddress(null, null, '123 Main', 'Provo', 'UT', '84602', 'United States', ['dom', 'postal', 'parcel', 'home'])
                 ->addLabel('Jane Doe\n123 Main St\nProvo, UT 84602', ['dom', 'parcel'])
