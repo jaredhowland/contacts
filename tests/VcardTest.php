@@ -5,14 +5,13 @@ declare(strict_types=1);
  * Tests for the Vcard class
  *
  * @author  Jared Howland <contacts@jaredhowland.com>
- * @version 2023-09-06
+ * @version 2023-09-10
  * @since   2017-12-12
  */
 
 namespace Tests;
 
 use Contacts\Options;
-use Contacts\Properties;
 use Contacts\Vcard;
 use Contacts\ContactsException;
 use GuzzleHttp\Exception\GuzzleException;
@@ -20,8 +19,6 @@ use PHPUnit\Framework\TestCase;
 
 class VcardTest extends TestCase
 {
-    public string $branch = 'dev';
-
     /**
      * @throws ContactsException if `addFullName()` does not work
      */

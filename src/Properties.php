@@ -140,45 +140,6 @@ class Properties
     }
 
     /**
-     * Add photo to `PHOTO` or `LOGO` elements
-     *
-     * @param string $element Element to add photo to
-     * @param string $photoUrl URL-referenced or base-64 encoded photo
-     *
-     * @throws ContactsException|GuzzleException if an element that can only be defined once is defined more than once
-     */
-    private function photoURL(string $element, string $photoUrl): void
-    {
-        // Set directly rather than going through $this->properties->constructElement to avoid escaping valid URL characters
-        $data = $this->getPhotoUrl($photoUrl);
-        if (!is_null($data)) {
-            $this->setProperty(
-                $element,
-                vsprintf(Config::get('PHOTO-BINARY'), [$data['mimetype'], base64_encode($data['photo'])])
-            );
-        }
-    }
-
-    /**
-     * Add photo to `PHOTO` or `LOGO` elements
-     *
-     * @param string $element Element to add photo to
-     * @param string $photoString URL-referenced or base-64 encoded photo
-     *
-     * @throws ContactsException if an element that can only be defined once is defined more than once
-     */
-    private function photoBase64(string $element, string $photoString): void
-    {
-        $data = $this->getPhotoBase64($photoString);
-        if (!is_null($data)) {
-            $this->setProperty(
-                $element,
-                vsprintf(Config::get('PHOTO-BINARY'), [$data['mimetype'], $data['photoString']])
-            );
-        }
-    }
-
-    /**
      * Set a defined element
      *
      * @param string $element
@@ -272,5 +233,85 @@ class Properties
         }
 
         return $string;
+    }
+
+    /**
+     * Add photo to `PHOTO` or `LOGO` elements
+     *
+     * @param string $element Element to add photo to
+     * @param string $photoUrl URL-referenced or base-64 encoded photo
+     *
+     * @throws ContactsException|GuzzleException if an element that can only be defined once is defined more than once
+     */
+    private function photoURL(string $element, string $photoUrl): void
+    {
+        // Set directly rather than going through $this->properties->constructElement to avoid escaping valid URL characters
+        $data = $this->getPhotoUrl($photoUrl);
+        if (!is_null($data)) {
+            $this->setProperty(
+                $element,
+                vsprintf(Config::get('PHOTO-BINARY'), [$data['mimetype'], base64_encode($data['photo'])])
+            );
+        }
+    }
+
+    /**
+     * Add photo to `PHOTO` or `LOGO` elements
+     *
+     * @param string $element Element to add photo to
+     * @param string $photoString URL-referenced or base-64 encoded photo
+     *
+     * @throws ContactsException if an element that can only be defined once is defined more than once
+     */
+    private function photoBase64(string $element, string $photoString): void
+    {
+        $data = $this->getPhotoBase64($photoString);
+        if (!is_null($data)) {
+            $this->setProperty(
+                $element,
+                vsprintf(Config::get('PHOTO-BINARY'), [$data['mimetype'], $data['photoString']])
+            );
+        }
+    }
+
+    /**
+     * Get the photo from a URL
+     *
+     * @param string $photoUrl URL of photo to grab
+     *
+     * @return array|null Info about photo in the URL or null if empty
+     *
+     * @throws ContactsException
+     * @throws GuzzleException
+     */
+    private function getPhotoUrl(string $photoUrl): ?array
+    {
+        if (!empty($this->sanitizeUrl($photoUrl))) {
+            $mimetype = strtoupper(str_replace('image/', '', getimagesize($photoUrl)['mime']));
+            $photo = $this->getData($this->sanitizeUrl($photoUrl));
+            return ['mimetype' => $mimetype, 'photo' => $photo];
+        }
+
+        return null;
+    }
+
+    /**
+     * Get the base 64 version of a photo
+     *
+     * @param string $photoString Photo to convert to base 64
+     * @return array|null Array with data or null if empty
+     */
+    private function getPhotoBase64(string $photoString): ?array
+    {
+        $img = base64_decode($photoString);
+        if (!empty($img)) {
+            $file = finfo_open();
+            $mimetype = finfo_buffer($file, $img, FILEINFO_MIME_TYPE);
+            $mimetype = strtoupper(str_replace('image/', '', $mimetype));
+
+            return ['mimetype' => $mimetype, 'photoString' => $photoString];
+        }
+
+        return null;
     }
 }
