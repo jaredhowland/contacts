@@ -799,7 +799,9 @@ class Vcard implements ContactsInterface
     {
         if (is_int(strtotime($anniversary))) {
             $anniversary = date('Y-m-d', strtotime($anniversary));
-            $this->properties->constructElement('ANNIVERSARY', [$anniversary, $this->properties->getExtendedItemCount()]
+            $this->properties->constructElement(
+                'ANNIVERSARY',
+                [$anniversary, $this->properties->getExtendedItemCount()]
             );
 
             return $this;
