@@ -7,7 +7,7 @@ We accept contributions via Pull Requests on [Github](https://github.com/jaredho
 
 ## Pull Requests
 
-- **Adhere to [PSR-2 Coding Standard](https://github.com/php-fig/fig-standards/blob/master/accepted/PSR-2-coding-style-guide.md)**.
+- **Adhere to [PSR-12 Coding Standard](https://github.com/php-fig/fig-standards/blob/master/accepted/PSR-12-extended-coding-style-guide.md)**.
 
 - **Add tests!** - Your patch won't be accepted if it doesn't have tests.
 
