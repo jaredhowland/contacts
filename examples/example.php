@@ -60,7 +60,7 @@ $directory->addFullName('Jane Doe')
     ->addChild('Lisa Doe')
     ->addExtendedType('TWITTER', '@jared_howland')
     ->addUniqueIdentifier()
-    ->addRevision('2023-09-05')
+    ->addRevision('2023-09-10')
     ->buildVcard(
         true,
         'example'

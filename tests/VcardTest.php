@@ -12,6 +12,7 @@ declare(strict_types=1);
 namespace Tests;
 
 use Contacts\Options;
+use Contacts\Properties;
 use Contacts\Vcard;
 use Contacts\ContactsException;
 use GuzzleHttp\Exception\GuzzleException;

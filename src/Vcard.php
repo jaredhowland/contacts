@@ -31,90 +31,24 @@ class Vcard implements ContactsInterface
     use Helpers\Vcard;
 
     /**
-     * @var object $options Object containing all options for this class
+     * @var Options $options Object containing all options for this class
      */
-    private object $options;
+    private Options $options;
 
     /**
-     * @var array $properties Array of properties added to the vCard object
+     * @var Properties $properties Object containing all the set properties
      */
-    private array $properties = [];
-
-    /**
-     * @var array $multiplePropertiesAllowed Array of properties that can be set more than once
-     */
-    private array $multiplePropertiesAllowed = [
-        'EMAIL',
-        'ADR',
-        'LABEL',
-        'TEL',
-        'EMAIL',
-        'URL',
-        'X-',
-        'CHILD',
-    ];
-
-    /**
-     * @var array $validAddressTypes Array of valid address types
-     */
-    private array $validAddressTypes = [
-        'dom',
-        'intl',
-        'postal',
-        'parcel',
-        'home',
-        'work',
-        'pref',
-    ];
-
-    /**
-     * @var array $validTelephoneTypes Array of valid telephone types
-     */
-    private array $validTelephoneTypes = [
-        'home',
-        'msg',
-        'work',
-        'pref',
-        'voice',
-        'fax',
-        'cell',
-        'video',
-        'pager',
-        'bbs',
-        'modem',
-        'car',
-        'isdn',
-        'pcs',
-        'iphone',
-    ]; // Custom type for iOS and macOS applications
-
-    /**
-     * @var array $validClassifications Array of valid classification types
-     */
-    private array $validClassifications = [
-        'PUBLIC',
-        'PRIVATE',
-        'CONFIDENTIAL',
-    ];
-
-    /**
-     * @var int $extendedItemCount Count of custom iOS elements set
-     */
-    private int $extendedItemCount = 1;
-
-    /**
-     * @var array $definedElements Array of defined vCard elements added to the vCard object
-     */
-    private array $definedElements = [];
+    private Properties $properties;
 
     /**
      * Construct Vcard Class
      *
-     * @param object|null $options
+     * @param Options|null $options
      */
-    public function __construct(object $options = null)
+    public function __construct(Options $options = null)
     {
         $this->options = $options ?? new Options();
+        $this->properties = new Properties();
     }
 
     /**
@@ -124,17 +58,17 @@ class Vcard implements ContactsInterface
      */
     public function getProperties(): array
     {
-        return $this->properties;
+        return $this->properties->get();
     }
 
     /**
-     * Get defined elements array
+     * Get defined elements in `Properties` object
      *
-     * @return array Array of defined elements
+     * @return array
      */
     public function getDefinedElements(): array
     {
-        return $this->definedElements;
+        return $this->properties->getDefinedElements();
     }
 
     /**
@@ -156,7 +90,7 @@ class Vcard implements ContactsInterface
      */
     public function addFullName(string $name): Vcard
     {
-        $this->constructElement('FN', $name);
+        $this->properties->constructElement('FN', $name);
 
         return $this;
     }
@@ -191,8 +125,8 @@ class Vcard implements ContactsInterface
         $additionalNames = $this->removeSpacesFromList($additionalNames);
         $prefixes = $this->removeSpacesFromList($prefixes);
         $suffixes = $this->removeSpacesFromList($suffixes);
-        // Set directly rather than going through $this->constructElement to avoid escaping valid commas in `$additionalNames`, `$prefixes`, and `$suffixes`
-        $this->setProperty(
+        // Set directly rather than going through $this->properties->constructElement to avoid escaping valid commas in `$additionalNames`, `$prefixes`, and `$suffixes`
+        $this->properties->setProperty(
             'N',
             vsprintf(Config::get('N'), [$lastName, $firstName, $additionalNames, $prefixes, $suffixes])
         );
@@ -222,8 +156,8 @@ class Vcard implements ContactsInterface
     public function addNickname(string $name): Vcard
     {
         $name = $this->removeSpacesFromList($name);
-        // Set directly rather than going through $this->constructElement to avoid escaping valid commas in `$additionalNames`, `$prefixes`, and `$suffixes`
-        $this->setProperty(
+        // Set directly rather than going through $this->properties->constructElement to avoid escaping valid commas in `$additionalNames`, `$prefixes`, and `$suffixes`
+        $this->properties->setProperty(
             'NICKNAME',
             vsprintf(Config::get('NICKNAME'), [$name])
         );
@@ -274,14 +208,14 @@ class Vcard implements ContactsInterface
     public function addBirthday(int $month, int $day, ?int $year = null): Vcard
     {
         if (empty($year)) {
-            $this->definedElements['BDAY'] = true; // Define `BDAY` element
-            $this->constructElement('BDAY-NO-YEAR', [$month, $day]);
+            $this->properties->setDefinedElements('BDAY'); // Define `BDAY` element
+            $this->properties->constructElement('BDAY-NO-YEAR', [$month, $day]);
 
             return $this;
         }
 
-        $this->definedElements['BDAY-NO-YEAR'] = true; // Define `BDAY-NO-YEAR` element
-        $this->constructElement('BDAY', [$year, $month, $day]);
+        $this->properties->setDefinedElements('BDAY-NO-YEAR'); // Define `BDAY-NO-YEAR` element
+        $this->properties->constructElement('BDAY', [$year, $month, $day]);
 
         return $this;
     }
@@ -326,8 +260,11 @@ class Vcard implements ContactsInterface
         array $types = ['intl', 'postal', 'parcel', 'work']
     ): Vcard {
         // Make sure all `$types`s are valid. If invalid `$types`(s), revert to standard default.
-        if ($this->inArrayAll($types, $this->validAddressTypes)) {
-            $this->constructElement('ADR', [$types, $poBox, $extended, $street, $city, $state, $zip, $country]);
+        if ($this->inArrayAll($types, $this->properties->getValidAddressTypes())) {
+            $this->properties->constructElement(
+                'ADR',
+                [$types, $poBox, $extended, $street, $city, $state, $zip, $country]
+            );
 
             return $this;
         }
@@ -362,8 +299,13 @@ class Vcard implements ContactsInterface
     public function addLabel(string $label, array $types = []): Vcard
     {
         // Make sure all `$types`s are valid. If invalid `$types`(s), revert to standard default.
-        $types = $this->inArrayAll($types, $this->validAddressTypes) ? $types : ['intl', 'postal', 'parcel', 'work'];
-        $this->constructElement('LABEL', [$types, $label]);
+        $types = $this->inArrayAll($types, $this->properties->getValidAddressTypes()) ? $types : [
+            'intl',
+            'postal',
+            'parcel',
+            'work'
+        ];
+        $this->properties->constructElement('LABEL', [$types, $label]);
 
         return $this;
     }
@@ -406,8 +348,8 @@ class Vcard implements ContactsInterface
             $phone = $this->formatUsTelephone($phone);
         }
         // Make sure all `$types`s are valid. If invalid `$types`(s), revert to standard default.
-        $types = $this->inArrayAll($types, $this->validTelephoneTypes) ? $types : ['voice'];
-        $this->constructElement('TEL', [$types, $phone]);
+        $types = $this->inArrayAll($types, $this->properties->getValidTelephoneTypes()) ? $types : ['voice'];
+        $this->properties->constructElement('TEL', [$types, $phone]);
 
         return $this;
     }
@@ -437,7 +379,7 @@ class Vcard implements ContactsInterface
     {
         $types = empty($types) ? ['internet'] : $types;
         $email = $this->sanitizeEmail($email);
-        $this->constructElement('EMAIL', [$types, $email]);
+        $this->properties->constructElement('EMAIL', [$types, $email]);
 
         return $this;
     }
@@ -457,7 +399,7 @@ class Vcard implements ContactsInterface
      */
     public function addMailer(string $mailer): Vcard
     {
-        $this->constructElement('MAILER', $mailer);
+        $this->properties->constructElement('MAILER', $mailer);
 
         return $this;
     }
@@ -483,7 +425,7 @@ class Vcard implements ContactsInterface
     public function addTimeZone(string $timeZone): Vcard
     {
         if ($this->sanitizeTimeZone($timeZone)) {
-            $this->constructElement('TZ', $this->sanitizeTimeZone($timeZone));
+            $this->properties->constructElement('TZ', $this->sanitizeTimeZone($timeZone));
         }
 
         return $this;
@@ -510,7 +452,7 @@ class Vcard implements ContactsInterface
     public function addLatLong(float $lat, float $long): Vcard
     {
         if ($this->sanitizeLatLong($lat, $long)) {
-            $this->constructElement('GEO', $this->sanitizeLatLong($lat, $long));
+            $this->properties->constructElement('GEO', $this->sanitizeLatLong($lat, $long));
         }
 
         return $this;
@@ -531,7 +473,7 @@ class Vcard implements ContactsInterface
      */
     public function addTitle(string $title): Vcard
     {
-        $this->constructElement('TITLE', $title);
+        $this->properties->constructElement('TITLE', $title);
 
         return $this;
     }
@@ -551,7 +493,7 @@ class Vcard implements ContactsInterface
      */
     public function addRole(string $role): Vcard
     {
-        $this->constructElement('ROLE', $role);
+        $this->properties->constructElement('ROLE', $role);
 
         return $this;
     }
@@ -611,7 +553,7 @@ class Vcard implements ContactsInterface
      */
     public function addOrganizations(array $organizations): Vcard
     {
-        $this->constructElement('ORG', [$organizations], ';');
+        $this->properties->constructElement('ORG', [$organizations], ';');
 
         return $this;
     }
@@ -631,7 +573,7 @@ class Vcard implements ContactsInterface
      */
     public function addCategories(array $categories): Vcard
     {
-        $this->constructElement('CATEGORIES', [$categories]);
+        $this->properties->constructElement('CATEGORIES', [$categories]);
 
         return $this;
     }
@@ -651,7 +593,7 @@ class Vcard implements ContactsInterface
      */
     public function addNote(string $note): Vcard
     {
-        $this->constructElement('NOTE', $note);
+        $this->properties->constructElement('NOTE', $note);
 
         return $this;
     }
@@ -671,7 +613,7 @@ class Vcard implements ContactsInterface
      */
     public function addProductId(string $productId): Vcard
     {
-        $this->constructElement('PRODID', $productId);
+        $this->properties->constructElement('PRODID', $productId);
 
         return $this;
     }
@@ -692,8 +634,8 @@ class Vcard implements ContactsInterface
     public function addRevision(string $dateTime = null): Vcard
     {
         $dateTime = $this->getDateTime($dateTime);
-        // Set directly rather than going through $this->constructElement to avoid escaping valid timestamp characters
-        $this->setProperty('REV', vsprintf(Config::get('REV'), [$dateTime]));
+        // Set directly rather than going through $this->properties->constructElement to avoid escaping valid timestamp characters
+        $this->properties->setProperty('REV', vsprintf(Config::get('REV'), [$dateTime]));
 
         return $this;
     }
@@ -714,7 +656,7 @@ class Vcard implements ContactsInterface
      */
     public function addSortString(string $sortString): Vcard
     {
-        $this->constructElement('SORT-STRING', $sortString);
+        $this->properties->constructElement('SORT-STRING', $sortString);
 
         return $this;
     }
@@ -751,7 +693,7 @@ class Vcard implements ContactsInterface
     public function addUniqueIdentifier(string $uniqueIdentifier = null): Vcard
     {
         $uniqueIdentifier = $uniqueIdentifier ?? uniqid('', true);
-        $this->constructElement('UID', $uniqueIdentifier);
+        $this->properties->constructElement('UID', $uniqueIdentifier);
 
         return $this;
     }
@@ -772,8 +714,8 @@ class Vcard implements ContactsInterface
     public function addUrl(string $url): Vcard
     {
         if (!empty($this->sanitizeUrl($url))) {
-            // Set directly rather than going through $this->constructElement to avoid escaping valid URL characters
-            $this->setProperty('URL', vsprintf(Config::get('URL'), [$this->sanitizeUrl($url)]));
+            // Set directly rather than going through $this->properties->constructElement to avoid escaping valid URL characters
+            $this->properties->setProperty('URL', vsprintf(Config::get('URL'), [$this->sanitizeUrl($url)]));
         }
 
         return $this;
@@ -798,8 +740,8 @@ class Vcard implements ContactsInterface
      */
     public function addClassification(string $classification = 'PUBLIC'): Vcard
     {
-        if ($this->inArrayAll([$classification], $this->validClassifications)) {
-            $this->constructElement('CLASS', $classification);
+        if ($this->inArrayAll([$classification], $this->properties->getValidClassifications())) {
+            $this->properties->constructElement('CLASS', $classification);
 
             return $this;
         }
@@ -823,7 +765,7 @@ class Vcard implements ContactsInterface
      */
     public function addExtendedType(string $label, string $value): Vcard
     {
-        $this->constructElement('X-', [$label, $value]);
+        $this->properties->constructElement('X-', [$label, $value]);
 
         return $this;
     }
@@ -857,8 +799,8 @@ class Vcard implements ContactsInterface
     {
         if (is_int(strtotime($anniversary))) {
             $anniversary = date('Y-m-d', strtotime($anniversary));
-            $this->constructElement('ANNIVERSARY', [$anniversary, $this->extendedItemCount]);
-            $this->extendedItemCount++;
+            $this->properties->constructElement('ANNIVERSARY', [$anniversary, $this->properties->getExtendedItemCount()]
+            );
 
             return $this;
         }
@@ -877,8 +819,7 @@ class Vcard implements ContactsInterface
      */
     public function addSupervisor(string $supervisor): Vcard
     {
-        $this->constructElement('SUPERVISOR', [$supervisor, $this->extendedItemCount]);
-        $this->extendedItemCount++;
+        $this->properties->constructElement('SUPERVISOR', [$supervisor, $this->properties->getExtendedItemCount()]);
 
         return $this;
     }
@@ -894,8 +835,7 @@ class Vcard implements ContactsInterface
      */
     public function addSpouse(string $spouse): Vcard
     {
-        $this->constructElement('SPOUSE', [$spouse, $this->extendedItemCount]);
-        $this->extendedItemCount++;
+        $this->properties->constructElement('SPOUSE', [$spouse, $this->properties->getExtendedItemCount()]);
 
         return $this;
     }
@@ -911,8 +851,7 @@ class Vcard implements ContactsInterface
      */
     public function addChild(string $child): Vcard
     {
-        $this->constructElement('CHILD', [$child, $this->extendedItemCount]);
-        $this->extendedItemCount++;
+        $this->properties->constructElement('CHILD', [$child, $this->properties->getExtendedItemCount()]);
 
         return $this;
     }
@@ -930,40 +869,18 @@ class Vcard implements ContactsInterface
     public function buildVcard(bool $write = false, string $filename = null): string
     {
         $filename = $this->getFileName($filename);
-        if (!isset($this->definedElements['REV'])) {
+        if (!isset($this->properties->getDefinedElements()['REV'])) {
             $this->addRevision();
         }
         $string = "BEGIN:VCARD\r\n";
         $string .= "VERSION:3.0\r\n";
-        $string .= $this->addProperties($this->properties);
+        $string .= $this->properties->addProperties($this->properties->get());
         $string .= "END:VCARD\r\n\r\n";
         if ($write) {
             $this->writeFile($filename . '.vcf', $string, true);
         }
 
         return $string;
-    }
-
-    /**
-     * Set vCard property
-     *
-     * @param string $element vCard element to set
-     * @param string $value Value to set vCard element to
-     *
-     * @throws ContactsException if an element that can only be defined once is defined more than once
-     */
-    private function setProperty(string $element, string $value): void
-    {
-        if (isset($this->definedElements[$element]) && !in_array($element, $this->multiplePropertiesAllowed, true)) {
-            throw new ContactsException('You can only set "' . $element . '" once.');
-        }
-        // Define that we set this element
-        $this->definedElements[$element] = true;
-        // Add property
-        $this->properties[] = [
-            'key' => $element,
-            'value' => $value,
-        ];
     }
 
     /**
@@ -995,10 +912,10 @@ class Vcard implements ContactsInterface
      */
     private function photoURL(string $element, string $photoUrl): void
     {
-        // Set directly rather than going through $this->constructElement to avoid escaping valid URL characters
+        // Set directly rather than going through $this->properties->constructElement to avoid escaping valid URL characters
         $data = $this->getPhotoUrl($photoUrl);
         if (!is_null($data)) {
-            $this->setProperty(
+            $this->properties->setProperty(
                 $element,
                 vsprintf(Config::get('PHOTO-BINARY'), [$data['mimetype'], base64_encode($data['photo'])])
             );
@@ -1017,32 +934,10 @@ class Vcard implements ContactsInterface
     {
         $data = $this->getPhotoBase64($photoString);
         if (!is_null($data)) {
-            $this->setProperty(
+            $this->properties->setProperty(
                 $element,
                 vsprintf(Config::get('PHOTO-BINARY'), [$data['mimetype'], $data['photoString']])
             );
-        }
-    }
-
-    /**
-     * Construct the element
-     *
-     * @param string $element Name of the vCard element
-     * @param array|string $value Value to construct. If it's an array, make it a list using the proper `delimiter`
-     * @param string $delimiter Delimiter to use for lists given via `$value` array.
-     *                                Default: `,`.
-     *
-     * @throws ContactsException if an element that can only be defined once is defined more than once
-     */
-    private function constructElement(string $element, mixed $value, string $delimiter = ','): void
-    {
-        $value = is_array($value) ? array_map(
-            [$this, 'cleanString'],
-            $value,
-            [$delimiter]
-        ) : [$this->cleanString($value)];
-        if (!empty($value) && !empty(Config::get($element))) {
-            $this->setProperty($element, vsprintf(Config::get($element), $value));
         }
     }
 }
