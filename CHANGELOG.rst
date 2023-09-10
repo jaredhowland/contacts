@@ -4,6 +4,37 @@ The format is based on `Keep a Changelog <http://keepachangelog.com/en/1.0.0/>`_
 and this project adheres to `Semantic Versioning <http://semver.org/spec/v2.0.0.html>`_.
 
 ****************
+[v6.0.0-alpha.2]
+****************
+
+Added
+-----
+
+- New ``Properties`` class from refactored ``Vcard`` class
+- Build badge to ``README``
+
+Changed
+-------
+
+- ``addNickname`` now only accepts strings and not arrays
+- Moved some methods from ``Helpers\Vcard`` to new ``Properties`` class
+
+Deprecated
+----------
+
+- ``debug`` method in ``Vcard``
+
+Removed
+-------
+
+- None
+
+Fixed
+-----
+
+- None
+
+****************
 [v6.0.0-alpha.1]
 ****************
 
@@ -15,7 +46,7 @@ Added
 Changed
 -------
 
-- Now requires PHP 8.0 or greater
+- Now requires PHP 8.0 or newer
 - Format code according to ``PRS-12`` coding standards
 - Options are now passed to the ``Vcard`` class constructor as an object instead of as an array
 
@@ -33,7 +64,7 @@ Fixed
 -----
 
 - Tests to work with PHP 8.0
-- Example files to work with new version
+- Example code to work with new version
 - Interface so ``addBirthday`` method parameters match current behavior
 
 ************
@@ -49,8 +80,8 @@ Changed
 -------
 
 - ``addLabel`` method so ``types`` parameter is now required just like it is in ``addAddress``
-- Moved some methods out of `Vcard` class into a `Helpers\Vcard` class
-- Fixed ``.travis.yml`` configuration to use ``phpunit`` version >=`9.0` and PHP version >=``7.3`` (library still works with version ``7.2`` but ``phpunit`` requires ``7.3``)
+- Moved some methods out of ``Vcard`` class into a ``Helpers\Vcard`` class
+- Fixed ``.travis.yml`` configuration to use ``phpunit`` version >=``9.0`` and PHP version >=``7.3`` (library still works with version ``7.2`` but ``phpunit`` requires ``7.3``)
 
 Deprecated
 ----------
@@ -149,8 +180,8 @@ Changed
 
 - Daisy-chaining methods allowed
 - Tests refactored
-- `Vcard.php` helpers moved to another class (`Helpers.php`)
-- `PSR-12` formatted code
+- ``Vcard.php`` helpers moved to another class (``Helpers.php``)
+- ``PSR-12`` formatted code
 
 Deprecated
 ----------
@@ -160,7 +191,7 @@ Deprecated
 Removed
 -------
 
-- `Contacts` subdirectory from `src`
+- ``Contacts`` subdirectory from ``src``
 
 Fixed
 -----
@@ -170,7 +201,7 @@ Fixed
 Security
 --------
 
-- `PHP 7.2` and above now required
+- ``PHP 7.2`` and above now required
 
 ************
 [Pre-v3.0.3]
