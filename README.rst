@@ -79,7 +79,7 @@ This is an extensive example. Most of the time, you will only need a tiny fracti
           $vcard->addChild('Lisa Doe');
           $vcard->addExtendedType('TWITTER', '@jared_howland');
           $vcard->addUniqueIdentifier();
-          $vcard->addRevision('2023-09-04'); // Added automatically if you don't call this method
+          $vcard->addRevision('2023-09-05'); // Added automatically if you don't call this method
 
           $directory->buildVcard(true, 'example');
        ?>
