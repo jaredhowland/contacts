@@ -36,20 +36,6 @@ class VcardTest extends TestCase
     /**
      * @throws ContactsException if `addFullName()` does not work
      */
-    public function testGetDefinedElementsReturnsAllProperties(): void
-    {
-        $vcard = new Vcard();
-        $vcard->addFullName('Jane Doe');
-
-        $expectedResult = '1';
-        $result = $vcard->getDefinedElements()['FN'];
-
-        $this->assertEquals($expectedResult, $result);
-    }
-
-    /**
-     * @throws ContactsException if `addFullName()` does not work
-     */
     public function testAddFullName(): void
     {
         $vcard = new Vcard();

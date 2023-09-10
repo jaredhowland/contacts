@@ -62,16 +62,6 @@ class Vcard implements ContactsInterface
     }
 
     /**
-     * Get defined elements in `Properties` object
-     *
-     * @return array
-     */
-    public function getDefinedElements(): array
-    {
-        return $this->properties->getDefinedElements();
-    }
-
-    /**
      * Add full name to vCard
      *
      * RFC 2426 pp. 7–8
