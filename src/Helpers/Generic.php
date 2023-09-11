@@ -126,7 +126,7 @@ trait Generic
     protected function sanitizeTimeZone(string $timeZone): array
     {
         $prefix   = $this->getPrefixes($timeZone);
-        $timeZone = $prefix['negative'].$this->cleanTimeZone($timeZone);
+        $timeZone = $prefix['negative'] . $this->cleanTimeZone($timeZone);
         if ($this->getTimeZoneOffset($timeZone)['hourOffset']) {
             return [
                 $prefix['sign'],
@@ -164,8 +164,8 @@ trait Generic
     private function getFileName(?string $fileName): string
     {
         return empty($fileName) ?
-            $this->options->getDataDirectory().date('Y.m.d.H.i.s') :
-            $this->options->getDataDirectory().$fileName;
+            $this->options->getDataDirectory() . date('Y.m.d.H.i.s') :
+            $this->options->getDataDirectory() . $fileName;
     }
 
     /**
