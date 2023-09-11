@@ -29,8 +29,8 @@ use function is_int;
  */
 class Vcard implements ContactsInterface
 {
-    use Helpers\Vcard;
     use Helpers\Generic;
+    use Helpers\Vcard;
 
     /**
      * @var Options $options Object containing all options for this class
