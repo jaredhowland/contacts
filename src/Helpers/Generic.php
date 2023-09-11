@@ -14,6 +14,8 @@ use Contacts\ContactsException;
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\GuzzleException;
 
+use function strlen;
+
 /**
  * Helper trait for methods shared between child classes
  */
@@ -27,7 +29,7 @@ trait Generic
     /**
      * Sanitize latitude and longitude
      *
-     * @param float $lat Geographic Positioning System latitude (decimal) (must be a number between -90 and 90)
+     * @param float $lat  Geographic Positioning System latitude (decimal) (must be a number between -90 and 90)
      *
      * **FORMULA**: decimal = degrees + minutes/60 + seconds/3600
      * @param float $long Geographic Positioning System longitude (decimal) (must be a number between -180 and 180)
@@ -51,7 +53,7 @@ trait Generic
     /**
      * Format latitude and longitude
      *
-     * @param float $lat Geographic Positioning System latitude (decimal) (must be a number between -90 and 90)
+     * @param float $lat  Geographic Positioning System latitude (decimal) (must be a number between -90 and 90)
      *
      * **FORMULA**: decimal = degrees + minutes/60 + seconds/3600
      * @param float $long Geographic Positioning System longitude (decimal) (must be a number between -180 and 180)
@@ -77,15 +79,15 @@ trait Generic
     protected function formatUsTelephone(string $phone): string
     {
         $phone = $this->cleanPhone($phone);
-        if (\strlen($phone) > 10) {
+        if (strlen($phone) > 10) {
             return $this->phoneIsMoreThanTen($phone);
         }
 
-        if (\strlen($phone) === 10) {
+        if (strlen($phone) === 10) {
             return $this->phoneIsTenDigits($phone);
         }
 
-        if (\strlen($phone) === 7) {
+        if (strlen($phone) === 7) {
             return $this->phoneIsSevenDigits($phone);
         }
 
@@ -123,8 +125,8 @@ trait Generic
      */
     protected function sanitizeTimeZone(string $timeZone): array
     {
-        $prefix = $this->getPrefixes($timeZone);
-        $timeZone = $prefix['negative'] . $this->cleanTimeZone($timeZone);
+        $prefix   = $this->getPrefixes($timeZone);
+        $timeZone = $prefix['negative'].$this->cleanTimeZone($timeZone);
         if ($this->getTimeZoneOffset($timeZone)['hourOffset']) {
             return [
                 $prefix['sign'],
@@ -140,6 +142,7 @@ trait Generic
      * Get a datetime stamp
      *
      * @param string|null $dateTime Datetime stamp to format, current datetime if `null`
+     *
      * @return string Formatted datetime string
      */
     private function getDateTime(?string $dateTime = null): string
@@ -147,6 +150,7 @@ trait Generic
         if ($dateTime === null) {
             return date('Y-m-d\TH:i:s\Z');
         }
+
         return date('Y-m-d\TH:i:s\Z', strtotime($dateTime));
     }
 
@@ -160,8 +164,8 @@ trait Generic
     private function getFileName(?string $fileName): string
     {
         return empty($fileName) ?
-            $this->options->getDataDirectory() . date('Y.m.d.H.i.s') :
-            $this->options->getDataDirectory() . $fileName;
+            $this->options->getDataDirectory().date('Y.m.d.H.i.s') :
+            $this->options->getDataDirectory().$fileName;
     }
 
     /**
@@ -187,7 +191,7 @@ trait Generic
      *
      * @link http://stackoverflow.com/questions/7542694/in-array-multiple-values/11040612#11040612
      *
-     * @param array $needles Strings to look for in the $haystack array
+     * @param array $needles  Strings to look for in the $haystack array
      * @param array $haystack Strings to be searched by $needles
      *
      * @return bool TRUE if all appear. FALSE otherwise.
@@ -202,9 +206,9 @@ trait Generic
      *
      * @param string $fileName Name of file inside directory defined
      *                         in by `$this->dataDirectory`
-     * @param string $data String containing all data to write to file
+     * @param string $data     String containing all data to write to file
      *                         Will overwrite any existing data
-     * @param bool $append Whether to append data to end of file (overwrite is default). Default: `false`
+     * @param bool   $append   Whether to append data to end of file (overwrite is default). Default: `false`
      *
      * @throws ContactsException if file cannot be opened and/or written to
      */
@@ -232,7 +236,7 @@ trait Generic
     protected function getData(string $url): string
     {
         $this->client = new Client();
-        $response = $this->client->get($url);
+        $response     = $this->client->get($url);
 
         return (string)$response->getBody();
     }
@@ -259,12 +263,13 @@ trait Generic
     private function phoneIsMoreThanTen(string $phone): string
     {
         $countryCode = substr($phone, 0, -10);
-        $areaCode = substr($phone, -10, 3);
-        $nextThree = substr($phone, -7, 3);
-        $lastFour = substr($phone, -4, 4);
+        $areaCode    = substr($phone, -10, 3);
+        $nextThree   = substr($phone, -7, 3);
+        $lastFour    = substr($phone, -4, 4);
         if ($countryCode < 2) {
             return "($areaCode) $nextThree-$lastFour";
         }
+
         return "+$countryCode ($areaCode) $nextThree-$lastFour";
     }
 
@@ -277,9 +282,10 @@ trait Generic
      */
     private function phoneIsTenDigits(string $phone): string
     {
-        $areaCode = substr($phone, 0, 3);
+        $areaCode  = substr($phone, 0, 3);
         $nextThree = substr($phone, 3, 3);
-        $lastFour = substr($phone, 6, 4);
+        $lastFour  = substr($phone, 6, 4);
+
         return "($areaCode) $nextThree-$lastFour";
     }
 
@@ -293,21 +299,22 @@ trait Generic
     private function phoneIsSevenDigits(string $phone): string
     {
         $nextThree = substr($phone, 0, 3);
-        $lastFour = substr($phone, 3, 4);
+        $lastFour  = substr($phone, 3, 4);
         if ($this->options->getDefaultAreaCode()) {
             return "($this->options->getDefaultAreaCode) $nextThree-$lastFour";
         }
+
         return "$nextThree-$lastFour";
     }
 
     /**
      * Clean latitude and longitude
      *
-     * @param string $lat Geographic Positioning System latitude (decimal) (must be a number between -90 and 90)
-     *                    **FORMULA**: decimal = degrees + minutes/60 + seconds/3600
+     * @param string $lat  Geographic Positioning System latitude (decimal) (must be a number between -90 and 90)
+     *                     **FORMULA**: decimal = degrees + minutes/60 + seconds/3600
      *
      * @param string $long Geographic Positioning System longitude (decimal) (must be a number between -180 and 180)
-     *                    **FORMULA**: decimal = degrees + minutes/60 + seconds/3600
+     *                     **FORMULA**: decimal = degrees + minutes/60 + seconds/3600
      *
      * @return array Array of formatted latitude and longitude
      *
@@ -315,7 +322,7 @@ trait Generic
      */
     private function cleanLatLong(string $lat, string $long): array
     {
-        $lat = $this->constrainLatLong((float)$lat, 90, -90);
+        $lat  = $this->constrainLatLong((float)$lat, 90, -90);
         $long = $this->constrainLatLong((float)$long, 180, -180);
 
         return ['lat' => $lat, 'long' => $long];
@@ -325,8 +332,8 @@ trait Generic
      * Constrain latitude and longitude
      *
      * @param float $float Latitude or longitude
-     * @param int $max Max value for latitude or longitude
-     * @param int $min Min value for latitude or longitude
+     * @param int   $max   Max value for latitude or longitude
+     * @param int   $min   Min value for latitude or longitude
      *
      * @return string Latitude or longitude rounded to 6 decimal places
      *
@@ -336,6 +343,7 @@ trait Generic
     {
         if ($float >= $min && $float <= $max) {
             $float = round($float, 6);
+
             return sprintf('%1.6f', $float);
         }
 
@@ -352,7 +360,7 @@ trait Generic
      */
     private function getPrefixes(string $timeZone): array
     {
-        $sign = (str_starts_with($timeZone, '-') && ((int)$timeZone !== 0)) ? '-' : '+';
+        $sign     = (str_starts_with($timeZone, '-') && ((int)$timeZone !== 0)) ? '-' : '+';
         $negative = str_starts_with($timeZone, '-') ? '-' : null;
 
         return ['sign' => $sign, 'negative' => $negative];
@@ -383,8 +391,8 @@ trait Generic
      */
     private function getTimeZoneOffset(string $timeZone): array
     {
-        $offset = explode(':', $timeZone);
-        $hourOffset = filter_var(
+        $offset       = explode(':', $timeZone);
+        $hourOffset   = filter_var(
             $offset[0],
             FILTER_VALIDATE_INT,
             ['options' => ['min_range' => -14, 'max_range' => 12]]

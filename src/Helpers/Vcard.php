@@ -39,22 +39,23 @@ trait Vcard
     /**
      * Clean a string by escaping `,` and `;` and `:`
      *
-     * @param array|string|null $string $string String to escape
-     * @param string|null $delimiter Delimiter to create a list from an array. Default: `,`.
+     * @param array|string|null $string    $string String to escape
+     * @param string|null       $delimiter Delimiter to create a list from an array. Default: `,`.
      *
      * @return string|null Returns cleaned string or `null`
      */
-    private function cleanString(mixed $string, ?string $delimiter = ','): ?string
+    private function cleanString(mixed $string, string $delimiter = null): ?string
     {
         // If it's an array, clean individual strings and return a delimited list of array values
         if (is_array($string)) {
+            $delimiter = $delimiter ?? ',';
             foreach ($string as $key => $value) {
                 $string[$key] = $this->cleanString($value, $delimiter);
             }
 
             return implode($delimiter, $string);
         }
-        $search = [',', ';', ':'];
+        $search  = [',', ';', ':'];
         $replace = ['\,', '\;', '\:'];
 
         return empty($string) ? null : str_replace($search, $replace, $string);
@@ -64,6 +65,7 @@ trait Vcard
      * Remove spaces from comma-delimited list
      *
      * @param string|null $list List to remove spaces from
+     *
      * @return string Cleaned or empty string
      */
     private function removeSpacesFromList(?string $list): string

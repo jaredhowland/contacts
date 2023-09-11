@@ -17,7 +17,7 @@ class Properties
     /**
      * @var array $properties Array of properties added to the object
      */
-    protected array $properties = [];
+    private array $properties = [];
 
     /**
      * @var array $definedElements Array of defined elements added to the object
@@ -130,8 +130,8 @@ class Properties
      * Add photo to `PHOTO` or `LOGO` elements
      *
      * @param string $element Element to add photo to
-     * @param string $photo URL-referenced or base-64 encoded photo
-     * @param bool $isUrl Optional. Is it a URL-referenced photo or a base-64 encoded photo? Default: `true`
+     * @param string $photo   URL-referenced or base-64 encoded photo
+     * @param bool   $isUrl   Optional. Is it a URL-referenced photo or a base-64 encoded photo? Default: `true`
      *
      * @throws ContactsException
      * @throws GuzzleException
@@ -155,6 +155,7 @@ class Properties
     public function setDefinedElements(string $element): Properties
     {
         $this->definedElements[$element] = true;
+
         return $this;
     }
 
@@ -176,15 +177,16 @@ class Properties
     public function getExtendedItemCount(): int
     {
         $this->extendedItemCount++;
+
         return $this->extendedItemCount;
     }
 
     /**
      * Construct the element
      *
-     * @param string $element Name of the vCard element
-     * @param array|string $value Value to construct. If it's an array, make it a list using the proper `delimiter`
-     * @param string $delimiter Delimiter to use for lists given via `$value` array.
+     * @param string       $element   Name of the vCard element
+     * @param array|string $value     Value to construct. If it's an array, make it a list using the proper `delimiter`
+     * @param string       $delimiter Delimiter to use for lists given via `$value` array.
      *                                Default: `,`.
      *
      * @throws ContactsException if an element that can only be defined once is defined more than once
@@ -205,14 +207,14 @@ class Properties
      * Set property
      *
      * @param string $element Element to set
-     * @param string $value Value to set element to
+     * @param string $value   Value to set element to
      *
      * @throws ContactsException if an element that can only be defined once is defined more than once
      */
     public function setProperty(string $element, string $value): void
     {
         if (isset($this->definedElements[$element]) && !in_array($element, $this->multiplePropertiesAllowed, true)) {
-            throw new ContactsException('You can only set "' . $element . '" once.');
+            throw new ContactsException('You can only set "'.$element.'" once.');
         }
         // Define that we set this element
         $this->definedElements[$element] = true;
@@ -234,8 +236,8 @@ class Properties
     {
         $string = null;
         foreach ($properties as $property) {
-            $value = str_replace('\r\n', "\r\n", $property['value']);
-            $string .= $this->fold($value . "\r\n");
+            $value  = str_replace('\r\n', "\r\n", $property['value']);
+            $string .= $this->fold($value."\r\n");
         }
 
         return $string;
@@ -244,7 +246,7 @@ class Properties
     /**
      * Add photo to `PHOTO` or `LOGO` elements
      *
-     * @param string $element Element to add photo to
+     * @param string $element  Element to add photo to
      * @param string $photoUrl URL-referenced or base-64 encoded photo
      *
      * @throws ContactsException|GuzzleException if an element that can only be defined once is defined more than once
@@ -264,7 +266,7 @@ class Properties
     /**
      * Add photo to `PHOTO` or `LOGO` elements
      *
-     * @param string $element Element to add photo to
+     * @param string $element     Element to add photo to
      * @param string $photoString URL-referenced or base-64 encoded photo
      *
      * @throws ContactsException if an element that can only be defined once is defined more than once
@@ -295,7 +297,8 @@ class Properties
         if (!empty($this->sanitizeUrl($photoUrl))) {
             $mimetype = $this->getImageMimeType($photoUrl);
             $mimetype = strtoupper(str_replace('image/', '', $mimetype));
-            $photo = $this->getData($this->sanitizeUrl($photoUrl));
+            $photo    = $this->getData($this->sanitizeUrl($photoUrl));
+
             return ['mimetype' => $mimetype, 'photo' => $photo];
         }
 
@@ -318,13 +321,14 @@ class Properties
      * Get the base 64 version of a photo
      *
      * @param string $photoString Photo to convert to base 64
+     *
      * @return array|null Array with data or null if empty
      */
     private function getPhotoBase64(string $photoString): ?array
     {
         $img = base64_decode($photoString);
         if (!empty($img)) {
-            $file = finfo_open();
+            $file     = finfo_open();
             $mimetype = finfo_buffer($file, $img, FILEINFO_MIME_TYPE);
             $mimetype = strtoupper(str_replace('image/', '', $mimetype));
 
