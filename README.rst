@@ -216,7 +216,7 @@ Inspired by https://github.com/jeroendesloovere/vcard
 .. |Build| image:: https://img.shields.io/scrutinizer/build/g/jaredhowland/contacts/main.svg?style=flat-square
 .. _Build: https://scrutinizer-ci.com/g/jaredhowland/contacts/
 
-.. |StyleCI| image:: https://styleci.io/repos/71304265/shield?branch=master
+.. |StyleCI| image:: https://styleci.io/repos/71304265/shield?branch=main
 .. _StyleCI: https://styleci.io/repos/71304265
 
 .. |Packagist| image:: https://img.shields.io/packagist/v/jaredhowland/contacts.svg?style=flat-square
