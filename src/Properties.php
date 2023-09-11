@@ -17,7 +17,7 @@ class Properties
     /**
      * @var array $properties Array of properties added to the object
      */
-    private array $properties = [];
+    protected array $properties = [];
 
     /**
      * @var array $definedElements Array of defined elements added to the object
