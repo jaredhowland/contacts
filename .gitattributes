@@ -1,11 +1,8 @@
 /tests              export-ignore
-/docs               export-ignore
 /phpdocs            export-ignore
 /examples           export-ignore
 .github             export-ignore
-.travis.yml         export-ignore
 .styleci.yml        export-ignore
-phpdoc.xml          export-ignore
 phpunit.xml         export-ignore
 README.rst          export-ignore
 CODE_OF_CONDUCT.rst export-ignore
