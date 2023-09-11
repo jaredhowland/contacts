@@ -1,4 +1,4 @@
-|Scrutinizer|_ |StyleCI|_ |Packagist|_ |MIT License|_
+|Scrutinizer|_ |Build|_ |StyleCI|_ |Packagist|_ |MIT License|_
 
 ========
 Contacts
@@ -26,7 +26,7 @@ Contacts is available as a `Composer <https://getcomposer.org>`_ `package <http:
 .. code-block:: javascript
 
    "require": {
-      "jaredhowland/contacts": "~5.0"
+      "jaredhowland/contacts": "~6.0"
    }
 
 =====
@@ -42,16 +42,21 @@ This is an extensive example. Most of the time, you will only need a tiny fracti
        <?php
           require 'vendor/autoload.php';
 
+          use \Contacts\Options;
           use \Contacts\Vcard;
 
-          $vcard = new Vcard('./'); // Tell app where to save `.vcf` file
+          // Set desired options
+          $options = new Options();
+          $options->setDataDirectory('./'); // Tell app where to save `.vcf` file
+
+          $vcard = new Vcard($options);
           $vcard->addFullName('Jane Doe');
           $vcard->addName('Doe', 'Jane');
-          $vcard->addNicknames(['Janie', 'Jan']);
-          $vcard->addPhoto('https://raw.githubusercontent.com/jaredhowland/contacts/dev/tests/files/photo.jpg');
-          $vcard->addBirthday(2, 10);
-          $vcard->addAddress(['dom', 'postal', 'parcel', 'work'], null, null, '123 Main', 'Provo', 'UT', '84602', 'United States');
-          $vcard->addAddress(['dom', 'postal', 'parcel', 'home'], null, null, '123 Main', 'Provo', 'UT', '84602', 'United States');
+          $vcard->addNickname('Janie, Jan');
+          $vcard->addPhoto('https://raw.githubusercontent.com/jaredhowland/contacts/master/tests/files/photo.jpg');
+          $vcard->addBirthday(10, 2, null);
+          $vcard->addAddress(null, null, '123 Main', 'Provo', 'UT', '84602', 'United States', ['dom', 'postal', 'parcel', 'work']);
+          $vcard->addAddress(null, null, '123 Main', 'Provo', 'UT', '84602', 'United States', ['dom', 'postal', 'parcel', 'home']);
           $vcard->addLabel('Jane Doe\n123 Main St\nProvo, UT 84602', ['dom', 'parcel']);
           $vcard->addTelephone('555-555-5555', ['cell', 'iphone']);
           $vcard->addEmail('jane_doe@domain.com');
@@ -65,7 +70,7 @@ This is an extensive example. Most of the time, you will only need a tiny fracti
           $vcard->addNote('Not much is known about Jane Doe.');
           $vcard->addSortString('Doe');
           // $vcard->addSound($sound); NOT SUPPORTED
-          $vcard->addUrl('http://www.example.com');
+          $vcard->addUrl('https://www.example.com');
           // $vcard->addKey($key); NOT SUPPORTED
           $vcard->addAnniversary('2010-10-10');
           $vcard->addSupervisor('Jane Smith');
@@ -74,9 +79,9 @@ This is an extensive example. Most of the time, you will only need a tiny fracti
           $vcard->addChild('Lisa Doe');
           $vcard->addExtendedType('TWITTER', '@jared_howland');
           $vcard->addUniqueIdentifier();
-          $vcard->addRevision('2017-12-14'); // Added automatically if you don't call this method
+          $vcard->addRevision('2023-09-05'); // Added automatically if you don't call this method
 
-          $directory->buildVcard(true, 'example'); // Writes to `./data/` directory by default unless you set a different directory when you create a new `Contacts` object
+          $directory->buildVcard(true, 'example');
        ?>
 
 Or you can chain methods together to build the vCard:
@@ -86,16 +91,21 @@ Or you can chain methods together to build the vCard:
         <?php
           require '../vendor/autoload.php';
 
+          use \Contacts\Options;
           use \Contacts\Vcard;
 
-          $vcard = new Vcard('./'); // Tell app where to save `.vcf` file
+          // Set desired options
+          $options = new Options();
+          $options->setDataDirectory('./'); // Tell app where to save `.vcf` file
+
+          $vcard = new Vcard($options);
           $vcard->addFullName('Jane Doe')
                 ->addName('Doe', 'Jane')
-                ->addNicknames(['Janie', 'Jan'])
-                ->addPhoto('https://raw.githubusercontent.com/jaredhowland/contacts/dev/tests/files/photo.jpg')
-                ->addBirthday(2, 10)
-                ->addAddress(['dom', 'postal', 'parcel', 'work'], null, null, '123 Main', 'Provo', 'UT', '84602', 'United States')
-                ->addAddress(['dom', 'postal', 'parcel', 'home'], null, null, '123 Main', 'Provo', 'UT', '84602', 'United States')
+                ->addNickname('Janie, Jan')
+                ->addPhoto('https://raw.githubusercontent.com/jaredhowland/contacts/master/tests/files/photo.jpg')
+                ->addBirthday(10, 2, null)
+                ->addAddress(null, null, '123 Main', 'Provo', 'UT', '84602', 'United States', ['dom', 'postal', 'parcel', 'work'])
+                ->addAddress(null, null, '123 Main', 'Provo', 'UT', '84602', 'United States', ['dom', 'postal', 'parcel', 'home'])
                 ->addLabel('Jane Doe\n123 Main St\nProvo, UT 84602', ['dom', 'parcel'])
                 ->addTelephone('555-555-5555', ['cell', 'iphone'])
                 ->addEmail('jane_doe@domain.com')
@@ -115,8 +125,8 @@ Or you can chain methods together to build the vCard:
                 ->addChild('Lisa Doe')
                 ->addExtendedType('TWITTER', '@jared_howland')
                 ->addUniqueIdentifier()
-                ->addRevision('2017-12-14') /* Added automatically with the current date and time if you don't call this method */
-                ->buildVcard(true, 'example'); // Writes to `./data/` directory by default unless you set a different directory when you create a new `Contacts` object
+                ->addRevision('2023-09-05') /* Added automatically with the current date and time if you don't call this method */
+                ->buildVcard(true, 'example');
           // $vcard->addAgent($agent); NOT SUPPORTED
           // $vcard->addSound($sound); NOT SUPPORTED
           // $vcard->addKey($key); NOT SUPPORTED
@@ -133,7 +143,7 @@ Output
    N:Doe;Jane;;;
    NICKNAME:Janie,Jan
    PHOTO;ENCODING=b;TYPE=JPEG:/9j/4QBwRXhpZgAASUkqAAgAAAABAJiCAgBLAAAAGgAAAA
-    AAAABDb3B5cmlnaHQgQllVIFB … rest of binary-encoded photo
+    AAAABDb3B5cmlnaHQgQllVIFB …rest of binary-encoded photo
    BDAY;X-APPLE-OMIT-YEAR=1604:1604-02-10
    ADR;TYPE=dom,postal,parcel,work:;;123 Main;Provo;UT;84602;United States
    ADR;TYPE=dom,postal,parcel,home:;;123 Main;Provo;UT;84602;United States
@@ -148,7 +158,7 @@ Output
    CATEGORIES:School,Work
    NOTE:Not much is known about Jane Doe.
    SORT-STRING:Doe
-   URL:http://www.example.com
+   URL:https://www.example.com
    item1.X-ABDATE;type=pref:2010-10-10
    item1.X-ABLabel:_$!<Anniversary>!$_
    item2.X-ABRELATEDNAMES:Jane Smith
@@ -161,14 +171,30 @@ Output
    item5.X-ABLabel:_$!<Child>!$_
    X-TWITTER:@jared_howland
    UID:5a32a74023b097.12918287
-   REV:2017-12-14T00:00:00Z
+   REV:2023-09-05T00:00:00Z
    END:VCARD
+
+Options
+-------
+
+Available options and defaults in the ``Options`` class:
+
+- ``setDataDirectory``: ``./data/``
+- ``setDefaultAreaCode``: ``null``
+- ``setFormatUsTelephone``: ``true``
+
+With appropriate getters:
+
+- ``getDataDirectory()``
+- ``getDefaultAreaCode()``
+- ``isFormatUsTelephone()``
 
 ==========
 Contribute
 ==========
 * Issue Tracker: https://github.com/jaredhowland/contacts/issues
 * Source Code: https://github.com/jaredhowland/contacts
+* Code of conduct: https://github.com/jaredhowland/contacts/blob/master/CODE_OF_CONDUCT.rst
 
 ============
 Known Issues
@@ -184,8 +210,11 @@ Known Issues
 
 Inspired by https://github.com/jeroendesloovere/vcard
 
-.. |Scrutinizer| image:: https://img.shields.io/scrutinizer/g/jaredhowland/contacts.svg?style=flat-square
-.. _Scrutinizer: https://scrutinizer-ci.com/g/jaredhowland/contacts/?branch=master
+.. |Scrutinizer| image:: https://img.shields.io/scrutinizer/g/jaredhowland/contacts/master.svg?style=flat-square
+.. _Scrutinizer: https://scrutinizer-ci.com/g/jaredhowland/contacts/
+
+.. |Build| image:: https://img.shields.io/scrutinizer/build/g/jaredhowland/contacts/master.svg?style=flat-square
+.. _Build: https://scrutinizer-ci.com/g/jaredhowland/contacts/
 
 .. |StyleCI| image:: https://styleci.io/repos/71304265/shield?branch=master
 .. _StyleCI: https://styleci.io/repos/71304265

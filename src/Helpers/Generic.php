@@ -3,16 +3,18 @@
  * Share Contacts methods between classes
  *
  * @author  Jared Howland <contacts@jaredhowland.com>
- * @version 2020-01-24
+ * @version 2023-09-05
  * @since   2016-10-05
  *
  */
 
 namespace Contacts\Helpers;
 
-use Contacts\Config;
 use Contacts\ContactsException;
 use GuzzleHttp\Client;
+use GuzzleHttp\Exception\GuzzleException;
+
+use function strlen;
 
 /**
  * Helper trait for methods shared between child classes
@@ -20,67 +22,9 @@ use GuzzleHttp\Client;
 trait Generic
 {
     /**
-     * @var string $defaultAreaCode String for default area code of phone numbers
-     */
-    protected $defaultAreaCode;
-    /**
-     * @var string $defaultTimeZone String for default time zone
-     */
-    protected $defaultTimeZone;
-    /**
      * @var object $client Guzzle object for downloading files (photos, logos, etc.)
      */
-    protected $client;
-    /**
-     * @var string $dataDirectory Path to directory to save the vCard(s) to
-     */
-    private $dataDirectory;
-
-    /**
-     * Setup Helper trait
-     *
-     * @param string $dataDirectory   Directory to save vCard(s) to. Default: `Config::get('dataDirectory')` value
-     * @param string $defaultAreaCode Default area code to use for phone numbers without an area code. Default: `801`
-     * @param string $defaultTimeZone Default time zone to use when adding a revision date to a vCard. Default:
-     *                                `America/Denver`
-     */
-    protected function setup(
-        string $dataDirectory = null,
-        string $defaultAreaCode = '801',
-        string $defaultTimeZone = 'America/Denver'
-    ): void {
-        $this->dataDirectory   = empty($dataDirectory) ? Config::get('dataDirectory') : $dataDirectory;
-        $this->defaultAreaCode = $defaultAreaCode;
-        $this->defaultTimeZone = $defaultTimeZone;
-        date_default_timezone_set($defaultTimeZone);
-    }
-
-    /**
-     * Sanitize phone number
-     *
-     * @param string $phone Phone number
-     *
-     * @return string|null Return formatted phone number if valid. Null otherwise.
-     *
-     * @throws ContactsException if invalid phone number is used
-     */
-    protected function sanitizePhone(string $phone = null): ?string
-    {
-        $phone = preg_replace('/[\D]/', '', $phone);
-        if (strlen($phone) === 10) {
-            $phone = sprintf('(%s) %s-%s', substr($phone, 0, 3), substr($phone, 3, 3), substr($phone, 6));
-
-            return $phone;
-        }
-
-        if (strlen($phone) === 7) {
-            $phone = sprintf('(' . $this->defaultAreaCode . ') %s-%s', substr($phone, 0, 3), substr($phone, 3));
-
-            return $phone;
-        }
-
-        throw new ContactsException("Invalid phone: '$phone'");
-    }
+    protected object $client;
 
     /**
      * Sanitize latitude and longitude
@@ -98,8 +42,8 @@ trait Generic
      */
     protected function sanitizeLatLong(float $lat, float $long): array
     {
-        $latLong = $this->cleanLatLong($lat, $long);
-        if ($latLong['lat'] === null || $latLong['long'] === null) {
+        $latLong = $this->formatGeo($lat, $long);
+        if (empty($latLong['lat']) || empty($latLong['long'])) {
             throw new ContactsException("Invalid latitude or longitude. Latitude: '$lat' Longitude: '$long'");
         }
 
@@ -107,9 +51,54 @@ trait Generic
     }
 
     /**
+     * Format latitude and longitude
+     *
+     * @param float $lat  Geographic Positioning System latitude (decimal) (must be a number between -90 and 90)
+     *
+     * **FORMULA**: decimal = degrees + minutes/60 + seconds/3600
+     * @param float $long Geographic Positioning System longitude (decimal) (must be a number between -180 and 180)
+     *
+     * **FORMULA**: decimal = degrees + minutes/60 + seconds/3600
+     *
+     * @return array Array of formatted latitude and longitude
+     * @throws ContactsException
+     */
+    protected function formatGeo(float $lat, float $long): array
+    {
+        return $this->cleanLatLong($lat, $long);
+    }
+
+    /**
+     * Format phone numbers to be formatted for U.S. numbers
+     * This does not validate phone numbers—it only formats them
+     *
+     * @param string $phone Phone number to format
+     *
+     * @return string Formatted phone number (or original if not exactly 7 or >=10 digits)
+     */
+    protected function formatUsTelephone(string $phone): string
+    {
+        $phone = $this->cleanPhone($phone);
+        if (strlen($phone) > 10) {
+            return $this->phoneIsMoreThanTen($phone);
+        }
+
+        if (strlen($phone) === 10) {
+            return $this->phoneIsTenDigits($phone);
+        }
+
+        if (strlen($phone) === 7) {
+            return $this->phoneIsSevenDigits($phone);
+        }
+
+        // Return formatted phone number (or original if not exactly 7 or >=10 digits)
+        return $phone;
+    }
+
+    /**
      * Sanitize email address
      *
-     * @param string $email Email address
+     * @param string|null $email Email address
      *
      * @return string|null Sanitized email address
      *
@@ -150,15 +139,45 @@ trait Generic
     }
 
     /**
+     * Get a datetime stamp
+     *
+     * @param string|null $dateTime Datetime stamp to format, current datetime if `null`
+     *
+     * @return string Formatted datetime string
+     */
+    protected function getDateTime(?string $dateTime = null): string
+    {
+        if ($dateTime === null) {
+            return date('Y-m-d\TH:i:s\Z');
+        }
+
+        return date('Y-m-d\TH:i:s\Z', strtotime($dateTime));
+    }
+
+    /**
+     * Get the file name and path to save the file to
+     *
+     * @param string|null $fileName Name of file
+     *
+     * @return string Name of file, including path
+     */
+    protected function getFileName(?string $fileName): string
+    {
+        return empty($fileName) ?
+            $this->options->getDataDirectory() . date('Y.m.d.H.i.s') :
+            $this->options->getDataDirectory() . $fileName;
+    }
+
+    /**
      * Sanitize uniform resource locator (URL)
      *
      * @param string $url URL
      *
-     * @return string|bool Sanitized URL or `false` if not a valid URL
+     * @return string Sanitized URL
      *
-     * @throws ContactsException if invalid URL is used
+     * @throws ContactsException If invalid URL is used
      */
-    protected function sanitizeUrl(string $url): ?string
+    protected function sanitizeUrl(string $url): string
     {
         if (filter_var($url, FILTER_VALIDATE_URL)) {
             return filter_var($url, FILTER_SANITIZE_URL);
@@ -185,20 +204,17 @@ trait Generic
     /**
      * Writes data to appropriate file
      *
-     * @access protected
-     *
      * @param string $fileName Name of file inside directory defined
      *                         in by `$this->dataDirectory`
      * @param string $data     String containing all data to write to file
      *                         Will overwrite any existing data
-     * @param bool   $append   Whether or not to append data to end of file (overwrite is default). Default: `false`
+     * @param bool   $append   Whether to append data to end of file (overwrite is default). Default: `false`
      *
      * @throws ContactsException if file cannot be opened and/or written to
      */
     protected function writeFile(string $fileName, string $data, bool $append = false): void
     {
-        $rights   = $append ? 'a' : 'w';
-        $fileName = $this->dataDirectory . $fileName;
+        $rights = $append ? 'a' : 'w';
         if (!$handle = fopen($fileName, $rights)) {
             throw new ContactsException("Cannot open file '$fileName'");
         }
@@ -214,6 +230,8 @@ trait Generic
      * @param string $url URL of data to grab
      *
      * @return string Contents of the passed URL
+     *
+     * @throws GuzzleException
      */
     protected function getData(string $url): string
     {
@@ -224,21 +242,88 @@ trait Generic
     }
 
     /**
+     * Clean phone numbers so only numbers are left.
+     *
+     * @param string $phone Phone number to clean
+     *
+     * @return string Cleaned phone number
+     */
+    protected function cleanPhone(string $phone): string
+    {
+        return preg_replace('/\D/', null, $phone);
+    }
+
+    /**
+     * Phone number formatted if more than 10 digits long
+     *
+     * @param string $phone Unformatted, stripped phone number
+     *
+     * @return string Formatted phone number
+     */
+    private function phoneIsMoreThanTen(string $phone): string
+    {
+        $countryCode = substr($phone, 0, -10);
+        $areaCode    = substr($phone, -10, 3);
+        $nextThree   = substr($phone, -7, 3);
+        $lastFour    = substr($phone, -4, 4);
+        if ($countryCode < 2) {
+            return "($areaCode) $nextThree-$lastFour";
+        }
+
+        return "+$countryCode ($areaCode) $nextThree-$lastFour";
+    }
+
+    /**
+     * Phone number formatted if exactly 10 digits long
+     *
+     * @param string $phone Unformatted, stripped phone number
+     *
+     * @return string Formatted phone number
+     */
+    private function phoneIsTenDigits(string $phone): string
+    {
+        $areaCode  = substr($phone, 0, 3);
+        $nextThree = substr($phone, 3, 3);
+        $lastFour  = substr($phone, 6, 4);
+
+        return "($areaCode) $nextThree-$lastFour";
+    }
+
+    /**
+     * Phone number formatted if exactly 7 digits long
+     *
+     * @param string $phone Unformatted, stripped phone number
+     *
+     * @return string Formatted phone number
+     */
+    private function phoneIsSevenDigits(string $phone): string
+    {
+        $nextThree = substr($phone, 0, 3);
+        $lastFour  = substr($phone, 3, 4);
+        if ($this->options->getDefaultAreaCode()) {
+            return "($this->options->getDefaultAreaCode) $nextThree-$lastFour";
+        }
+
+        return "$nextThree-$lastFour";
+    }
+
+    /**
      * Clean latitude and longitude
      *
-     * @param mixed $lat  Geographic Positioning System latitude (decimal) (must be a number between -90 and 90)
+     * @param string $lat  Geographic Positioning System latitude (decimal) (must be a number between -90 and 90)
+     *                     **FORMULA**: decimal = degrees + minutes/60 + seconds/3600
      *
-     * **FORMULA**: decimal = degrees + minutes/60 + seconds/3600
-     * @param mixed $long Geographic Positioning System longitude (decimal) (must be a number between -180 and 180)
-     *
-     * **FORMULA**: decimal = degrees + minutes/60 + seconds/3600
+     * @param string $long Geographic Positioning System longitude (decimal) (must be a number between -180 and 180)
+     *                     **FORMULA**: decimal = degrees + minutes/60 + seconds/3600
      *
      * @return array Array of formatted latitude and longitude
+     *
+     * @throws ContactsException If invalid latitude or longitude is used
      */
-    private function cleanLatLong($lat, float $long): array
+    private function cleanLatLong(string $lat, string $long): array
     {
-        $lat  = $this->constrainLatLong($lat, 90, -90);
-        $long = $this->constrainLatLong($long, 180, -180);
+        $lat  = $this->constrainLatLong((float)$lat, 90, -90);
+        $long = $this->constrainLatLong((float)$long, 180, -180);
 
         return ['lat' => $lat, 'long' => $long];
     }
@@ -246,15 +331,23 @@ trait Generic
     /**
      * Constrain latitude and longitude
      *
-     * @param float $float Latitude or longitude value
-     * @param int   $max    Max value for latitude or longitude
-     * @param int   $min    Min value for latitude or longitude
+     * @param float $float Latitude or longitude
+     * @param int   $max   Max value for latitude or longitude
+     * @param int   $min   Min value for latitude or longitude
      *
-     * @return string|null Latitude or longitude rounded to 6 decimal places. Default if invalid: `null`
+     * @return string Latitude or longitude rounded to 6 decimal places
+     *
+     * @throws ContactsException If invalid latitude or longitude is used
      */
-    private function constrainLatLong(float $float, int $max, int $min): ?string
+    private function constrainLatLong(float $float, int $max, int $min): string
     {
-        return ($float >= $min && $float <= $max) ? sprintf('%1.6f', round($float, 6)) : null;
+        if ($float >= $min && $float <= $max) {
+            $float = round($float, 6);
+
+            return sprintf('%1.6f', $float);
+        }
+
+        return throw new ContactsException("Invalid latitude or longitude: '$float'");
     }
 
     /**
@@ -267,8 +360,8 @@ trait Generic
      */
     private function getPrefixes(string $timeZone): array
     {
-        $sign     = (strpos($timeZone, '-') === 0 && $timeZone[0] !== 0) ? '-' : '+';
-        $negative = strpos($timeZone, '-') === 0 ? '-' : null;
+        $sign     = (str_starts_with($timeZone, '-') && ((int)$timeZone !== 0)) ? '-' : '+';
+        $negative = str_starts_with($timeZone, '-') ? '-' : null;
 
         return ['sign' => $sign, 'negative' => $negative];
     }
@@ -283,7 +376,7 @@ trait Generic
      */
     private function cleanTimeZone(string $timeZone): string
     {
-        $timeZone = preg_replace('/[^0-9:]/', '', $timeZone);
+        $timeZone = preg_replace('/[^0-9:]/', null, $timeZone);
 
         return ltrim($timeZone, '0');
     }

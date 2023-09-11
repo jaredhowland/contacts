@@ -1,128 +1,27 @@
 <?php
 /**
- * vCard helper class
+ * Helper methods for `Vcard` class
  *
  * @author  Jared Howland <contacts@jaredhowland.com>
- * @version 2020-02-28
- * @since   2020-02-28
+ * @version 2023-09-05
+ * @since   2023-09-05
+ *
  */
 
 namespace Contacts\Helpers;
 
-use Contacts\Config;
-use Contacts\ContactsException;
+use function is_array;
+use function strlen;
 
 /**
- * vCard class to create a vCard. Extends `Contacts` and implements `ContactsInterface`
+ * Helper trait for methods shared between child classes
  */
 trait Vcard
 {
     use Generic;
 
     /**
-     * @var array $properties Array of properties added to the vCard object
-     */
-    protected $properties;
-
-    /**
-     * @var array $multiplePropertiesAllowed Array of properties that can be set more than once
-     */
-    protected $multiplePropertiesAllowed = [
-        'EMAIL',
-        'ADR',
-        'LABEL',
-        'TEL',
-        'EMAIL',
-        'URL',
-        'X-',
-        'CHILD',
-    ];
-
-    /**
-     * @var array $validAddressTypes Array of valid address types
-     */
-    protected $validAddressTypes = [
-        'dom',
-        'intl',
-        'postal',
-        'parcel',
-        'home',
-        'work',
-        'pref',
-    ];
-
-    /**
-     * @var array $validTelephoneTypes Array of valid telephone types
-     */
-    protected $validTelephoneTypes = [
-        'home',
-        'msg',
-        'work',
-        'pref',
-        'voice',
-        'fax',
-        'cell',
-        'video',
-        'pager',
-        'bbs',
-        'modem',
-        'car',
-        'isdn',
-        'pcs',
-        'iphone',
-    ]; // Custom type for iOS and macOS applications
-
-    /**
-     * @var array $validClassifications Array of valid classification types
-     */
-    protected $validClassifications = [
-        'PUBLIC',
-        'PRIVATE',
-        'CONFIDENTIAL',
-    ];
-
-    /**
-     * @var int $extendedItemCount Count of custom iOS elements set
-     */
-    protected $extendedItemCount = 1;
-
-    /**
-     * @var array $definedElements Array of defined vCard elements added to the vCard object
-     */
-    protected $definedElements;
-
-    /**
-     * Set filename
-     *
-     * @param string|null $filename Name of file. Default: current date and time
-     *
-     * @return string Name of file
-     */
-    protected function setFilename(string $filename = null): string
-    {
-        return $filename ?? (string)date('Y.m.d.H.i.s');
-    }
-
-    /**
-     * Set vCard string
-     *
-     * @return string vCard string
-     */
-    protected function setVcardString(): string
-    {
-        $string = "BEGIN:VCARD\r\n";
-        $string .= "VERSION:3.0\r\n";
-        foreach ($this->properties as $property) {
-            $value = str_replace('\r\n', "\r\n", $property['value']);
-            $string .= $this->fold($value . "\r\n");
-        }
-        $string .= "END:VCARD\r\n\r\n";
-
-        return $string;
-    }
-
-    /**
-     * Fold vCard text so each line is 75 characters or less
+     * Fold vCard text so each line is 75 characters or fewer
      *
      * RFC 2426 p. 7
      *
@@ -132,100 +31,24 @@ trait Vcard
      *
      * @return string Folded text
      */
-    protected function fold(string $text): string
+    private function fold(string $text): string
     {
         return (strlen($text) <= 75) ? $text : substr(chunk_split($text, 73, "\r\n "), 0, -3);
     }
 
     /**
-     * Add photo to `PHOTO` or `LOGO` elements
-     *
-     * @param string $element Element to add photo to
-     * @param string $photo   URL-referenced or base-64 encoded photo
-     * @param bool   $isUrl   Optional. Is it a URL-referenced photo or a base-64 encoded photo? Default: `true`
-     *
-     * @return $this
-     *
-     * @throws ContactsException if an element that can only be defined once is defined more than once
-     */
-    protected function photoProperty(string $element, string $photo, bool $isUrl = true): self
-    {
-        $isUrl ? $this->photoUrl($element, $photo) : $this->photoBase64($element, $photo);
-
-        return $this;
-    }
-
-    /**
-     * Add photo to `PHOTO` or `LOGO` elements
-     *
-     * @param string $element  Element to add photo to
-     * @param string $photoUrl URL-referenced or base-64 encoded photo
-     *
-     * @throws ContactsException if an element that can only be defined once is defined more than once
-     */
-    protected function photoUrl(string $element, string $photoUrl): void
-    {
-        // Set directly rather than going through $this->constructElement to avoid escaping valid URL characters
-        if ($this->sanitizeUrl($photoUrl)) {
-            $mimetype = strtoupper(str_replace('image/', '', getimagesize($photoUrl)['mime']));
-            $photo    = $this->getData($photoUrl);
-            $this->setProperty($element, vsprintf(Config::get('PHOTO-BINARY'), [$mimetype, base64_encode($photo)]));
-        }
-    }
-
-    /**
-     * Add photo to `PHOTO` or `LOGO` elements
-     *
-     * @param string $element     Element to add photo to
-     * @param string $photoString URL-referenced or base-64 encoded photo
-     *
-     * @throws ContactsException if an element that can only be defined once is defined more than once
-     */
-    protected function photoBase64(string $element, string $photoString): void
-    {
-        $img = base64_decode($photoString);
-        if (!empty($img)) {
-            $file     = finfo_open();
-            $mimetype = finfo_buffer($file, $img, FILEINFO_MIME_TYPE);
-            $mimetype = strtoupper(str_replace('image/', '', $mimetype));
-            $this->setProperty($element, vsprintf(Config::get('PHOTO-BINARY'), [$mimetype, $photoString]));
-        }
-    }
-
-    /**
-     * Construct the element
-     *
-     * @param string       $element   Name of the vCard element
-     * @param string|array $value     Value to construct. If it's an array, make it a list using the proper `delimiter`
-     * @param string       $delimiter Delimiter to use for lists given via `$value` array.
-     *                                Default: `,`.
-     *
-     * @throws ContactsException if an element that can only be defined once is defined more than once
-     */
-    protected function constructElement(string $element, $value, string $delimiter = ','): void
-    {
-        $value = is_array($value) ? array_map(
-            [$this, 'cleanString'],
-            $value,
-            [$delimiter]
-        ) : [$this->cleanString($value)];
-        if (!empty($value) && !empty(Config::get($element))) {
-            $this->setProperty($element, vsprintf(Config::get($element), $value));
-        }
-    }
-
-    /**
      * Clean a string by escaping `,` and `;` and `:`
      *
-     * @param string|array $string    String to escape
-     * @param string       $delimiter Delimiter to create a list from an array. Default: `,`.
+     * @param array|string|null $string    $string String to escape
+     * @param string|null       $delimiter Delimiter to create a list from an array. Default: `,`.
      *
      * @return string|null Returns cleaned string or `null`
      */
-    protected function cleanString($string, $delimiter = ','): ?string
+    private function cleanString(mixed $string, string $delimiter = null): ?string
     {
         // If it's an array, clean individual strings and return a delimited list of array values
         if (is_array($string)) {
+            $delimiter = $delimiter ?? ',';
             foreach ($string as $key => $value) {
                 $string[$key] = $this->cleanString($value, $delimiter);
             }
@@ -239,24 +62,14 @@ trait Vcard
     }
 
     /**
-     * Set vCard property
+     * Remove spaces from comma-delimited list
      *
-     * @param string $element vCard element to set
-     * @param string $value   Value to set vCard element to
+     * @param string|null $list List to remove spaces from
      *
-     * @throws ContactsException if an element that can only be defined once is defined more than once
+     * @return string Cleaned or empty string
      */
-    protected function setProperty(string $element, string $value): void
+    private function removeSpacesFromList(?string $list): string
     {
-        if (isset($this->definedElements[$element]) && !in_array($element, $this->multiplePropertiesAllowed, true)) {
-            throw new ContactsException('You can only set "' . $element . '" once.');
-        }
-        // Define that we set this element
-        $this->definedElements[$element] = true;
-        // Add property
-        $this->properties[] = [
-            'key' => $element,
-            'value' => $value,
-        ];
+        return str_replace(search: ', ', replace: ',', subject: $list ?? '');
     }
 }

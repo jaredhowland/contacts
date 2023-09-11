@@ -1,7 +1,11 @@
 {
   "name": "jaredhowland/contacts",
   "description": "PHP library to create files to store contact information",
-  "keywords": ["contacts","address book","vcard"],
+  "keywords": [
+    "contacts",
+    "address book",
+    "vcard"
+  ],
   "homepage": "http://github.com/jaredhowland/contacts",
   "license": "MIT",
   "autoload": {
@@ -17,16 +21,18 @@
   "authors": [
     {
       "name": "Jared Howland",
-      "homepage": "https://www.jaredhowland.com",
+      "homepage": "http://jaredhowland.com",
       "role": "developer"
     }
   ],
   "require": {
-    "php": "^8.2",
-    "guzzlehttp/guzzle": "^7.5",
-    "ext-fileinfo": "*"
+    "php": "^8.0",
+    "guzzlehttp/guzzle": "^7.0",
+    "ext-fileinfo": "*",
+    "ext-exif": "*"
   },
   "require-dev": {
-    "phpunit/phpunit": "^9"
+    "roave/security-advisories": "dev-latest",
+    "phpunit/phpunit": "^10"
   }
 }

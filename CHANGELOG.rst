@@ -3,6 +3,210 @@ All notable changes (beginning with v3.0.3) to ``contacts`` will be documented i
 The format is based on `Keep a Changelog <http://keepachangelog.com/en/1.0.0/>`_
 and this project adheres to `Semantic Versioning <http://semver.org/spec/v2.0.0.html>`_.
 
+********
+[v6.0.0]
+********
+
+Added
+-----
+
+- Options class to pass options to ``Vcard`` class constructor
+- New ``Properties`` class from refactored ``Vcard`` class
+- Build badge to ``README``
+
+Changed
+-------
+
+- Now requires PHP 8.0 or newer
+- Format code according to ``PRS-12`` coding standards
+- Options are now passed to the ``Vcard`` class constructor as an object instead of as an array
+- ``addNickname`` now only accepts strings and not arrays
+- Moved some methods from ``Helpers\Vcard`` to new ``Properties`` class
+
+Deprecated
+----------
+
+- Options passing to ``Vcard`` class constructor as an array
+- ``debug`` method in ``Vcard``
+- ``addNicknames`` is now ``addNickname``
+
+Removed
+-------
+
+- Travis CI integration due to pricing changes
+- ``addNicknames`` is removed and replaced with ``addNickname``
+
+Fixed
+-----
+
+- Tests to work with PHP 8.0
+- Example code to work with new version
+- Interface so ``addBirthday`` method parameters match current behavior
+
+****************
+[v6.0.0-alpha.2]
+****************
+
+Added
+-----
+
+- New ``Properties`` class from refactored ``Vcard`` class
+- Build badge to ``README``
+
+Changed
+-------
+
+- ``addNickname`` now only accepts strings and not arrays
+- Moved some methods from ``Helpers\Vcard`` to new ``Properties`` class
+
+Deprecated
+----------
+
+- ``debug`` method in ``Vcard``
+- ``addNicknames`` is now ``addNickname``
+
+Removed
+-------
+
+- ``addNicknames`` method is now ``addNickname``
+
+Fixed
+-----
+
+- None
+
+****************
+[v6.0.0-alpha.1]
+****************
+
+Added
+-----
+
+- Options class to pass options to ``Vcard`` class constructor
+
+Changed
+-------
+
+- Now requires PHP 8.0 or newer
+- Format code according to ``PRS-12`` coding standards
+- Options are now passed to the ``Vcard`` class constructor as an object instead of as an array
+
+Deprecated
+----------
+
+- Options passing to ``Vcard`` class constructor as an array
+
+Removed
+-------
+
+- Travis CI integration due to pricing changes
+
+Fixed
+-----
+
+- Tests to work with PHP 8.0
+- Example code to work with new version
+- Interface so ``addBirthday`` method parameters match current behavior
+
+************
+[v5.0.1]
+************
+
+Added
+-----
+
+- New ``Helpers`` directory to hold the general, and all specific, helper classes (specific helper classes call the generic one)
+
+Changed
+-------
+
+- ``addLabel`` method so ``types`` parameter is now required just like it is in ``addAddress``
+- Moved some methods out of ``Vcard`` class into a ``Helpers\Vcard`` class
+- Fixed ``.travis.yml`` configuration to use ``phpunit`` version >=``9.0`` and PHP version >=``7.3`` (library still works with version ``7.2`` but ``phpunit`` requires ``7.3``)
+
+Deprecated
+----------
+
+- Nothing
+
+Removed
+-------
+
+- Old and inaccurate documentation
+
+Fixed
+-----
+
+- Bad ``Examples\example.php`` file so works with new behavior of ``Contacts`` library
+
+************
+[v5.0.0]
+************
+
+Added
+-----
+
+- Nothing
+
+Changed
+-------
+
+- Method behavior for ``addAddress`` and ``addLabel`` so that required parameters come before optional ones (breaking backwards compatibility requiring a bump in version number)
+
+Deprecated
+----------
+
+- Nothing
+
+Removed
+-------
+
+- Nothing
+
+Fixed
+-----
+
+- Update ``README.rst`` for new version
+- Tests updated to reflect new method behavior
+- ``ContactsInterface`` updated to reflect new method behavior
+- Errors in ``CHANGELOG.rst``
+
+************
+[v4.1.0]
+************
+
+Added
+-----
+
+- Nothing
+
+Changed
+-------
+
+- Reduced code complexity
+- Date files were edited
+
+Deprecated
+----------
+
+- Nothing
+
+Removed
+-------
+
+- Nothing
+
+Fixed
+-----
+
+- ``addBirthday`` method so optional ``year`` parameter comes after required methods parameters ``month`` and ``day``
+- ``testAddBirthdayWithYear`` so test passes again
+- ``testAddBirthdayWithoutYear`` so test passes again
+
+Security
+======
+- Nothing
+
 ************
 [UNRELEASED]
 ************

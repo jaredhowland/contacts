@@ -3,7 +3,7 @@
  * Interface to create contacts
  *
  * @author  Jared Howland <contacts@jaredhowland.com>
- * @version 2020-01-28
+ * @version 2023-09-03
  * @since   2016-10-05
  */
 
@@ -24,24 +24,24 @@ interface ContactsInterface
         string $suffixes
     );
 
-    public function addNicknames(array $names);
+    public function addNickname(string $name);
 
     public function addPhoto(string $photo, bool $isUrl);
 
     public function addBirthday(int $month, int $day, int $year);
 
     public function addAddress(
-        array $types,
         string $poBox,
         string $extended,
         string $street,
         string $city,
         string $state,
         string $zip,
-        string $country
+        string $country,
+        array $types
     );
 
-    public function addLabel(array $types, string $label);
+    public function addLabel(string $label, array $types);
 
     public function addTelephone(string $phone, array $types);
 

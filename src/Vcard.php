@@ -13,47 +13,44 @@
  * Inspired by https://github.com/jeroendesloovere/vcard
  *
  * @author  Jared Howland <contacts@jaredhowland.com>
- * @version 2020-02-28
+ * @version 2023-09-06
  * @since   2016-10-05
  *
  */
 
 namespace Contacts;
 
+use GuzzleHttp\Exception\GuzzleException;
+
+use function is_int;
+
 /**
  * vCard class to create a vCard. Extends `Contacts` and implements `ContactsInterface`
  */
 class Vcard implements ContactsInterface
 {
+    use Helpers\Generic;
     use Helpers\Vcard;
+
+    /**
+     * @var Options $options Object containing all options for this class
+     */
+    private Options $options;
+
+    /**
+     * @var Properties $properties Object containing all the set properties
+     */
+    private Properties $properties;
 
     /**
      * Construct Vcard Class
      *
-     * @param string $dataDirectory   Directory to save vCard(s) to. Default: `./data/`
-     * @param string $defaultAreaCode Default area code to use for phone numbers. Default: `801`
-     * @param string $defaultTimeZone Default time zone to use for Vcard revision date and time. Default:
-     *                                `America/Denver`
+     * @param Options|null $options
      */
-    public function __construct(
-        string $dataDirectory = null,
-        string $defaultAreaCode = '801',
-        string $defaultTimeZone = 'America/Denver'
-    ) {
-        $this->setup($dataDirectory, $defaultAreaCode, $defaultTimeZone);
-    }
-
-    /**
-     * Print out properties and define elements to help with debugging
-     *
-     * @return string
-     */
-    public function debug(): string
+    public function __construct(Options $options = null)
     {
-        $properties      = print_r((string)$this->properties);
-        $definedElements = print_r((string)$this->definedElements);
-
-        return "<pre>**PROPERTIES**\n" . $properties . "\n\n**DEFINED ELEMENTS**\n" . $definedElements;
+        $this->options    = $options ?? new Options();
+        $this->properties = new Properties($this->options);
     }
 
     /**
@@ -63,17 +60,7 @@ class Vcard implements ContactsInterface
      */
     public function getProperties(): array
     {
-        return $this->properties;
-    }
-
-    /**
-     * Get defined elements array
-     *
-     * @return array Array of defined elements
-     */
-    public function getDefinedElements(): array
-    {
-        return $this->definedElements;
+        return $this->properties->get();
     }
 
     /**
@@ -93,9 +80,9 @@ class Vcard implements ContactsInterface
      *
      * @throws ContactsException if an element that can only be defined once is defined more than once
      */
-    public function addFullName(string $name): self
+    public function addFullName(string $name): Vcard
     {
-        $this->constructElement('FN', $name);
+        $this->properties->constructElement('FN', $name);
 
         return $this;
     }
@@ -110,11 +97,11 @@ class Vcard implements ContactsInterface
      *
      * @link https://tools.ietf.org/html/rfc2426#section-3.1.2 RFC 2426 Section 3.1.2 (p. 8)
      *
-     * @param string $lastName        Family name
-     * @param string $firstName       Given name. Default: `null`
-     * @param string $additionalNames Middle name(s). Comma-delimited. Default: `null`
-     * @param string $prefixes        Honorific prefix(es). Comma-delimited. Default: `null`
-     * @param string $suffixes        Honorific suffix(es). Comma-delimited. Default: `null`
+     * @param string      $lastName        Family name
+     * @param string|null $firstName       Given name. Default: `null`
+     * @param string|null $additionalNames Middle name(s). Comma-delimited. Default: `null`
+     * @param string|null $prefixes        Honorific prefix(es). Comma-delimited. Default: `null`
+     * @param string|null $suffixes        Honorific suffix(es). Comma-delimited. Default: `null`
      *
      * @return $this
      *
@@ -126,12 +113,12 @@ class Vcard implements ContactsInterface
         string $additionalNames = null,
         string $prefixes = null,
         string $suffixes = null
-    ): self {
-        $additionalNames = str_replace(', ', ',', $additionalNames);
-        $prefixes        = str_replace(', ', ',', $prefixes);
-        $suffixes        = str_replace(', ', ',', $suffixes);
-        // Set directly rather than going through $this->constructElement to avoid escaping valid commas in `$additionalNames`, `$prefixes`, and `$suffixes`
-        $this->setProperty(
+    ): Vcard {
+        $additionalNames = $this->removeSpacesFromList($additionalNames);
+        $prefixes        = $this->removeSpacesFromList($prefixes);
+        $suffixes        = $this->removeSpacesFromList($suffixes);
+        // Set directly rather than going through $this->properties->constructElement to avoid escaping valid commas in `$additionalNames`, `$prefixes`, and `$suffixes`
+        $this->properties->setProperty(
             'N',
             vsprintf(Config::get('N'), [$lastName, $firstName, $additionalNames, $prefixes, $suffixes])
         );
@@ -140,7 +127,8 @@ class Vcard implements ContactsInterface
     }
 
     /**
-     * Add nickname(s) to vCard
+     * Add nickname to vCard
+     * Make list comma delimited if you have more than one nickname to add
      *
      * RFC 2426 pp. 8–9
      *
@@ -151,15 +139,20 @@ class Vcard implements ContactsInterface
      *
      * @link https://tools.ietf.org/html/rfc2426#section-3.1.3 RFC 2426 Section 3.1.3 (pp. 8-9)
      *
-     * @param array $names Nickname(s). Array of nicknames
+     * @param string $name Nickname(s), comma delimited string if more than one nickname
      *
      * @return $this
      *
      * @throws ContactsException if an element that can only be defined once is defined more than once
      */
-    public function addNicknames(array $names): self
+    public function addNickname(string $name): Vcard
     {
-        $this->constructElement('NICKNAME', [$names]);
+        $name = $this->removeSpacesFromList($name);
+        // Set directly rather than going through $this->properties->constructElement to avoid escaping valid commas in `$additionalNames`, `$prefixes`, and `$suffixes`
+        $this->properties->setProperty(
+            'NICKNAME',
+            vsprintf(Config::get('NICKNAME'), [$name])
+        );
 
         return $this;
     }
@@ -177,10 +170,11 @@ class Vcard implements ContactsInterface
      * @return $this
      *
      * @throws ContactsException if an element that can only be defined once is defined more than once
+     * @throws GuzzleException
      */
-    public function addPhoto(string $photo, bool $isUrl = true): self
+    public function addPhoto(string $photo, bool $isUrl = true): Vcard
     {
-        $this->photoProperty('PHOTO', $photo, $isUrl);
+        $this->properties->photoProperty('PHOTO', $photo, $isUrl);
 
         return $this;
     }
@@ -194,25 +188,26 @@ class Vcard implements ContactsInterface
      *
      * @link https://tools.ietf.org/html/rfc2426#section-3.1.5 RFC 2426 Section 3.1.5 (p. 10)
      *
-     * @param int $month Month of birth.
-     * @param int $day   Day of birth.
-     * @param int $year  Year of birth. If no year given, use iOS custom date field to indicate birth month and day
-     *                   only. Default: `null`
+     * @param int      $month Month of birth.
+     * @param int      $day   Day of birth.
+     * @param int|null $year  Year of birth. If no year given, use iOS custom date field to indicate birth month and day
+     *                        only. Default: `null`
      *
      * @return $this
      *
      * @throws ContactsException if an element that can only be defined once is defined more than once
      */
-    public function addBirthday(int $month, int $day, int $year = null): self
+    public function addBirthday(int $month, int $day, ?int $year = null): Vcard
     {
-        if ($year !== null) {
-            $this->constructElement('BDAY', [$year, $month, $day]);
+        if ($year === null) {
+            $this->properties->setDefinedElements('BDAY'); // Define `BDAY` element
+            $this->properties->constructElement('BDAY-NO-YEAR', [$month, $day]);
 
             return $this;
         }
 
-        $this->definedElements['BDAY'] = true; // Define `BDAY` element
-        $this->constructElement('BDAY-NO-YEAR', [$month, $day]);
+        $this->properties->setDefinedElements('BDAY-NO-YEAR'); // Define `BDAY-NO-YEAR` element
+        $this->properties->constructElement('BDAY', [$year, $month, $day]);
 
         return $this;
     }
@@ -224,46 +219,50 @@ class Vcard implements ContactsInterface
      *
      * @link https://tools.ietf.org/html/rfc2426#section-3.2.1 RFC 2426 Section 3.2.1 (pp. 10-11)
      *
-     * @param array  $types    Array of address types
-     *                         * Valid `$types`s:
-     *                         * `dom` - domestic delivery address
-     *                         * `intl` - international delivery address
-     *                         * `postal` - postal delivery address
-     *                         * `parcel` - parcel delivery address
-     *                         * `home` - residence delivery address
-     *                         * `work` - work delivery address
-     *                         * `pref` - preferred delivery address when more than one address is specified
-     *                         * Default: `intl,postal,parcel,work`
-     * @param string $poBox    Post office box number
-     * @param string $extended Extended address
-     * @param string $street   Street address
-     * @param string $city     City
-     * @param string $state    State/province
-     * @param string $zip      Postal code
-     * @param string $country  Country
+     * @param string|null $poBox    Post office box number
+     * @param string|null $extended Extended address
+     * @param string|null $street   Street address
+     * @param string|null $city     City
+     * @param string|null $state    State/province
+     * @param string|null $zip      Postal code
+     * @param string|null $country  Country
+     * @param array       $types    Array of address types
+     *                              * Valid `$types`s:
+     *                              * `dom` - domestic delivery address
+     *                              * `intl` - international delivery address
+     *                              * `postal` - postal delivery address
+     *                              * `parcel` - parcel delivery address
+     *                              * `home` - residence delivery address
+     *                              * `work` - work delivery address
+     *                              * `pref` - preferred delivery address when more than one address is specified
+     *                              * Default: `intl,postal,parcel,work`
      *
      * @return $this
      *
      * @throws ContactsException if an element that can only be defined once is defined more than once
      */
     public function addAddress(
-        array $types = ['intl', 'postal', 'parcel', 'work'],
         string $poBox = null,
         string $extended = null,
         string $street = null,
         string $city = null,
         string $state = null,
         string $zip = null,
-        string $country = null
-    ): self {
+        string $country = null,
+        array $types = ['intl', 'postal', 'parcel', 'work']
+    ): Vcard {
         // Make sure all `$types`s are valid. If invalid `$types`(s), revert to standard default.
-        if ($this->inArrayAll($types, $this->validAddressTypes)) {
-            $this->constructElement('ADR', [$types, $poBox, $extended, $street, $city, $state, $zip, $country]);
+        if ($this->inArrayAll($types, $this->properties->getValidAddressTypes())) {
+            $this->properties->constructElement(
+                'ADR',
+                [$types, $poBox, $extended, $street, $city, $state, $zip, $country]
+            );
 
             return $this;
         }
 
-        throw new ContactsException("Invalid address type(s): '$types'");
+        $typesMessage = implode(', ', $types);
+        throw new ContactsException("Invalid address type(s): '$typesMessage'");
     }
 
     /**
@@ -273,6 +272,7 @@ class Vcard implements ContactsInterface
      *
      * @link https://tools.ietf.org/html/rfc2426#section-3.2.2 RFC 2426 Section 3.2.2 (p. 12)
      *
+     * @param string $label Mailing label
      * @param array  $types Array of mailing label types
      *                      * Valid `$types`s:
      *                      * `dom` - domestic delivery address
@@ -283,17 +283,21 @@ class Vcard implements ContactsInterface
      *                      * `work` - work delivery address
      *                      * `pref` - preferred delivery address when more than one address is specified
      *                      * Default: `intl,postal,parcel,work`
-     * @param string $label Mailing label
      *
      * @return $this
      *
      * @throws ContactsException if an element that can only be defined once is defined more than once
      */
-    public function addLabel(array $types, string $label): self
+    public function addLabel(string $label, array $types = []): Vcard
     {
         // Make sure all `$types`s are valid. If invalid `$types`(s), revert to standard default.
-        $types = $this->inArrayAll($types, $this->validAddressTypes) ? $types : ['intl', 'postal', 'parcel', 'work'];
-        $this->constructElement('LABEL', [$types, $label]);
+        $types = $this->inArrayAll($types, $this->properties->getValidAddressTypes()) ? $types : [
+            'intl',
+            'postal',
+            'parcel',
+            'work',
+        ];
+        $this->properties->constructElement('LABEL', [$types, $label]);
 
         return $this;
     }
@@ -305,36 +309,39 @@ class Vcard implements ContactsInterface
      *
      * @link https://tools.ietf.org/html/rfc2426#section-3.3.1 RFC 2426 Section 3.3.1 (p. 13)
      *
-     * @param string $phone Phone number
-     * @param array  $types Array of telephone types
-     *                      * Valid `$types`s:
-     *                      * `home` - telephone number associated with a residence
-     *                      * `msg` - telephone number has voice messaging support
-     *                      * `work` - telephone number associated with a place of work
-     *                      * `pref` - preferred-use telephone number
-     *                      * `voice` - voice telephone number
-     *                      * `fax` - facsimile telephone number
-     *                      * `cell` - cellular telephone number
-     *                      * `video` - video conferencing telephone number
-     *                      * `pager` - paging device telephone number
-     *                      * `bbs` - bulletin board system telephone number
-     *                      * `modem` - MODEM connected telephone number
-     *                      * `car` - car-phone telephone number
-     *                      * `isdn` - ISDN service telephone number
-     *                      * `pcs` - personal communication services telephone number
-     *                      * `iphone` - Non-standard type to indicate phone is an iPhone
-     *                      * Default: `voice`
+     * @param string|null $phone Phone number
+     * @param array       $types Array of telephone types
+     *                           * Valid `$types`s:
+     *                           * `home` - telephone number associated with a residence
+     *                           * `msg` - telephone number has voice messaging support
+     *                           * `work` - telephone number associated with a place of work
+     *                           * `pref` - preferred-use telephone number
+     *                           * `voice` - voice telephone number
+     *                           * `fax` - facsimile telephone number
+     *                           * `cell` - cellular telephone number
+     *                           * `video` - video conferencing telephone number
+     *                           * `pager` - paging device telephone number
+     *                           * `bbs` - bulletin board system telephone number
+     *                           * `modem` - MODEM connected telephone number
+     *                           * `car` - car-phone telephone number
+     *                           * `isdn` - ISDN service telephone number
+     *                           * `pcs` - personal communication services telephone number
+     *                           * `iphone` - Non-standard type to indicate phone is an iPhone
+     *                           * Default: `voice`
      *
      * @return $this
      *
      * @throws ContactsException if an element that can only be defined once is defined more than once
      */
-    public function addTelephone(string $phone = null, array $types = []): self
+    public function addTelephone(string $phone = null, array $types = []): Vcard
     {
+        // Format phone number if requested
+        if ($phone !== null && $this->options->isFormatUsTelephone()) {
+            $phone = $this->formatUsTelephone($phone);
+        }
         // Make sure all `$types`s are valid. If invalid `$types`(s), revert to standard default.
-        $types = $this->inArrayAll($types, $this->validTelephoneTypes) ? $types : ['voice'];
-        $phone = $this->sanitizePhone($phone);
-        $this->constructElement('TEL', [$types, $phone]);
+        $types = $this->inArrayAll($types, $this->properties->getValidTelephoneTypes()) ? $types : ['voice'];
+        $this->properties->constructElement('TEL', [$types, $phone]);
 
         return $this;
     }
@@ -346,25 +353,25 @@ class Vcard implements ContactsInterface
      *
      * @link https://tools.ietf.org/html/rfc2426#section-3.3.2 RFC 2426 Section 3.3.2 (p. 14)
      *
-     * @param string $email Email address
-     * @param array  $types Array of email address types
-     *                      * Valid `$types`s:
-     *                      * `internet` - Internet addressing type
-     *                      * `x400` - X.400 addressing type
-     *                      * `pref` - preferred-use email address when more than one is specified
-     *                      * Another IANA registered address type can also be specified
-     *                      * A non-standard value can also be specified
-     *                      * Default: `internet`
+     * @param string|null $email Email address
+     * @param array|null  $types Array of email address types
+     *                           * Valid `$types`s:
+     *                           * `internet` - Internet addressing type
+     *                           * `x400` - X.400 addressing type
+     *                           * `pref` - preferred-use email address when more than one is specified
+     *                           * Another IANA registered address type can also be specified
+     *                           * A non-standard value can also be specified
+     *                           * Default: `internet`
      *
      * @return $this
      *
      * @throws ContactsException if an element that can only be defined once is defined more than once
      */
-    public function addEmail(string $email = null, array $types = null): self
+    public function addEmail(string $email = null, array $types = null): Vcard
     {
-        $types = $types ?? ['internet'];
+        $types = empty($types) ? ['internet'] : $types;
         $email = $this->sanitizeEmail($email);
-        $this->constructElement('EMAIL', [$types, $email]);
+        $this->properties->constructElement('EMAIL', [$types, $email]);
 
         return $this;
     }
@@ -382,9 +389,9 @@ class Vcard implements ContactsInterface
      *
      * @throws ContactsException if an element that can only be defined once is defined more than once
      */
-    public function addMailer(string $mailer): self
+    public function addMailer(string $mailer): Vcard
     {
-        $this->constructElement('MAILER', $mailer);
+        $this->properties->constructElement('MAILER', $mailer);
 
         return $this;
     }
@@ -407,10 +414,10 @@ class Vcard implements ContactsInterface
      *
      * @throws ContactsException if an element that can only be defined once is defined more than once
      */
-    public function addTimeZone(string $timeZone): self
+    public function addTimeZone(string $timeZone): Vcard
     {
         if ($this->sanitizeTimeZone($timeZone)) {
-            $this->constructElement('TZ', $this->sanitizeTimeZone($timeZone));
+            $this->properties->constructElement('TZ', $this->sanitizeTimeZone($timeZone));
         }
 
         return $this;
@@ -434,10 +441,10 @@ class Vcard implements ContactsInterface
      *
      * @throws ContactsException if an element that can only be defined once is defined more than once
      */
-    public function addLatLong(float $lat, float $long): self
+    public function addLatLong(float $lat, float $long): Vcard
     {
         if ($this->sanitizeLatLong($lat, $long)) {
-            $this->constructElement('GEO', $this->sanitizeLatLong($lat, $long));
+            $this->properties->constructElement('GEO', $this->sanitizeLatLong($lat, $long));
         }
 
         return $this;
@@ -456,9 +463,9 @@ class Vcard implements ContactsInterface
      *
      * @throws ContactsException if an element that can only be defined once is defined more than once
      */
-    public function addTitle(string $title): self
+    public function addTitle(string $title): Vcard
     {
-        $this->constructElement('TITLE', $title);
+        $this->properties->constructElement('TITLE', $title);
 
         return $this;
     }
@@ -476,9 +483,9 @@ class Vcard implements ContactsInterface
      *
      * @throws ContactsException if an element that can only be defined once is defined more than once
      */
-    public function addRole(string $role): self
+    public function addRole(string $role): Vcard
     {
-        $this->constructElement('ROLE', $role);
+        $this->properties->constructElement('ROLE', $role);
 
         return $this;
     }
@@ -495,11 +502,11 @@ class Vcard implements ContactsInterface
      *
      * @return $this
      *
-     * @throws ContactsException if an element that can only be defined once is defined more than once
+     * @throws ContactsException|GuzzleException if an element that can only be defined once is defined more than once
      */
-    public function addLogo(string $logo, bool $isUrl = true): self
+    public function addLogo(string $logo, bool $isUrl = true): Vcard
     {
-        $this->photoProperty('LOGO', $logo, $isUrl);
+        $this->properties->photoProperty('LOGO', $logo, $isUrl);
 
         return $this;
     }
@@ -511,7 +518,7 @@ class Vcard implements ContactsInterface
      *
      * @link https://tools.ietf.org/html/rfc2426#section-3.5.4 RFC 2426 Section 3.5.4 (pp. 18-19)
      *
-     * @param string $agent Not supported. Default `null`
+     * @param string|null $agent Not supported. Default `null`
      *
      * @throws ContactsException if this unsupported method is called
      */
@@ -526,7 +533,7 @@ class Vcard implements ContactsInterface
      * RFC 2426 p. 19
      *
      * Structured type consisting of the organization name, followed by
-     * one or more levels of organizational unit names (semi-colon delimited).
+     * one or more levels of organizational unit names (semicolon delimited).
      *
      * @link https://tools.ietf.org/html/rfc2426#section-3.5.5 RFC 2426 Section 3.5.5 (p. 19)
      *
@@ -536,9 +543,9 @@ class Vcard implements ContactsInterface
      *
      * @throws ContactsException if an element that can only be defined once is defined more than once
      */
-    public function addOrganizations(array $organizations): self
+    public function addOrganizations(array $organizations): Vcard
     {
-        $this->constructElement('ORG', [$organizations], ';');
+        $this->properties->constructElement('ORG', [$organizations], ';');
 
         return $this;
     }
@@ -556,29 +563,9 @@ class Vcard implements ContactsInterface
      *
      * @throws ContactsException if an element that can only be defined once is defined more than once
      */
-    public function addCategories(array $categories): self
+    public function addCategories(array $categories): Vcard
     {
-        $this->constructElement('CATEGORIES', [$categories]);
-
-        return $this;
-    }
-
-    /**
-     * Add identifier for the product that created the vCard
-     *
-     * RFC 2426 pp. 20-21
-     *
-     * @link https://tools.ietf.org/html/rfc2426#section-3.6.3 RFC 2426 Section 3.6.3 (pp. 20-21)
-     *
-     * @param string $productId Product ID
-     *
-     * @return $this
-     *
-     * @throws ContactsException if an element that can only be defined once is defined more than once
-     */
-    public function addProductId(string $productId): self
-    {
-        $this->constructElement('PRODID', $productId);
+        $this->properties->constructElement('CATEGORIES', [$categories]);
 
         return $this;
     }
@@ -596,9 +583,29 @@ class Vcard implements ContactsInterface
      *
      * @throws ContactsException if an element that can only be defined once is defined more than once
      */
-    public function addNote(string $note): self
+    public function addNote(string $note): Vcard
     {
-        $this->constructElement('NOTE', $note);
+        $this->properties->constructElement('NOTE', $note);
+
+        return $this;
+    }
+
+    /**
+     * Add identifier for the product that created the vCard
+     *
+     * RFC 2426 pp. 20-21
+     *
+     * @link https://tools.ietf.org/html/rfc2426#section-3.6.3 RFC 2426 Section 3.6.3 (pp. 20-21)
+     *
+     * @param string $productId Product ID
+     *
+     * @return $this
+     *
+     * @throws ContactsException if an element that can only be defined once is defined more than once
+     */
+    public function addProductId(string $productId): Vcard
+    {
+        $this->properties->constructElement('PRODID', $productId);
 
         return $this;
     }
@@ -610,20 +617,17 @@ class Vcard implements ContactsInterface
      *
      * @link https://tools.ietf.org/html/rfc2426#section-3.6.4 RFC 2426 Section 3.6.4 (p. 21)
      *
-     * @param string $dateTime Date and time to add to card as the revision time. Default: `creation timestamp`
+     * @param string|null $dateTime Date and time to add to card as the revision time. Default: `creation timestamp`
      *
      * @return $this
      *
      * @throws ContactsException if an element that can only be defined once is defined more than once
      */
-    public function addRevision(string $dateTime = null): self
+    public function addRevision(string $dateTime = null): Vcard
     {
-        $dateTime = $dateTime === null ? (string)date('Y-m-d\TH:i:s\Z') : (string)date(
-            "Y-m-d\TH:i:s\Z",
-            strtotime($dateTime)
-        );
-        // Set directly rather than going through $this->constructElement to avoid escaping valid timestamp characters
-        $this->setProperty('REV', vsprintf(Config::get('REV'), [$dateTime]));
+        $dateTime = $this->getDateTime($dateTime);
+        // Set directly rather than going through $this->properties->constructElement to avoid escaping valid timestamp characters
+        $this->properties->setProperty('REV', vsprintf(Config::get('REV'), [$dateTime]));
 
         return $this;
     }
@@ -642,9 +646,9 @@ class Vcard implements ContactsInterface
      *
      * @throws ContactsException if an element that can only be defined once is defined more than once
      */
-    public function addSortString(string $sortString): self
+    public function addSortString(string $sortString): Vcard
     {
-        $this->constructElement('SORT-STRING', $sortString);
+        $this->properties->constructElement('SORT-STRING', $sortString);
 
         return $this;
     }
@@ -656,7 +660,7 @@ class Vcard implements ContactsInterface
      *
      * @link https://tools.ietf.org/html/rfc2426#section-3.6.6 RFC 2426 Section 3.6.6 (pp. 22-23)
      *
-     * @param string $sound Not supported. Default `null`
+     * @param string|null $sound Not supported. Default `null`
      *
      * @throws ContactsException if this unsupported method is called
      */
@@ -672,16 +676,16 @@ class Vcard implements ContactsInterface
      *
      * @link https://tools.ietf.org/html/rfc2426#section-3.6.7 RFC 2426 Section 3.6.7 (p. 23)
      *
-     * @param string $uniqueIdentifier Unique identifier. Default: `PHP-generated unique identifier`
+     * @param string|null $uniqueIdentifier Unique identifier. Default: `PHP-generated unique identifier`
      *
      * @return $this
      *
      * @throws ContactsException if an element that can only be defined once is defined more than once
      */
-    public function addUniqueIdentifier(string $uniqueIdentifier = null): self
+    public function addUniqueIdentifier(string $uniqueIdentifier = null): Vcard
     {
         $uniqueIdentifier = $uniqueIdentifier ?? uniqid('', true);
-        $this->constructElement('UID', $uniqueIdentifier);
+        $this->properties->constructElement('UID', $uniqueIdentifier);
 
         return $this;
     }
@@ -699,11 +703,11 @@ class Vcard implements ContactsInterface
      *
      * @throws ContactsException if an element that can only be defined once is defined more than once
      */
-    public function addUrl(string $url): self
+    public function addUrl(string $url): Vcard
     {
-        if ($this->sanitizeUrl($url) !== null) {
-            // Set directly rather than going through $this->constructElement to avoid escaping valid URL characters
-            $this->setProperty('URL', vsprintf(Config::get('URL'), [$this->sanitizeUrl($url)]));
+        if (!empty($this->sanitizeUrl($url))) {
+            // Set directly rather than going through $this->properties->constructElement to avoid escaping valid URL characters
+            $this->properties->setProperty('URL', vsprintf(Config::get('URL'), [$this->sanitizeUrl($url)]));
         }
 
         return $this;
@@ -726,10 +730,10 @@ class Vcard implements ContactsInterface
      *
      * @throws ContactsException if an element that can only be defined once is defined more than once
      */
-    public function addClassification(string $classification = 'PUBLIC'): self
+    public function addClassification(string $classification = 'PUBLIC'): Vcard
     {
-        if ($this->inArrayAll([$classification], $this->validClassifications)) {
-            $this->constructElement('CLASS', $classification);
+        if ($this->inArrayAll([$classification], $this->properties->getValidClassifications())) {
+            $this->properties->constructElement('CLASS', $classification);
 
             return $this;
         }
@@ -751,9 +755,9 @@ class Vcard implements ContactsInterface
      *
      * @throws ContactsException if an element that can only be defined once is defined more than once
      */
-    public function addExtendedType(string $label, string $value): self
+    public function addExtendedType(string $label, string $value): Vcard
     {
-        $this->constructElement('X-', [$label, $value]);
+        $this->properties->constructElement('X-', [$label, $value]);
 
         return $this;
     }
@@ -765,7 +769,7 @@ class Vcard implements ContactsInterface
      *
      * @link https://tools.ietf.org/html/rfc2426#section-3.7.2 RFC 2426 Section 3.7.2 (pp. 25-26)
      *
-     * @param string $key Not supported. Default `null`
+     * @param string|null $key Not supported. Default `null`
      *
      * @throws ContactsException if this unsupported method is called
      */
@@ -783,13 +787,19 @@ class Vcard implements ContactsInterface
      *
      * @throws ContactsException if an element that can only be defined once is defined more than once
      */
-    public function addAnniversary(string $anniversary): self
+    public function addAnniversary(string $anniversary): Vcard
     {
-        $anniversary = date('Y-m-d', strtotime($anniversary));
-        $this->constructElement('ANNIVERSARY', [$anniversary, $this->extendedItemCount]);
-        $this->extendedItemCount++;
+        if (is_int(strtotime($anniversary))) {
+            $anniversary = date('Y-m-d', strtotime($anniversary));
+            $this->properties->constructElement(
+                'ANNIVERSARY',
+                [$anniversary, $this->properties->getExtendedItemCount()]
+            );
 
-        return $this;
+            return $this;
+        }
+
+        throw new ContactsException("Invalid date for anniversary: '$anniversary'");
     }
 
     /**
@@ -801,10 +811,9 @@ class Vcard implements ContactsInterface
      *
      * @throws ContactsException if an element that can only be defined once is defined more than once
      */
-    public function addSupervisor(string $supervisor): self
+    public function addSupervisor(string $supervisor): Vcard
     {
-        $this->constructElement('SUPERVISOR', [$supervisor, $this->extendedItemCount]);
-        $this->extendedItemCount++;
+        $this->properties->constructElement('SUPERVISOR', [$supervisor, $this->properties->getExtendedItemCount()]);
 
         return $this;
     }
@@ -818,10 +827,9 @@ class Vcard implements ContactsInterface
      *
      * @throws ContactsException if an element that can only be defined once is defined more than once
      */
-    public function addSpouse(string $spouse): self
+    public function addSpouse(string $spouse): Vcard
     {
-        $this->constructElement('SPOUSE', [$spouse, $this->extendedItemCount]);
-        $this->extendedItemCount++;
+        $this->properties->constructElement('SPOUSE', [$spouse, $this->properties->getExtendedItemCount()]);
 
         return $this;
     }
@@ -835,10 +843,9 @@ class Vcard implements ContactsInterface
      *
      * @throws ContactsException if an element that can only be defined once is defined more than once
      */
-    public function addChild(string $child): self
+    public function addChild(string $child): Vcard
     {
-        $this->constructElement('CHILD', [$child, $this->extendedItemCount]);
-        $this->extendedItemCount++;
+        $this->properties->constructElement('CHILD', [$child, $this->properties->getExtendedItemCount()]);
 
         return $this;
     }
@@ -846,8 +853,8 @@ class Vcard implements ContactsInterface
     /**
      * Build the vCard
      *
-     * @param bool   $write    Write vCard to file or not. Default: `false`
-     * @param string $filename Name of vCard file. Default: `timestamp`
+     * @param bool        $write    Write vCard to file or not. Default: `false`
+     * @param string|null $filename Name of vCard file. Default: `timestamp`
      *
      * @return string vCard as a string
      *
@@ -855,25 +862,18 @@ class Vcard implements ContactsInterface
      */
     public function buildVcard(bool $write = false, string $filename = null): string
     {
-        $this->setRevisionDate();
-        $filename = $this->setFilename($filename);
-        $string   = $this->setVcardString();
+        $filename = $this->getFileName($filename);
+        if (!isset($this->properties->getDefinedElements()['REV'])) {
+            $this->addRevision();
+        }
+        $string = "BEGIN:VCARD\r\n";
+        $string .= "VERSION:3.0\r\n";
+        $string .= $this->properties->addProperties($this->properties->get());
+        $string .= "END:VCARD\r\n\r\n";
         if ($write) {
             $this->writeFile($filename . '.vcf', $string, true);
         }
 
         return $string;
-    }
-
-    /**
-     * Set revision date
-     *
-     * @throws ContactsException if an element that can only be defined once is defined more than once
-     */
-    private function setRevisionDate(): void
-    {
-        if (!isset($this->definedElements['REV'])) {
-            $this->addRevision();
-        }
     }
 }
