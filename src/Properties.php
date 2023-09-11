@@ -12,7 +12,6 @@ use function is_array;
  */
 class Properties
 {
-    use Helpers\Generic;
     use Helpers\Vcard;
 
     /**
@@ -86,6 +85,17 @@ class Properties
      * @var int $extendedItemCount Count of custom elements set
      */
     private int $extendedItemCount = 0;
+    private Options $options;
+
+    /**
+     * Construct Vcard Class
+     *
+     * @param Options|null $options
+     */
+    public function __construct(Options $options = null)
+    {
+        $this->options = $options ?? new Options();
+    }
 
     /**
      * Get all defined properties
