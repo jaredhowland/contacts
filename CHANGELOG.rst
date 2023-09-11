@@ -3,6 +3,46 @@ All notable changes (beginning with v3.0.3) to ``contacts`` will be documented i
 The format is based on `Keep a Changelog <http://keepachangelog.com/en/1.0.0/>`_
 and this project adheres to `Semantic Versioning <http://semver.org/spec/v2.0.0.html>`_.
 
+********
+[v6.0.0]
+********
+
+Added
+-----
+
+- Options class to pass options to ``Vcard`` class constructor
+- New ``Properties`` class from refactored ``Vcard`` class
+- Build badge to ``README``
+
+Changed
+-------
+
+- Now requires PHP 8.0 or newer
+- Format code according to ``PRS-12`` coding standards
+- Options are now passed to the ``Vcard`` class constructor as an object instead of as an array
+- ``addNickname`` now only accepts strings and not arrays
+- Moved some methods from ``Helpers\Vcard`` to new ``Properties`` class
+
+Deprecated
+----------
+
+- Options passing to ``Vcard`` class constructor as an array
+- ``debug`` method in ``Vcard``
+- ``addNicknames`` is now ``addNickname``
+
+Removed
+-------
+
+- Travis CI integration due to pricing changes
+- ``addNicknames`` is removed and replaced with ``addNickname``
+
+Fixed
+-----
+
+- Tests to work with PHP 8.0
+- Example code to work with new version
+- Interface so ``addBirthday`` method parameters match current behavior
+
 ****************
 [v6.0.0-alpha.2]
 ****************
