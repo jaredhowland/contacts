@@ -85,16 +85,20 @@ class Properties
      * @var int $extendedItemCount Count of custom elements set
      */
     private int $extendedItemCount = 0;
+
+    /**
+     * @var Options $options Object containing all options for this class
+     */
     private Options $options;
 
     /**
-     * Construct Vcard Class
+     * Construct Properties Class
      *
-     * @param Options|null $options
+     * @param Options $options
      */
-    public function __construct(Options $options = null)
+    public function __construct(Options $options)
     {
-        $this->options = $options ?? new Options();
+        $this->options = $options;
     }
 
     /**
@@ -225,7 +229,7 @@ class Properties
     public function setProperty(string $element, string $value): void
     {
         if (isset($this->definedElements[$element]) && !in_array($element, $this->multiplePropertiesAllowed, true)) {
-            throw new ContactsException('You can only set "' . $element . '" once.');
+            throw new ContactsException('You can only set "'.$element.'" once.');
         }
         // Define that we set this element
         $this->definedElements[$element] = true;
@@ -248,7 +252,7 @@ class Properties
         $string = null;
         foreach ($properties as $property) {
             $value  = str_replace('\r\n', "\r\n", $property['value']);
-            $string .= $this->fold($value . "\r\n");
+            $string .= $this->fold($value."\r\n");
         }
 
         return $string;

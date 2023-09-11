@@ -50,7 +50,7 @@ class Vcard implements ContactsInterface
     public function __construct(Options $options = null)
     {
         $this->options    = $options ?? new Options();
-        $this->properties = new Properties();
+        $this->properties = new Properties($this->options);
     }
 
     /**
@@ -871,7 +871,7 @@ class Vcard implements ContactsInterface
         $string .= $this->properties->addProperties($this->properties->get());
         $string .= "END:VCARD\r\n\r\n";
         if ($write) {
-            $this->writeFile($filename . '.vcf', $string, true);
+            $this->writeFile($filename.'.vcf', $string, true);
         }
 
         return $string;
