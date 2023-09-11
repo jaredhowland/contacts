@@ -871,7 +871,7 @@ class Vcard implements ContactsInterface
         $string .= $this->properties->addProperties($this->properties->get());
         $string .= "END:VCARD\r\n\r\n";
         if ($write) {
-            $this->writeFile($filename.'.vcf', $string, true);
+            $this->writeFile($filename . '.vcf', $string, true);
         }
 
         return $string;
