@@ -22,13 +22,15 @@ namespace Contacts;
 
 use GuzzleHttp\Exception\GuzzleException;
 
+use function is_int;
+
 /**
  * vCard class to create a vCard. Extends `Contacts` and implements `ContactsInterface`
  */
 class Vcard implements ContactsInterface
 {
-    use Helpers\Generic;
     use Helpers\Vcard;
+    use Helpers\Generic;
 
     /**
      * @var Options $options Object containing all options for this class
@@ -47,7 +49,7 @@ class Vcard implements ContactsInterface
      */
     public function __construct(Options $options = null)
     {
-        $this->options = $options ?? new Options();
+        $this->options    = $options ?? new Options();
         $this->properties = new Properties();
     }
 
@@ -95,11 +97,11 @@ class Vcard implements ContactsInterface
      *
      * @link https://tools.ietf.org/html/rfc2426#section-3.1.2 RFC 2426 Section 3.1.2 (p. 8)
      *
-     * @param string $lastName Family name
-     * @param string|null $firstName Given name. Default: `null`
+     * @param string      $lastName        Family name
+     * @param string|null $firstName       Given name. Default: `null`
      * @param string|null $additionalNames Middle name(s). Comma-delimited. Default: `null`
-     * @param string|null $prefixes Honorific prefix(es). Comma-delimited. Default: `null`
-     * @param string|null $suffixes Honorific suffix(es). Comma-delimited. Default: `null`
+     * @param string|null $prefixes        Honorific prefix(es). Comma-delimited. Default: `null`
+     * @param string|null $suffixes        Honorific suffix(es). Comma-delimited. Default: `null`
      *
      * @return $this
      *
@@ -113,8 +115,8 @@ class Vcard implements ContactsInterface
         string $suffixes = null
     ): Vcard {
         $additionalNames = $this->removeSpacesFromList($additionalNames);
-        $prefixes = $this->removeSpacesFromList($prefixes);
-        $suffixes = $this->removeSpacesFromList($suffixes);
+        $prefixes        = $this->removeSpacesFromList($prefixes);
+        $suffixes        = $this->removeSpacesFromList($suffixes);
         // Set directly rather than going through $this->properties->constructElement to avoid escaping valid commas in `$additionalNames`, `$prefixes`, and `$suffixes`
         $this->properties->setProperty(
             'N',
@@ -163,7 +165,7 @@ class Vcard implements ContactsInterface
      * @link https://tools.ietf.org/html/rfc2426#section-3.1.4 RFC 2426 Section 3.1.4 (pp. 9-10)
      *
      * @param string $photo URL-referenced or base-64 encoded photo
-     * @param bool $isUrl Optional. Is it a URL-referenced photo or a base-64 encoded photo? Default: `true`
+     * @param bool   $isUrl Optional. Is it a URL-referenced photo or a base-64 encoded photo? Default: `true`
      *
      * @return $this
      *
@@ -186,10 +188,10 @@ class Vcard implements ContactsInterface
      *
      * @link https://tools.ietf.org/html/rfc2426#section-3.1.5 RFC 2426 Section 3.1.5 (p. 10)
      *
-     * @param int $month Month of birth.
-     * @param int $day Day of birth.
-     * @param int|null $year Year of birth. If no year given, use iOS custom date field to indicate birth month and day
-     *                    only. Default: `null`
+     * @param int      $month Month of birth.
+     * @param int      $day   Day of birth.
+     * @param int|null $year  Year of birth. If no year given, use iOS custom date field to indicate birth month and day
+     *                        only. Default: `null`
      *
      * @return $this
      *
@@ -217,23 +219,23 @@ class Vcard implements ContactsInterface
      *
      * @link https://tools.ietf.org/html/rfc2426#section-3.2.1 RFC 2426 Section 3.2.1 (pp. 10-11)
      *
-     * @param string|null $poBox Post office box number
+     * @param string|null $poBox    Post office box number
      * @param string|null $extended Extended address
-     * @param string|null $street Street address
-     * @param string|null $city City
-     * @param string|null $state State/province
-     * @param string|null $zip Postal code
-     * @param string|null $country Country
-     * @param array $types Array of address types
-     *                         * Valid `$types`s:
-     *                         * `dom` - domestic delivery address
-     *                         * `intl` - international delivery address
-     *                         * `postal` - postal delivery address
-     *                         * `parcel` - parcel delivery address
-     *                         * `home` - residence delivery address
-     *                         * `work` - work delivery address
-     *                         * `pref` - preferred delivery address when more than one address is specified
-     *                         * Default: `intl,postal,parcel,work`
+     * @param string|null $street   Street address
+     * @param string|null $city     City
+     * @param string|null $state    State/province
+     * @param string|null $zip      Postal code
+     * @param string|null $country  Country
+     * @param array       $types    Array of address types
+     *                              * Valid `$types`s:
+     *                              * `dom` - domestic delivery address
+     *                              * `intl` - international delivery address
+     *                              * `postal` - postal delivery address
+     *                              * `parcel` - parcel delivery address
+     *                              * `home` - residence delivery address
+     *                              * `work` - work delivery address
+     *                              * `pref` - preferred delivery address when more than one address is specified
+     *                              * Default: `intl,postal,parcel,work`
      *
      * @return $this
      *
@@ -271,7 +273,7 @@ class Vcard implements ContactsInterface
      * @link https://tools.ietf.org/html/rfc2426#section-3.2.2 RFC 2426 Section 3.2.2 (p. 12)
      *
      * @param string $label Mailing label
-     * @param array $types Array of mailing label types
+     * @param array  $types Array of mailing label types
      *                      * Valid `$types`s:
      *                      * `dom` - domestic delivery address
      *                      * `intl` - international delivery address
@@ -293,7 +295,7 @@ class Vcard implements ContactsInterface
             'intl',
             'postal',
             'parcel',
-            'work'
+            'work',
         ];
         $this->properties->constructElement('LABEL', [$types, $label]);
 
@@ -308,24 +310,24 @@ class Vcard implements ContactsInterface
      * @link https://tools.ietf.org/html/rfc2426#section-3.3.1 RFC 2426 Section 3.3.1 (p. 13)
      *
      * @param string|null $phone Phone number
-     * @param array $types Array of telephone types
-     *                      * Valid `$types`s:
-     *                      * `home` - telephone number associated with a residence
-     *                      * `msg` - telephone number has voice messaging support
-     *                      * `work` - telephone number associated with a place of work
-     *                      * `pref` - preferred-use telephone number
-     *                      * `voice` - voice telephone number
-     *                      * `fax` - facsimile telephone number
-     *                      * `cell` - cellular telephone number
-     *                      * `video` - video conferencing telephone number
-     *                      * `pager` - paging device telephone number
-     *                      * `bbs` - bulletin board system telephone number
-     *                      * `modem` - MODEM connected telephone number
-     *                      * `car` - car-phone telephone number
-     *                      * `isdn` - ISDN service telephone number
-     *                      * `pcs` - personal communication services telephone number
-     *                      * `iphone` - Non-standard type to indicate phone is an iPhone
-     *                      * Default: `voice`
+     * @param array       $types Array of telephone types
+     *                           * Valid `$types`s:
+     *                           * `home` - telephone number associated with a residence
+     *                           * `msg` - telephone number has voice messaging support
+     *                           * `work` - telephone number associated with a place of work
+     *                           * `pref` - preferred-use telephone number
+     *                           * `voice` - voice telephone number
+     *                           * `fax` - facsimile telephone number
+     *                           * `cell` - cellular telephone number
+     *                           * `video` - video conferencing telephone number
+     *                           * `pager` - paging device telephone number
+     *                           * `bbs` - bulletin board system telephone number
+     *                           * `modem` - MODEM connected telephone number
+     *                           * `car` - car-phone telephone number
+     *                           * `isdn` - ISDN service telephone number
+     *                           * `pcs` - personal communication services telephone number
+     *                           * `iphone` - Non-standard type to indicate phone is an iPhone
+     *                           * Default: `voice`
      *
      * @return $this
      *
@@ -352,14 +354,14 @@ class Vcard implements ContactsInterface
      * @link https://tools.ietf.org/html/rfc2426#section-3.3.2 RFC 2426 Section 3.3.2 (p. 14)
      *
      * @param string|null $email Email address
-     * @param array|null $types Array of email address types
-     *                      * Valid `$types`s:
-     *                      * `internet` - Internet addressing type
-     *                      * `x400` - X.400 addressing type
-     *                      * `pref` - preferred-use email address when more than one is specified
-     *                      * Another IANA registered address type can also be specified
-     *                      * A non-standard value can also be specified
-     *                      * Default: `internet`
+     * @param array|null  $types Array of email address types
+     *                           * Valid `$types`s:
+     *                           * `internet` - Internet addressing type
+     *                           * `x400` - X.400 addressing type
+     *                           * `pref` - preferred-use email address when more than one is specified
+     *                           * Another IANA registered address type can also be specified
+     *                           * A non-standard value can also be specified
+     *                           * Default: `internet`
      *
      * @return $this
      *
@@ -428,7 +430,7 @@ class Vcard implements ContactsInterface
      *
      * @link https://tools.ietf.org/html/rfc2426#section-3.4.2 RFC 2426 Section 3.4.2 (pp. 15-16)
      *
-     * @param float $lat Geographic Positioning System latitude (decimal) (must be a number between -90 and 90)
+     * @param float $lat  Geographic Positioning System latitude (decimal) (must be a number between -90 and 90)
      *
      * **FORMULA**: decimal = degrees + minutes/60 + seconds/3600
      * @param float $long Geographic Positioning System longitude (decimal) (must be a number between -180 and 180)
@@ -495,8 +497,8 @@ class Vcard implements ContactsInterface
      *
      * @link https://tools.ietf.org/html/rfc2426#section-3.5.3 RFC 2426 Section 3.5.3 (pp. 17-18)
      *
-     * @param string $logo URL-referenced or base-64 encoded photo
-     * @param bool $isUrl Optional. Is it a URL-referenced photo or a base-64 encoded photo? Default: `true`
+     * @param string $logo  URL-referenced or base-64 encoded photo
+     * @param bool   $isUrl Optional. Is it a URL-referenced photo or a base-64 encoded photo? Default: `true`
      *
      * @return $this
      *
@@ -851,7 +853,7 @@ class Vcard implements ContactsInterface
     /**
      * Build the vCard
      *
-     * @param bool $write Write vCard to file or not. Default: `false`
+     * @param bool        $write    Write vCard to file or not. Default: `false`
      * @param string|null $filename Name of vCard file. Default: `timestamp`
      *
      * @return string vCard as a string
@@ -869,7 +871,7 @@ class Vcard implements ContactsInterface
         $string .= $this->properties->addProperties($this->properties->get());
         $string .= "END:VCARD\r\n\r\n";
         if ($write) {
-            $this->writeFile($filename . '.vcf', $string, true);
+            $this->writeFile($filename.'.vcf', $string, true);
         }
 
         return $string;

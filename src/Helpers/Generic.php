@@ -145,7 +145,7 @@ trait Generic
      *
      * @return string Formatted datetime string
      */
-    private function getDateTime(?string $dateTime = null): string
+    protected function getDateTime(?string $dateTime = null): string
     {
         if ($dateTime === null) {
             return date('Y-m-d\TH:i:s\Z');
@@ -161,7 +161,7 @@ trait Generic
      *
      * @return string Name of file, including path
      */
-    private function getFileName(?string $fileName): string
+    protected function getFileName(?string $fileName): string
     {
         return empty($fileName) ?
             $this->options->getDataDirectory().date('Y.m.d.H.i.s') :
@@ -248,7 +248,7 @@ trait Generic
      *
      * @return string Cleaned phone number
      */
-    private function cleanPhone(string $phone): string
+    protected function cleanPhone(string $phone): string
     {
         return preg_replace('/\D/', null, $phone);
     }
