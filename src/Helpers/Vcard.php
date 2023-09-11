@@ -10,8 +10,8 @@
 
 namespace Contacts\Helpers;
 
-use Contacts\ContactsException;
-use GuzzleHttp\Exception\GuzzleException;
+use function is_array;
+use function strlen;
 
 /**
  * Helper trait for methods shared between child classes
@@ -52,7 +52,7 @@ trait Vcard
                 $string[$key] = $this->cleanString($value, $delimiter);
             }
 
-            return implode(/** @scrutinizer ignore-type */ $delimiter, $string);
+            return implode($delimiter, $string);
         }
         $search = [',', ';', ':'];
         $replace = ['\,', '\;', '\:'];

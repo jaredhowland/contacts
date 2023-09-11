@@ -77,16 +77,16 @@ trait Generic
     protected function formatUsTelephone(string $phone): string
     {
         $phone = $this->cleanPhone($phone);
-        if (strlen($phone) > 10) {
-            return $this->phoneDigitsMoreThanTen($phone);
+        if (\strlen($phone) > 10) {
+            return $this->phoneIsMoreThanTen($phone);
         }
 
-        if (strlen($phone) === 10) {
-            return $this->phoneDigitsEqualTen($phone);
+        if (\strlen($phone) === 10) {
+            return $this->phoneIsTenDigits($phone);
         }
 
-        if (strlen($phone) === 7) {
-            return $this->phoneDigitsEqualSeven($phone);
+        if (\strlen($phone) === 7) {
+            return $this->phoneIsSevenDigits($phone);
         }
 
         // Return formatted phone number (or original if not exactly 7 or >=10 digits)
@@ -144,7 +144,7 @@ trait Generic
      */
     private function getDateTime(?string $dateTime = null): string
     {
-        if (is_null($dateTime)) {
+        if ($dateTime === null) {
             return date('Y-m-d\TH:i:s\Z');
         }
         return date('Y-m-d\TH:i:s\Z', strtotime($dateTime));
@@ -256,7 +256,7 @@ trait Generic
      *
      * @return string Formatted phone number
      */
-    private function phoneDigitsMoreThanTen(string $phone): string
+    private function phoneIsMoreThanTen(string $phone): string
     {
         $countryCode = substr($phone, 0, -10);
         $areaCode = substr($phone, -10, 3);
@@ -275,7 +275,7 @@ trait Generic
      *
      * @return string Formatted phone number
      */
-    private function phoneDigitsEqualTen(string $phone): string
+    private function phoneIsTenDigits(string $phone): string
     {
         $areaCode = substr($phone, 0, 3);
         $nextThree = substr($phone, 3, 3);
@@ -290,11 +290,11 @@ trait Generic
      *
      * @return string Formatted phone number
      */
-    private function phoneDigitsEqualSeven(string $phone): string
+    private function phoneIsSevenDigits(string $phone): string
     {
         $nextThree = substr($phone, 0, 3);
         $lastFour = substr($phone, 3, 4);
-        if ($this->options->getDefaultAreaCode) {
+        if ($this->options->getDefaultAreaCode()) {
             return "($this->options->getDefaultAreaCode) $nextThree-$lastFour";
         }
         return "$nextThree-$lastFour";

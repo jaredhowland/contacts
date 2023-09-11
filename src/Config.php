@@ -13,15 +13,17 @@ namespace Contacts;
 
 use UnexpectedValueException;
 
+use function is_array;
+
 /**
  * Configuration class to import `Config.ini` file and set other defaults
  */
 class Config
 {
     /**
-     * @var array|false $config Array of values in `Config.ini`. `false` if file cannot be parsed.
+     * @var array $config Array of values in `Config.ini`. `false` if file cannot be parsed.
      */
-    private static array|false $config;
+    private static array $config;
 
     /**
      * Get config setting from `.ini` file
@@ -55,7 +57,7 @@ class Config
         }
 
         throw new UnexpectedValueException(
-            "'$setting' is not a valid config setting. Please check your 'config.ini' file for valid config options.\n"
+            "'$setting' is not a valid config setting. Please check your 'Config.ini' file for valid config options.\n"
         );
     }
 }

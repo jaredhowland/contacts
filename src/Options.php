@@ -10,6 +10,9 @@
 
 namespace Contacts;
 
+/**
+ * Options class
+ */
 class Options
 {
     private string $dataDirectory = './data/';

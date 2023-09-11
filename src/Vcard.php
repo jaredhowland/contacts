@@ -197,7 +197,7 @@ class Vcard implements ContactsInterface
      */
     public function addBirthday(int $month, int $day, ?int $year = null): Vcard
     {
-        if (empty($year)) {
+        if ($year === null) {
             $this->properties->setDefinedElements('BDAY'); // Define `BDAY` element
             $this->properties->constructElement('BDAY-NO-YEAR', [$month, $day]);
 
@@ -334,7 +334,7 @@ class Vcard implements ContactsInterface
     public function addTelephone(string $phone = null, array $types = []): Vcard
     {
         // Format phone number if requested
-        if ($this->options->isFormatUsTelephone() && !is_null($phone)) {
+        if ($phone !== null && $this->options->isFormatUsTelephone()) {
             $phone = $this->formatUsTelephone($phone);
         }
         // Make sure all `$types`s are valid. If invalid `$types`(s), revert to standard default.

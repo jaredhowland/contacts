@@ -4,6 +4,12 @@ namespace Contacts;
 
 use GuzzleHttp\Exception\GuzzleException;
 
+use function in_array;
+use function is_array;
+
+/**
+ * Properties class for `Vcard` class
+ */
 class Properties
 {
     use Helpers\Vcard;
@@ -247,7 +253,7 @@ class Properties
     {
         // Set directly rather than going through $this->properties->constructElement to avoid escaping valid URL characters
         $data = $this->getPhotoUrl($photoUrl);
-        if (!is_null($data)) {
+        if ($data !== null) {
             $this->setProperty(
                 $element,
                 vsprintf(Config::get('PHOTO-BINARY'), [$data['mimetype'], base64_encode($data['photo'])])
@@ -266,7 +272,7 @@ class Properties
     private function photoBase64(string $element, string $photoString): void
     {
         $data = $this->getPhotoBase64($photoString);
-        if (!is_null($data)) {
+        if ($data !== null) {
             $this->setProperty(
                 $element,
                 vsprintf(Config::get('PHOTO-BINARY'), [$data['mimetype'], $data['photoString']])
@@ -287,12 +293,25 @@ class Properties
     private function getPhotoUrl(string $photoUrl): ?array
     {
         if (!empty($this->sanitizeUrl($photoUrl))) {
-            $mimetype = strtoupper(str_replace('image/', '', getimagesize($photoUrl)['mime']));
+            $mimetype = $this->getImageMimeType($photoUrl);
+            $mimetype = strtoupper(str_replace('image/', '', $mimetype));
             $photo = $this->getData($this->sanitizeUrl($photoUrl));
             return ['mimetype' => $mimetype, 'photo' => $photo];
         }
 
         return null;
+    }
+
+    /**
+     * Get the mime type of image
+     *
+     * @param string $image Image to get mime type for
+     *
+     * @return string Mime type of image
+     */
+    private function getImageMimeType(string $image): string
+    {
+        return image_type_to_mime_type(exif_imagetype($image));
     }
 
     /**
