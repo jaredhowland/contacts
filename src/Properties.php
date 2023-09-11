@@ -229,7 +229,7 @@ class Properties
     public function setProperty(string $element, string $value): void
     {
         if (isset($this->definedElements[$element]) && !in_array($element, $this->multiplePropertiesAllowed, true)) {
-            throw new ContactsException('You can only set "'.$element.'" once.');
+            throw new ContactsException('You can only set "' . $element . '" once.');
         }
         // Define that we set this element
         $this->definedElements[$element] = true;
@@ -252,7 +252,7 @@ class Properties
         $string = null;
         foreach ($properties as $property) {
             $value  = str_replace('\r\n', "\r\n", $property['value']);
-            $string .= $this->fold($value."\r\n");
+            $string .= $this->fold($value . "\r\n");
         }
 
         return $string;
