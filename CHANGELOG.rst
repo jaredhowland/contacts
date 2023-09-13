@@ -1,4 +1,4 @@
-All notable changes (beginning with v3.0.3) to ``contacts`` will be documented in this file.
+All notable changes (beginning with v3.0.3) to ``Contacts`` will be documented in this file.
 
 The format is based on `Keep a Changelog <http://keepachangelog.com/en/1.0.0/>`_
 and this project adheres to `Semantic Versioning <http://semver.org/spec/v2.0.0.html>`_.
