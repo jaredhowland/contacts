@@ -1,4 +1,4 @@
-|Scrutinizer|_ |Build|_ |StyleCI|_ |Packagist|_ |MIT License|_
+|Scrutinizer|_ |Build|_ |StyleCI|_ |Packagist-dl|_ |Packagist|_ |MIT License|_
 
 ========
 Contacts
@@ -224,3 +224,7 @@ Inspired by https://github.com/jeroendesloovere/vcard
 
 .. |MIT License| image:: https://img.shields.io/badge/License-MIT-blue.svg?style=flat-square
 .. _MIT License: LICENSE.rst
+
+.. |Packagist-dl| image:: https://img.shields.io/packagist/dt/jaredhowland/contacts?style=flat-square
+.. _Packagist-dl: https://packagist.org/packages/jaredhowland/contacts
+
