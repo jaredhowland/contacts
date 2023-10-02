@@ -3,7 +3,7 @@
 ========
 Contacts
 ========
-Contacts is a small PHP library to create files containing address book information for people. Currently, `vCard 3.0 <https://tools.ietf.org/html/rfc2426>`_ is the only supported export format.
+Contacts is a small PHP library to create files containing address book information for people or organizations. Currently, `vCard 3.0 <https://tools.ietf.org/html/rfc2426>`_ is the only supported export format.
 
 ========
 Features
@@ -14,6 +14,7 @@ Features
   * Includes fields that are unique to the iOS and macOS contacts application (``Supervisor``, ``Anniversary``, ``Spouse``, ``Child``)
 * Flexible: future implementations will include other formats commonly used to store contact information—other vCard formats, microformats, Google contacts format, ``.csv`` format, etc.
 * Method chaining for constructing contact information in a fluid interface
+* The method argument order typically comes directly from the `standard <https://tools.ietf.org/html/rfc2426>`_ itself
 
 ============
 Installation
@@ -35,14 +36,14 @@ Usage
 
 Input
 -----
-This is an extensive example. Most of the time, you will only need a tiny fraction of these fields to create a vCard:
+This is an extensive example. The code is well documented and you should get all the hints needed for using it in an IDE. Most of the time, you will only need a fraction of these fields to create a vCard:
 
 .. code-block:: php
 
        <?php
           require 'vendor/autoload.php';
 
-          use \Contacts\Options;
+          use \Contacts\Options; // Only needed if you must override the default settings
           use \Contacts\Vcard;
 
           // Set desired options
@@ -225,6 +226,5 @@ Inspired by https://github.com/jeroendesloovere/vcard
 .. |MIT License| image:: https://img.shields.io/badge/License-MIT-blue.svg?style=flat-square
 .. _MIT License: LICENSE.rst
 
-.. |Packagist-dl| image:: https://img.shields.io/packagist/dt/jaredhowland/contacts?style=flat-square
+.. |Packagist-dl| image:: https://img.shields.io/packagist/dt/jaredhowland/contacts.svg?style=flat-square&label=installs&color=%239265bf
 .. _Packagist-dl: https://packagist.org/packages/jaredhowland/contacts
-
