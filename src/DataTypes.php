@@ -13,5 +13,4 @@ namespace Contacts;
 
 class DataTypes
 {
-    
 }
