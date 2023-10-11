@@ -118,7 +118,7 @@ Or you can chain methods together to build the vCard:
                 ->addCategories(['School', 'Work'])
                 ->addNote('Not much is known about Jane Doe.')
                 ->addSortString('Doe')
-                ->addUrl('http://www.example.com')
+                ->addUrl('https://www.example.com')
                 ->addAnniversary('2010-10-10')
                 ->addSupervisor('Jane Smith')
                 ->addSpouse('John Doe')
