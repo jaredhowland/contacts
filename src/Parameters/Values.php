@@ -64,18 +64,18 @@ class Values
      * CRLF-followed-by-space line folding technique, and the backslash
      * escape technique.
      */
-    protected CONST TEXT = 'text';
-    protected CONST URI = 'uri';
-    protected CONST DATE = 'date';
-    protected CONST TIME = 'time';
-    protected CONST DATE_TIME = 'date-time';
-    protected CONST DATE_AND_OR_TIME = 'date-and-or-time';
-    protected CONST TIMESTAMP = 'timestamp';
-    protected CONST BOOLEAN = 'boolean';
-    protected CONST INTEGER = 'integer';
-    protected CONST FLOAT = 'float';
-    protected CONST UTC_OFFSET = 'utc-offset';
-    protected CONST LANGUAGE_TAG = 'language-tag';
-    protected CONST IANA_TOKEN = 'iana-token';
-    protected CONST X_NAME = 'x-name';
+    protected const TEXT = 'text';
+    protected const URI = 'uri';
+    protected const DATE = 'date';
+    protected const TIME = 'time';
+    protected const DATE_TIME = 'date-time';
+    protected const DATE_AND_OR_TIME = 'date-and-or-time';
+    protected const TIMESTAMP = 'timestamp';
+    protected const BOOLEAN = 'boolean';
+    protected const INTEGER = 'integer';
+    protected const FLOAT = 'float';
+    protected const UTC_OFFSET = 'utc-offset';
+    protected const LANGUAGE_TAG = 'language-tag';
+    protected const IANA_TOKEN = 'iana-token';
+    protected const X_NAME = 'x-name';
 }
