@@ -60,8 +60,8 @@ class Values
      * `NOTE:Mythical Manager\nHyjinx Software Division\n
      *  BabsCo\, Inc.\n`
      *
-     * demonstrating the \n literal formatted line break technique, the
-     * CRLF-followed-by-space line folding technique, and the backslash
+     * demonstrating the `\n` literal formatted line break technique, the
+     * `CRLF`-followed-by-space line folding technique, and the backslash
      * escape technique.
      */
     protected const TEXT = 'text';
