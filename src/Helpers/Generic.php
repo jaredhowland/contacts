@@ -252,7 +252,7 @@ trait Generic
      */
     protected function cleanPhone(string $phone): string
     {
-        return preg_replace('/\D/', null, $phone);
+        return preg_replace('/\D/', '', $phone);
     }
 
     /**
@@ -312,20 +312,20 @@ trait Generic
     /**
      * Clean latitude and longitude
      *
-     * @param string $lat  Geographic Positioning System latitude (decimal) (must be a number between -90 and 90)
+     * @param float $lat   Geographic Positioning System latitude (decimal) (must be a number between -90 and 90)
      *                     **FORMULA**: decimal = degrees + minutes/60 + seconds/3600
      *
-     * @param string $long Geographic Positioning System longitude (decimal) (must be a number between -180 and 180)
+     * @param float $long  Geographic Positioning System longitude (decimal) (must be a number between -180 and 180)
      *                     **FORMULA**: decimal = degrees + minutes/60 + seconds/3600
      *
      * @return array Array of formatted latitude and longitude
      *
      * @throws ContactsException If invalid latitude or longitude is used
      */
-    private function cleanLatLong(string $lat, string $long): array
+    private function cleanLatLong(float $lat, float $long): array
     {
-        $lat  = $this->constrainLatLong((float)$lat, 90, -90);
-        $long = $this->constrainLatLong((float)$long, 180, -180);
+        $lat  = $this->constrainLatLong($lat, 90, -90);
+        $long = $this->constrainLatLong($long, 180, -180);
 
         return ['lat' => $lat, 'long' => $long];
     }
@@ -378,7 +378,7 @@ trait Generic
      */
     private function cleanTimeZone(string $timeZone): string
     {
-        $timeZone = preg_replace('/[^0-9:]/', null, $timeZone);
+        $timeZone = preg_replace('/[^0-9:]/', '', $timeZone);
 
         return ltrim($timeZone, '0');
     }
