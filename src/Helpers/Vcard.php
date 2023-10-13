@@ -60,7 +60,7 @@ trait Vcard
         $search  = [',', ';', ':'];
         $replace = ['\,', '\;', '\:'];
 
-        return empty($string) ? null : str_replace($search, $replace, $string);
+        return empty($string) ? null : str_replace($search, $replace, (string)$string);
     }
 
     /**
