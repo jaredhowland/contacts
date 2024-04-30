@@ -220,7 +220,8 @@ Inspired by https://github.com/jeroendesloovere/vcard
 .. |StyleCI| image:: https://styleci.io/repos/71304265/shield?branch=main
 .. _StyleCI: https://styleci.io/repos/71304265
 
-.. |Packagist| image:: https://img.shields.io/packagist/dt/jaredhowland/contacts?style=flat-square&link=https%3A%2F%2Fpackagist.org%2Fpackages%2Fjaredhowland%2Fcontacts
+.. |Packagist| image:: https://img.shields.io/packagist/v/jaredhowland/contacts.svg?style=flat-square
+.. _Packagist: https://packagist.org/packages/jaredhowland/contacts
 
 .. |MIT License| image:: https://img.shields.io/badge/License-MIT-blue.svg?style=flat-square
 .. _MIT License: LICENSE.rst
