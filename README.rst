@@ -1,4 +1,4 @@
-|Scrutinizer|_ |Build|_ |StyleCI|_ |Packagist-dl|_ |Packagist|_ |MIT License|_
+|Scrutinizer| |Build| |StyleCI| |Packagist-dl| |Packagist| |MIT License|
 
 ========
 Contacts
