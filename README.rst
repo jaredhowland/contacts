@@ -213,6 +213,9 @@ Inspired by https://github.com/jeroendesloovere/vcard
 
 .. |Scrutinizer| image:: https://img.shields.io/scrutinizer/g/jaredhowland/contacts/main.svg?style=flat-square
 .. _Scrutinizer: https://scrutinizer-ci.com/g/jaredhowland/contacts/
+.. image:: https://img.shields.io/packagist/dt/jaredhowland/contacts?style=flat-square&link=https%3A%2F%2Fpackagist.org%2Fpackages%2Fjaredhowland%2Fcontacts
+   :alt: Packagist Downloads
+
 
 .. |Build| image:: https://img.shields.io/scrutinizer/build/g/jaredhowland/contacts/main.svg?style=flat-square
 .. _Build: https://scrutinizer-ci.com/g/jaredhowland/contacts/
